@@ -14,7 +14,12 @@ else ( ZLIB_FOUND )
     set(ZLIB_LIBRARIES "zlib")
 endif( ZLIB_FOUND )
 
-PKG_CHECK_MODULES(MINIZIP minizip)
+if (PKG_CONFIG_FOUND)
+    PKG_CHECK_MODULES(MINIZIP minizip)
+else (PKG_CONFIG_FOUND)
+    set (MINIZIP_FOUND FALSE)
+endif(PKG_CONFIG_FOUND)
+
 if ( MINIZIP_FOUND )
     include_directories( ${MINIZIP_INCLUDE_DIRS} )
 else ( MINIZIP_FOUND )
