@@ -28,7 +28,7 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-#ifdef linux
+#if ! _WIN32
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
@@ -392,9 +392,9 @@ OGPS_Boolean LinuxEnvironment::RemoveDir(const OpenGPS::String& path) const
     dir = opendir(tempPath.ToChar());
     if (dir == NULL)
         return 0;
-    while (entry == readdir(dir) != NULL)
+    while ((entry = readdir(dir)) != NULL)
     {
-        if ((strcmp(entry->d_name, ".") == 0) || (strcmp(entry->d_name, ".") == 0))
+        if ((strcmp(entry->d_name, ".") == 0) || (strcmp(entry->d_name, "..") == 0))
             continue;
         else if (entry->d_type == DT_DIR)
         {
@@ -493,4 +493,4 @@ Environment* Environment::CreateInstance()
    return new LinuxEnvironment();
 }
 
-#endif /* linux */
+#endif /* !_WIN32 */

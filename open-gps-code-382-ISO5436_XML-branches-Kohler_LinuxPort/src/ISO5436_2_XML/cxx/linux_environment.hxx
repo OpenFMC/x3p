@@ -35,7 +35,7 @@
 #ifndef _OPENGPS_LINUX_ENVIRONMENT_HXX
 #define _OPENGPS_LINUX_ENVIRONMENT_HXX
 
-#ifdef linux
+#if !_WIN32
 
 #ifndef _OPENGPS_ENVIRONMENT_HXX
 #  include "environment.hxx"
@@ -80,6 +80,6 @@ namespace OpenGPS
    };
 }
 
-#endif /* linux */
+#endif /* !_WIN32 */
 
 #endif /* _OPENGPS_LINUX_ENVIRONMENT_HXX */
