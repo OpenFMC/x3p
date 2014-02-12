@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sample XML of a possible ISO5436-2 implementation -->
+<!-- 18-Oct-2007
+      Copyright by Georg Wiora (NanoFocus AG) 2007
+      Jörg Seewig (Uni Hannover) 2007
+      Andreas Walther (NanoFocus AG) 2007
+      Mark A. Weber (NanoFocus AG) 2007
+
+      This file is part of the openGPS(R)[TM] software library.
+      This program is free software; you can redistribute it and/or modify
+      it under the terms of the GNU Lesser General Public License (LGPL)
+      as published by the Free Software Foundation; either version 3 of
+      the License, or (at your option) any later version.
+      for detail see the files "licence_LGPL-3.0.txt" and
+      "licence_GPL-3.0.txt".
+
+      openGPS is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU Lesser General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program.  If not, see http://www.gnu.org/licenses/.
+
+      openGPS and the openGPS logo is a registered trademark of
+      Physikalisch Technische Bundesanstalt (PTB)
+      http://www.ptb.de/
+
+      More information about openGPS can be found at
+      http://www.opengps.eu/ -->
+<p:ISO5436_2 xmlns:p="http://www.opengps.eu/2008/ISO5436_2" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.opengps.eu/2008/ISO5436_2 http://www.opengps.eu/2008/ISO5436_2/ISO5436_2.xsd ">
+  <Record1>
+    <Revision>ISO5436 - 2000</Revision>
+    <!-- "SUR" for surface or "PRF" for profile -->
+    <FeatureType>SUR</FeatureType>
+    <!-- Axis description-->  
+    <Axes>
+      <CX>
+        <!-- "I" for Incremental, "A" for Absolute -->
+        <AxisType>I</AxisType>
+        <!-- Datatype: "I" for int16, "L" for int32, "F" for float32, "D" for float64-->
+        <DataType>D</DataType>
+        <!-- Increment is the length of one increment in Meter -->
+        <Increment>1.60160000000000E-0002</Increment>
+        <!-- The offset of the incremental axis -->
+        <Offset>0.00000000000000E+0000</Offset>
+      </CX>
+      <CY>
+        <AxisType>I</AxisType>
+        <DataType>D</DataType>
+        <Increment>1.60160000000000E-0002</Increment>
+        <Offset>0.00000000000000E+0000</Offset>
+      </CY>
+      <CZ>
+        <!-- Example for an absolute axis. Needs no additional specifications -->
+        <AxisType>A</AxisType>
+        <!-- Double precission data -->
+        <DataType>I</DataType>
+        <Increment>0.001</Increment>
+        <Offset>-0.5</Offset>
+      </CZ>
+    </Axes>
+  </Record1>
+  <Record2> <!-- Optional -->
+    <Date>2007-04-30T13:58:02.6+02:00</Date>
+    <Creator>Name of measuring person</Creator> <!-- Optional -->
+    <Instrument>
+        <Manufacturer>NanoFocus AG</Manufacturer>
+                <Model>µSurf X</Model>
+                <Serial>12345abc</Serial>
+                <Version>Software V1.0 ,Hardware V1.0</Version>
+    </Instrument>
+            <CalibrationDate>2007-04-30T13:58:02.6+02:00</CalibrationDate>
+            <ProbingSystem>
+                <Type>NonContacting</Type>      <!-- Contacting|NonContacting -->
+                <Identification>LensName,Setupname,...</Identification> <!-- Vendor specific -->              
+            </ProbingSystem>
+            <Comment>This is a sample data file containing an integer encoded z-data set</Comment> <!-- Optional -->
+  </Record2>
+  <!-- Record 3 contains one set of measurement data in a Data-Tag. -->
+  <Record3> <!-- Optional for NF, but mandatory for ISO 5436-2 -->
+    <!-- This is a sample Data set for 2D-Matrix organised data like microscopic surface profiles -->
+      <!-- Data and Index Order in DataList: 
+           If an incremental axis shows up in the DataList, its values are stored as integers.
+           If it does not show up, its values are derived from the matrix dimensions or list length -->
+      <!-- In this case DataList has only an absolute z-Axis -->
+      <!-- Data organized in a matrix 4x4 with one z-value per matrix element -->
+      <MatrixDimension><SizeX>4</SizeX><SizeY>4</SizeY><SizeZ>1</SizeZ></MatrixDimension>
+      <!-- to save a multi layer system there are two possible methods -->
+      <!-- Optional:Relative URN to Binary File with data triples. Data types in binary files are described in axis definitions -->
+      <!-- <DataLink><Link>Data/SampleDatafileWithMatrix.lst</Link><MD5Checksum></MD5Checksum></DataLink>-->
+      <!-- Data list is ordered like specified in DataOrder:
+           Z-Index is empty (only one sample per pixel)
+           X is fastest index, Y is slowest:
+           (x1,y1),(x2,y1),(x3,y1),(x4,y1),(x1,y2)... -->
+      <DataLink>
+	      <PointDataLink>bindata/data.bin</PointDataLink>
+	      <MD5ChecksumPointData>272f5faf0a067c56a8ef08f98d96b187</MD5ChecksumPointData>
+	      <ValidPointsLink>bindata/valid.bin</ValidPointsLink>
+	      <MD5ChecksumValidPoints>b8114a9c9a26c5680be3c4d89073bde1</MD5ChecksumValidPoints>
+      </DataLink>
+  </Record3>
+  <Record4>
+    <!-- checksum over this XML-file. Binary files not included -->
+    <ChecksumFile>md5checksum.hex</ChecksumFile>
+  </Record4> 
+</p:ISO5436_2>

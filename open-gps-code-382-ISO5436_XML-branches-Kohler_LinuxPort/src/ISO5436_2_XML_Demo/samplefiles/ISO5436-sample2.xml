@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sample XML of a possible ISO5436 implementation -->
+<!-- 04-Apr-2007
+     Dr. Jörg Seewig (Uni Hannover)
+     Andreas Walther (NanoFocus AG)
+     Dr. Mark Weber (NanoFocus AG)
+     Dr. Georg Wiora (NanoFocus AG) -->
+<p:ISO5436_2 xmlns:p="http://www.opengps.eu/2008/ISO5436_2" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.opengps.eu/2008/ISO5436_2 http://www.opengps.eu/2008/ISO5436_2/ISO5436_2.xsd ">
+  <Record1>
+    <Revision>ISO5436 - 2000</Revision>
+    <!-- "SUR" for surface or "PRF" for profile PCL for Point cloud-->
+    <FeatureType>PCL</FeatureType>
+    <!-- Axis description-->
+    <Axes>
+      <CX>
+        <!-- "I" for Incremental, "A" for Absolute -->
+        <AxisType>A</AxisType>
+        <!-- Datatype: "I" for int16, "L" for int32, "F" for float32, "D" for float64-->
+        <DataType>D</DataType>
+        <!-- Increment is the length of one increment in Meter -->
+        <Increment>1</Increment>
+        <!-- The offset of the incremental axis -->
+        <Offset>0.1000000000000E+0000</Offset>
+      </CX>
+      <CY>
+        <AxisType>A</AxisType>
+        <DataType>D</DataType>
+        <Increment>1</Increment>
+        <Offset>2.00000000000000E+0000</Offset>
+      </CY>
+      <CZ>
+        <!-- Example for an absolute axis. Needs no additional specifications -->
+        <AxisType>A</AxisType>
+        <!-- Double precission data -->
+        <DataType>D</DataType>
+        <Offset>2.00000000000000E+0000</Offset>        
+      </CZ>
+    </Axes>
+  </Record1>
+  <Record2>
+    <!-- Optional -->
+    <Date>2007-04-30T13:58:02.6+02:00</Date>
+    <Creator>Name of measuring person</Creator>
+    <!-- Optional -->
+    <Instrument>
+      <Manufacturer>NanoFocus AG</Manufacturer>
+      <Model>µSurf X</Model>
+      <Serial>12345abc</Serial>
+      <Version>Software V1.0 ,Hardware V1.0</Version>
+    </Instrument>
+    <CalibrationDate>2007-04-30T13:58:02.6+02:00</CalibrationDate>
+    <ProbingSystem>
+      <Type>NonContacting</Type>
+      <!-- Contacting|NonContacting -->
+      <Identification>LensName,Setupname,...</Identification>
+      <!-- Vendor specific -->
+    </ProbingSystem>
+    <Comment>This is a user comment specific to this dataset</Comment>
+  </Record2>
+  <!-- Record 3 contains one set of measurement data in a Data-Tag. -->
+  <Record3>
+    <!-- This is a sample Data set for unorganised point cloud data like CMM measurements -->
+    <!-- Data organized in a list of 16 Elements with one x,y,z-value per element -->
+    <ListDimension>16</ListDimension>
+    <!-- Optional:Relative URN to Binary File with data triples. Data types in binary files are described in axis definitions -->
+    <!-- Data list is sorted in list order -->
+    <DataList>
+      <Datum>0e-6;0e-6;4.86219120804151E-0001</Datum>
+      <Datum>1e-6;0e-6;3.46341436648013E-0003</Datum>
+      <Datum>2e-6;0e-6;-8.08368571682830E-0001</Datum>
+      <Datum>3e-6;0e-6;-5.79793099037002E-0001</Datum>
+      <Datum>0e-6;1e-6;8.57622027393310E-0001</Datum>
+      <Datum>1e-6;1e-6;1.04759602566142E+0000</Datum>
+      <Datum>2e-6;1e-6;1.01879225277798E+0000</Datum>
+      <Datum>3e-6;1e-6;3.46341436648013E-0003</Datum>
+      <Datum>0e-6;2e-6;8.23683772970184E-0001</Datum>
+      <Datum>1e-6;2e-6;7.97872489327661E-0001</Datum>
+      <Datum>2e-6;2e-6;-5.57459388341694E-0001</Datum>
+      <Datum>3e-6;2e-6;-2.33247858849220E-0001</Datum>
+      <Datum>0e-6;3e-6;6.75397146760858E-0001</Datum>
+      <Datum>1e-6;3e-6;4.20737549074718E-0001</Datum>
+      <Datum>2e-6;3e-6;6.42069248110950E-0001</Datum>
+      <Datum>3e-6;3e-6;-2.15696638464903E-0001</Datum>
+    </DataList>
+  </Record3>
+  <Record4>
+    <!-- checksum over this XML-file. Binary files not included -->
+    <ChecksumFile>md5checksum.hex</ChecksumFile>
+  </Record4>
+</p:ISO5436_2>
