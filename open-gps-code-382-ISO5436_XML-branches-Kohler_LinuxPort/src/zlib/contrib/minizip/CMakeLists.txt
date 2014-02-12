@@ -30,9 +30,9 @@ ELSE(CMAKE_BUILD_TYPE)
   SET (CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.")
 ENDIF (DEFINED CMAKE_BUILD_TYPE)
 
-INCLUDE_DIRECTORIES( "${PROJECT_SOURCE_DIR}"
-	  "${PROJECT_SOURCE_DIR}/../../"
-)
+#INCLUDE_DIRECTORIES( "${PROJECT_SOURCE_DIR}"
+#	  "${PROJECT_SOURCE_DIR}/../../"
+#)
 
 #ENABLE_LANGUAGE(ASM)
 
@@ -93,7 +93,8 @@ endif()
 #endif ()
 
 add_library(zlibwapi ${LIBRARY_TYPE} ${libSrcs})
-
+target_link_libraries(zlibwapi ${ZLIB_LIBRARIES})
+ 
 if (DEFINED MSVC_VERSION)
   set_target_properties(zlibwapi PROPERTIES COMPILE_FLAGS "/Zc:wchar_t")
 endif ()
@@ -101,5 +102,6 @@ endif ()
 
 install(TARGETS  zlibwapi 
        RUNTIME DESTINATION bin
+	   LIBRARY DESTINATION iso5436-2-xml/lib
 	   ARCHIVE DESTINATION iso5436-2-xml/lib
 	)

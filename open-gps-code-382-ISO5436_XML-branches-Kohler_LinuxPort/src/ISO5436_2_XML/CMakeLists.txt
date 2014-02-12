@@ -35,7 +35,7 @@ FIND_PACKAGE(Subversion)
 IF (NOT SUBVERSION_FOUND)
    FIND_PACKAGE(TortoiseSVN REQUIRED)
    MESSAGE(STATUS "Using TortoiseSVN from:")
-   MESSAGE(STATUS "   "${TortoiseSVN_EXECUTABLE})
+   MESSAGE(STATUS "   " ${TortoiseSVN_EXECUTABLE})
    SET(Subversion_SVN_EXECUTABLE ${TortoiseSVN_EXECUTABLE})
 ENDIF(NOT SUBVERSION_FOUND)
 # Find native ZLIB package
@@ -236,10 +236,11 @@ SET(iso54362xml_SRCS
 
 add_library( ${iso54362xmlNAME} ${LIBRARY_TYPE} ${iso54362xml_SRCS} ${iso54362xml_HEADER} ${opengps_HDRS} ${opengps_CXXHDRS})
 
-target_link_libraries(${iso54362xmlNAME} zlibwapi ${XERCESC_LIBRARY})
+target_link_libraries(${iso54362xmlNAME} ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${XERCESC_LIBRARY})
 
 install(TARGETS  ${iso54362xmlNAME} 
        RUNTIME DESTINATION bin
+	   LIBRARY DESTINATION iso5436-2-xml/lib
 	   ARCHIVE DESTINATION iso5436-2-xml/lib
 	)
 install(FILES ${opengps_HDRS} DESTINATION iso5436-2-xml/include/opengps)	

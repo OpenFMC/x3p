@@ -47,21 +47,21 @@
 /// Build number is automatically incremented after each succesfull release build.
 #define _OPENGPS_BUILD     41
 /// Version or Version range, automatically extracted from SVN repository
-#define _OPENGPS_REVISION "378"
+#define _OPENGPS_REVISION "exported"
 
 /// Date of highest revision
-#define _OPENGPS_REVISION_DATE "2012/05/09 13:35:18"
+#define _OPENGPS_REVISION_DATE ""
 /// Build date
-#define _OPENGPS_BUILD_DATE "2012/05/15 17:21:13"
+#define _OPENGPS_BUILD_DATE "Wed 12 Feb 2014 17:12:46 EST"
 /// URL of project archive
-#define _OPENGPS_REPOSITORY_URL "https://open-gps.svn.sourceforge.net/svnroot/open-gps/ISO5436_XML/branches/Kohler_LinuxPort/src/ISO5436_2_XML"
+#define _OPENGPS_REPOSITORY_URL ""
 /// Warning message "Warning! Contains locally modified code!" or empty.
-#define _OPENGPS_CLEAN_BUILD "Warning! Contains locally modified code!"
+#define _OPENGPS_CLEAN_BUILD ""
 /// Warning message "Warning! Contains mixed revisions!" or empty
-#define _OPENGPS_CLEAN_REVISION 
+#define _OPENGPS_CLEAN_REVISION ""
 
 /// 0 if locally modified sources exist, 1 otherwise
-#define _OPENGPS_CLEAN_BUILD_FLAG 0
+#define _OPENGPS_CLEAN_BUILD_FLAG 1
 /// 0 if it contains mixed revisions, 1 otherwise
 #define _OPENGPS_CLEAN_REVISION_FLAG 1
 
