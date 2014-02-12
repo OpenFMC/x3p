@@ -138,13 +138,13 @@ size_t String::CopyTo(OGPS_Character *const target, const size_t size) const
    if(len > 0)
    {
 #ifdef _UNICODE
-    #if linux
+    #if !_WIN32 
         wcsncpy(target, c_str(), size);
     #else
         wcscpy_s(target, size, c_str());
     #endif
 #else
-    #if linux
+    #if !_WIN32 
         strncpy(target, c_str(), size);
     #else
         strcpy_s(target, size, c_str());

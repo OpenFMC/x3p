@@ -36,13 +36,13 @@ Exception::Exception(const OGPS_ExceptionId id,
                      const OGPS_ExceptionChar *text,
                      const OGPS_ExceptionChar *details,
                      const OGPS_ExceptionChar *method)
-#if linux
-   : std::exception()
-#else
+#if _WIN32
    : std::exception(text)
+#else
+   : std::exception()
 #endif
 {
-#if linux
+#if !_WIN32
    std::cerr << text << std::endl;
 #endif
 

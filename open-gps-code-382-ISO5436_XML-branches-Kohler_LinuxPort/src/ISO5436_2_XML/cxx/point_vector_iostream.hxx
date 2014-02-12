@@ -39,10 +39,10 @@
 #  include <opengps/cxx/opengps.hxx>
 #endif
 
-#if linux
-    #include <xlocale.h>
-#else
+#if _WIN32
     #include <xlocale>
+#else
+    #include <xlocale.h>
 #endif
 #include <sstream>
 #include <fstream>

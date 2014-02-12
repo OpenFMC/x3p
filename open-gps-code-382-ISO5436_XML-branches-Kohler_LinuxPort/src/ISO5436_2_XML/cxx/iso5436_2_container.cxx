@@ -250,7 +250,7 @@ void ISO5436_2Container::VerifyValidBinChecksum()
 OGPS_Boolean ISO5436_2Container::ReadMd5FromFile(const OpenGPS::String& fileName, OpenGPS::UnsignedByte checksum[16]) const
 {
 #ifdef _UNICODE
-    #if linux
+    #if !_WIN32
         OpenGPS::String tempFileName(fileName);
         std::wifstream file(tempFileName.ToChar());
     #else
