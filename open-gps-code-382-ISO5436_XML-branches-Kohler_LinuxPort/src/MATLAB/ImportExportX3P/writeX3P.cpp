@@ -42,9 +42,9 @@
 // mex -g -L"S:/openGPS/ISO5436_XML/install/lib/" -L"S:/openGPS/ISO5436_XML/install/bin/" -l"ISO5436_2_XML_S" -I"S:/openGPS/ISO5436_XML/install/include/" -I"C:\Programme\CodeSynthesis XSD 3.0\include"  COMPFLAGS="$COMPFLAGS /Zc:wchar_t" writeX3P.cpp
 
 // We want to link to the iso5436_2.dll
-#define SHARED_OPENGPS_LIBRARY
-#define _UNICODE
-#define UNICODE
+//#define SHARED_OPENGPS_LIBRARY
+//#define _UNICODE
+//#define UNICODE
 
 #include "X3PUtilities.h"
 #include <tchar.h>
@@ -660,11 +660,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
               "data set creation date\n");
     }
     // Use current date as creation date
-    date = new Record2Type::Date_type(TimeStamp());
+//    date = new Record2Type::Date_type(TimeStamp());
+    date = new Record2Type::Date_type(0,0);
   }
   else
     // Use the given date
-    date = new Record2Type::Date_type(ConvertMtoWStr(mxGetField(meta, 0,"Date")));
+//    date = new Record2Type::Date_type(ConvertMtoWStr(mxGetField(meta, 0,"Date")));
+    date = new Record2Type::Date_type(0,0);
     
   
   // Instrument manufacturer
@@ -697,8 +699,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
   serial=NULL;
   
   // Calibration date
-  Record2Type::CalibrationDate_type 
-          calibrationDate(ConvertMtoWStr(mxGetField(meta, 0,"CalibrationDate")));
+//  Record2Type::CalibrationDate_type 
+//          calibrationDate(ConvertMtoWStr(mxGetField(meta, 0,"CalibrationDate")));
+  Record2Type::CalibrationDate_type calibrationDate(0,0);
 
   // Type of probing system: Contacting, non Contacting, Software 
   Record2Type::ProbingSystem_type::Type_type type(GetProbingSystemTypeEnum(meta));

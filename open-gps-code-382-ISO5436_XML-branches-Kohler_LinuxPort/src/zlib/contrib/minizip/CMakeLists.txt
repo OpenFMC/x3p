@@ -46,7 +46,7 @@ set(libSrcs
         ${CMAKE_CURRENT_SOURCE_DIR}/mztools.c
 )
 
-if (WIN32)
+if (FALSE)
   set(libSrcs
 	${libSrcs}
         ${CMAKE_CURRENT_SOURCE_DIR}/../../adler32.c
@@ -102,6 +102,6 @@ endif ()
 
 install(TARGETS  zlibwapi 
        RUNTIME DESTINATION bin
-	   LIBRARY DESTINATION iso5436-2-xml/lib
-	   ARCHIVE DESTINATION iso5436-2-xml/lib
+	   LIBRARY DESTINATION lib
+	   ARCHIVE DESTINATION lib
 	)

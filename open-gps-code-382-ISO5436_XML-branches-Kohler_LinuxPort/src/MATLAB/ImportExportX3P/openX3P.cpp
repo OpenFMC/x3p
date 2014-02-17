@@ -441,7 +441,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     const OpenGPS::Schemas::ISO5436_2::ISO5436_2Type::Record2_type &r2 = r2opt.get();
 
     // Data set creation date
-    mxSetField(plhs[4], 0, "Date", ConvertWtoMStr(r2.Date()));
+//    mxSetField(plhs[4], 0, "Date", ConvertWtoMStr(r2.Date()));
 
     // Check for data set creator
     if (r2.Creator().present())
@@ -468,7 +468,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     mxSetField(plhs[4], 0, "Instrument_Version", ConvertWtoMStr(r2.Instrument().Version()));    
 
     // Calibration
-    mxSetField(plhs[4], 0, "CalibrationDate", ConvertWtoMStr(r2.CalibrationDate()));    
+//    mxSetField(plhs[4], 0, "CalibrationDate", ConvertWtoMStr(r2.CalibrationDate()));    
 
     // Probing system type
     mxSetField(plhs[4], 0, "ProbingSystem_Type", ConvertWtoMStr( r2.ProbingSystem().Type()));    

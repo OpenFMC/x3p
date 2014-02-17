@@ -43,24 +43,25 @@ d = [fileparts(mexpath),filesep];
 
 % Debug flag
 % debug='-g '
-debug='-v -g '
+debug='-O '
 
 %% Build path names
 
 % Installation path of x3p lib
 % InstallX3P = [cd(cd([d,up,up,up,up,'install'])),fs]
-InstallX3P = [d,fs,'install',fs]
+% InstallX3P = [d,fs,'install',fs]
+InstallX3P = 'C:\Users\Cadre\ISO5436_2-1.0.0-win64\'
 % Include directory for x3p
-IDirX3P = ['-I"',InstallX3P,'include',fs,'" ','-I"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include" ']
-% IDirX3P = ['-I"',InstallX3P,'include',fs,'" ']
+% IDirX3P = ['-I"',InstallX3P,'include',fs,'" ','-I"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include" ']
+IDirX3P = ['-I"',InstallX3P,'include" ']
 % Library directory for x3p
-LDirX3P = ['-L"',InstallX3P,'lib',fs,'" ',...
-           '-L"',InstallX3P,'bin',fs,'" ']
+LDirX3P = ['-L"',InstallX3P,'lib" ',...
+           '-L"',InstallX3P,'bin" ']
 % Set library name of x3P DLL
-LibX3P= '-lISO5436_2_XML_S '
+LibX3P= '-liso5436-2-xml64 '
 
 % Path of x3p dll
-LibX3PPath = [InstallX3P,'bin',fs,'ISO5436_2_XML.dll']
+LibX3PPath = [InstallX3P,'bin',fs,'iso5436-2-xml64.dll']
 % Path of Sample files
 X3PSamplePath = [InstallX3P,'SampleFiles',fs,'*.x3p']
            
@@ -96,16 +97,19 @@ if ispc()
         break;
       end
     end
+    if sp(en) == '\'
+        en = en -1;
+    end
     % grep the bin path of codesynthesys
-    DirCS = [sp(st:en),fs];
+    DirCS = [sp(st:en)];
     % Set include and library path
-    IDirCS=['-I"',cd(cd([DirCS,up,'include'])),fs,'" ']
+    IDirCS=['-I"',cd(cd([DirCS,fs,up,'include'])),'" ']
     % ToDo: We stick to vc8 here, this may have to be changed
-    warning('Assuming you are using Visual C8.0. If this is not the case please change the version of Codysynthesys libraries!');
-    LDirCS=['-L"',cd(cd([DirCS,up,'lib',fs,'vc-8.0'])),fs,'" ',...
+    warning('Assuming you are using Visual C10.0. If this is not the case please change the version of Codysynthesys libraries!');
+    LDirCS=['-L"',cd(cd([DirCS,fs,up,'lib64',fs,'vc-10.0'])),'" ',...
             '-L"',DirCS,'" ']
     % Path to xerces DLL
-    LibXercesPath = [DirCS,'xerces-c_2_7_vc80.dll']
+    LibXercesPath = [DirCS,'64',fs,'xerces-c_3_1_vc100.dll']
   end
 else
   error('Please specifiy the include and library path of codesynthesys Xerces library and remove this error message!');
@@ -114,9 +118,10 @@ else
 end
 
 %% Create compile commands
-cmex=['mex ',debug,IDirX3P,LDirX3P,LibX3P,IDirCS,LDirCS,'COMPFLAGS="$COMPFLAGS /Zc:wchar_t" '];
-cmexopenX3P=[cmex,'openX3P.cpp ','X3PUtilities.cpp'];
-cmexwriteX3P=[cmex,'writeX3P.cpp ','X3PUtilities.cpp'];
+cmex=['mex -compatibleArrayDims ',debug,IDirX3P,LDirX3P,LibX3P,IDirCS,LDirCS,'COMPFLAGS="$COMPFLAGS /Zc:wchar_t /VERBOSE /D_UNICODE /DUNICODE /nologo-" '];
+%cmex=['mex ',debug,IDirX3P,LDirX3P,LibX3P,IDirCS,LDirCS];
+cmexopenX3P=[cmex,'openX3P.cpp ','X3PUtilities.cpp '];
+cmexwriteX3P=[cmex,'writeX3P.cpp ','X3PUtilities.cpp '];
 
 %% Check date of mexfiles and compare to source files
   datsrc(1) = dir('openX3P.cpp');
@@ -171,9 +176,9 @@ copyfile(LibX3PPath,'.')
 copyfile(LibXercesPath,'.')
 
 %% Copy sample files
-% Clear all x3p files from current dir
-disp('Delete all x3p files in current directory...');
-delete('*.x3p');
-% Copy sample files to current dir
-disp('Copy sample files to current directory...');
-copyfile(X3PSamplePath,'.')
+% % Clear all x3p files from current dir
+% disp('Delete all x3p files in current directory...');
+% delete('*.x3p');
+% % Copy sample files to current dir
+% disp('Copy sample files to current directory...');
+% copyfile(X3PSamplePath,'.')

@@ -31,13 +31,13 @@ XSD_SCHEMA(OUTPATH ${PROJECT_SOURCE_DIR}/iso5436_2.xsd  --prologue-file ${PROJEC
 find_package(Xerces REQUIRED)
 
 # Subversion is needed to generate version.h from version.in
-FIND_PACKAGE(Subversion)
-IF (NOT SUBVERSION_FOUND)
-   FIND_PACKAGE(TortoiseSVN REQUIRED)
-   MESSAGE(STATUS "Using TortoiseSVN from:")
-   MESSAGE(STATUS "   " ${TortoiseSVN_EXECUTABLE})
-   SET(Subversion_SVN_EXECUTABLE ${TortoiseSVN_EXECUTABLE})
-ENDIF(NOT SUBVERSION_FOUND)
+#FIND_PACKAGE(Subversion)
+#IF (NOT SUBVERSION_FOUND)
+#   FIND_PACKAGE(TortoiseSVN REQUIRED)
+#   MESSAGE(STATUS "Using TortoiseSVN from:")
+#   MESSAGE(STATUS "   " ${TortoiseSVN_EXECUTABLE})
+#   SET(Subversion_SVN_EXECUTABLE ${TortoiseSVN_EXECUTABLE})
+#ENDIF(NOT SUBVERSION_FOUND)
 # Find native ZLIB package
 # FIND_PACKAGE(ZLIB REQUIRED)
 
@@ -65,34 +65,34 @@ INCLUDE_DIRECTORIES( "${PROJECT_SOURCE_DIR}/../../include"
 )
 
 # Generate the version include file from the .in file
-if (WIN32)
-# Find subwcrev executable
-GET_FILENAME_COMPONENT(Subversion_PATH "${Subversion_SVN_EXECUTABLE}" PATH)
-SET(Subwcrev_EXECUTABLE "${Subversion_PATH}/subwcrev.exe" )
-MESSAGE(STATUS Subwcrev found: ${Subwcrev_EXECUTABLE})
-# subwcrev $(ProjectDir) $(InputDir)/cxx/Version.in $(InputDir)/cxx/Version.h
-ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h"
-                    PRE_BUILD
-                    COMMAND "${Subwcrev_EXECUTABLE}"
-                    ARGS "${PROJECT_SOURCE_DIR}"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h"
-                    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
-                    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}"
-                    COMMENT generating cxx/version.h )
-endif (WIN32)
-if (UNIX)
-# on mac and linux we need the included replacement script
-ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h" 
-                    PRE_BUILD
-                    COMMAND "${PROJECT_SOURCE_DIR}/../tools/subwcrev.sh"
-                    ARGS "${PROJECT_SOURCE_DIR}"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
-                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h"
-                    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
-                    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}"
-                    COMMENT generating cxx/version.h )
-endif (UNIX)
+#if (WIN32)
+## Find subwcrev executable
+#GET_FILENAME_COMPONENT(Subversion_PATH "${Subversion_SVN_EXECUTABLE}" PATH)
+#SET(Subwcrev_EXECUTABLE "${Subversion_PATH}/subwcrev.exe" )
+#MESSAGE(STATUS Subwcrev found: ${Subwcrev_EXECUTABLE})
+## subwcrev $(ProjectDir) $(InputDir)/cxx/Version.in $(InputDir)/cxx/Version.h
+#ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h"
+#                    PRE_BUILD
+#                    COMMAND "${Subwcrev_EXECUTABLE}"
+#                    ARGS "${PROJECT_SOURCE_DIR}"
+#                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
+#                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h"
+#                    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
+#                    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}"
+#                    COMMENT generating cxx/version.h )
+#endif (WIN32)
+#if (UNIX)
+## on mac and linux we need the included replacement script
+#ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h" 
+#                    PRE_BUILD
+#                    COMMAND "${PROJECT_SOURCE_DIR}/../tools/subwcrev.sh"
+#                    ARGS "${PROJECT_SOURCE_DIR}"
+#                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
+#                         "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.h"
+#                    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/cxx/version.in"
+#                    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}"
+#                    COMMENT generating cxx/version.h )
+#endif (UNIX)
 
 # Now publish the version file to public include dir
 ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/../../include/opengps/cxx/version.h" 
@@ -240,11 +240,11 @@ target_link_libraries(${iso54362xmlNAME} ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} 
 
 install(TARGETS  ${iso54362xmlNAME} 
        RUNTIME DESTINATION bin
-	   LIBRARY DESTINATION iso5436-2-xml/lib
-	   ARCHIVE DESTINATION iso5436-2-xml/lib
+	   LIBRARY DESTINATION lib
+	   ARCHIVE DESTINATION lib
 	)
-install(FILES ${opengps_HDRS} DESTINATION iso5436-2-xml/include/opengps)	
-install(FILES ${opengps_CXXHDRS} DESTINATION iso5436-2-xml/include/opengps/cxx)	
+install(FILES ${opengps_HDRS} DESTINATION include/opengps)	
+install(FILES ${opengps_CXXHDRS} DESTINATION include/opengps/cxx)	
 
 if (DEFINED MSVC_VERSION)
   set_target_properties(${iso54362xmlNAME}  PROPERTIES COMPILE_FLAGS "/Zc:wchar_t")
