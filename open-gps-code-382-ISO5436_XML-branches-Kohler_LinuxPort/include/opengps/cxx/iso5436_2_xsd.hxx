@@ -36,46 +36,46 @@
  * @brief Generated from iso5436_2.xsd.
  */
 
-#ifndef CXX_USERS_MBRUBAKE_PROJECTS_CADRE_X3P_OPEN_GPS_CODE_382_ISO5436_XML_BRANCHES_KOHLER_LINUX_PORT_SRC_ISO5436_2_XML_ISO5436_2_XSD_HXX
-#define CXX_USERS_MBRUBAKE_PROJECTS_CADRE_X3P_OPEN_GPS_CODE_382_ISO5436_XML_BRANCHES_KOHLER_LINUX_PORT_SRC_ISO5436_2_XML_ISO5436_2_XSD_HXX
+#ifndef C__USERS_CADRE_SOURCE_X3P_OPEN_GPS_CODE_382_ISO5436_XML_BRANCHES_KOHLER_LINUX_PORT_SRC_ISO5436_2_XML_ISO5436_2_XSD_HXX
+#define C__USERS_CADRE_SOURCE_X3P_OPEN_GPS_CODE_382_ISO5436_XML_BRANCHES_KOHLER_LINUX_PORT_SRC_ISO5436_2_XML_ISO5436_2_XSD_HXX
 
 // Begin prologue.
 //
-/***************************************************************************
- *   Copyright by                                                          *
- *   Georg Wiora (NanoFocus AG) 2007                                       *
- *   Joerg Seewig (Uni Hannover),                                           *
- *   Andreas Walther (NanoFocus AG),                                       *
- *   Mark A. Weber (NanoFocus AG) 2007                                     *
- *   Johannes Herwig (Uni Duisburg-Essen) 2007                             *
- *                                                                         *
- *   This file is part of the openGPS (R)[TM] software library.            *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Lesser General Public License (LGPL)    *
- *   as published by the Free Software Foundation; either version 3 of     *
- *   the License, or (at your option) any later version.                   *
- *   for detail see the files "licence_LGPL-3.0.txt" and                   *
- *   "licence_GPL-3.0.txt".                                                *
- *                                                                         *
- *   openGPS is distributed in the hope that it will be useful,            *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        * 
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU Lesser General Public License for more details.                   *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *                                                                         *
- *   The name "openGPS" and the logo are registered as                     *
- *   European trade mark No. 006178354 for                                 *
- *   Physikalisch Technische Bundesanstalt (PTB)                           *
- *   http://www.ptb.de/                                                    *
- *                                                                         *
- *   More information about openGPS can be found at                        *
- *   http://www.opengps.eu/                                                *
- ***************************************************************************/
-
-#include <opengps/opengps.h>
+/***************************************************************************
+ *   Copyright by                                                          *
+ *   Georg Wiora (NanoFocus AG) 2007                                       *
+ *   Joerg Seewig (Uni Hannover),                                           *
+ *   Andreas Walther (NanoFocus AG),                                       *
+ *   Mark A. Weber (NanoFocus AG) 2007                                     *
+ *   Johannes Herwig (Uni Duisburg-Essen) 2007                             *
+ *                                                                         *
+ *   This file is part of the openGPS (R)[TM] software library.            *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License (LGPL)    *
+ *   as published by the Free Software Foundation; either version 3 of     *
+ *   the License, or (at your option) any later version.                   *
+ *   for detail see the files "licence_LGPL-3.0.txt" and                   *
+ *   "licence_GPL-3.0.txt".                                                *
+ *                                                                         *
+ *   openGPS is distributed in the hope that it will be useful,            *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        * 
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU Lesser General Public License for more details.                   *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                         *
+ *   The name "openGPS" and the logo are registered as                     *
+ *   European trade mark No. 006178354 for                                 *
+ *   Physikalisch Technische Bundesanstalt (PTB)                           *
+ *   http://www.ptb.de/                                                    *
+ *                                                                         *
+ *   More information about openGPS can be found at                        *
+ *   http://www.opengps.eu/                                                *
+ ***************************************************************************/
+
+#include <opengps/opengps.h>
 //
 // End prologue.
 
@@ -6770,4 +6770,4 @@ namespace OpenGPS
 //
 // End epilogue.
 
-#endif // CXX_USERS_MBRUBAKE_PROJECTS_CADRE_X3P_OPEN_GPS_CODE_382_ISO5436_XML_BRANCHES_KOHLER_LINUX_PORT_SRC_ISO5436_2_XML_ISO5436_2_XSD_HXX
+#endif // C__USERS_CADRE_SOURCE_X3P_OPEN_GPS_CODE_382_ISO5436_XML_BRANCHES_KOHLER_LINUX_PORT_SRC_ISO5436_2_XML_ISO5436_2_XSD_HXX

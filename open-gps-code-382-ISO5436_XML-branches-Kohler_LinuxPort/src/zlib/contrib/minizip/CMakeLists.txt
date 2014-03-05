@@ -7,13 +7,14 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
 	OPTION(BUILD_SHARED_LIBS "Build shared library." OFF)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
 
-IF(BUILD_SHARED_LIBS)
-  SET(LIBRARY_TYPE SHARED)
-  add_definitions(-DZLIB_DLL )
-ELSE(BUILD_SHARED_LIBS)
-  SET(LIBRARY_TYPE STATIC)
+#IF(BUILD_SHARED_LIBS)
+#  SET(LIBRARY_TYPE SHARED)
+#  add_definitions(-DZLIB_DLL )
+#ELSE(BUILD_SHARED_LIBS)
+#  SET(LIBRARY_TYPE STATIC)
   
-ENDIF(BUILD_SHARED_LIBS)
+#ENDIF(BUILD_SHARED_LIBS)
+SET(LIBRARY_TYPE STATIC)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 
@@ -46,7 +47,7 @@ set(libSrcs
         ${CMAKE_CURRENT_SOURCE_DIR}/mztools.c
 )
 
-if (FALSE)
+if (WIN32)
   set(libSrcs
 	${libSrcs}
         ${CMAKE_CURRENT_SOURCE_DIR}/../../adler32.c
@@ -66,7 +67,7 @@ if (FALSE)
         ${CMAKE_CURRENT_SOURCE_DIR}/../../uncompr.c
         ${CMAKE_CURRENT_SOURCE_DIR}/../../zutil.c
         ${CMAKE_CURRENT_SOURCE_DIR}/iowin32.c
-		${CMAKE_CURRENT_SOURCE_DIR}/../vstudio/vc10/zlibvc.def
+#		${CMAKE_CURRENT_SOURCE_DIR}/../vstudio/vc10/zlibvc.def
   )
 else()
 #  set(libSrcs
@@ -93,7 +94,6 @@ endif()
 #endif ()
 
 add_library(zlibwapi ${LIBRARY_TYPE} ${libSrcs})
-target_link_libraries(zlibwapi ${ZLIB_LIBRARIES})
  
 if (DEFINED MSVC_VERSION)
   set_target_properties(zlibwapi PROPERTIES COMPILE_FLAGS "/Zc:wchar_t")

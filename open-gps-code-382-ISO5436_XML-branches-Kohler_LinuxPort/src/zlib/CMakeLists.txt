@@ -113,9 +113,9 @@ set(ZLIB_SRCS
 )
 
 if(NOT MINGW)
-    set(ZLIB_SRCS ${ZLIB_SRCS}
-        win32/zlib1.rc # If present will override custom build rule below.
-    )
+#    set(ZLIB_SRCS ${ZLIB_SRCS}
+#        win32/zlib1.rc # If present will override custom build rule below.
+#    )
 endif()
 
 # parse the full version number from zlib.h and include in ZLIB_FULL_VERSION

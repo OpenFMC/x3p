@@ -32,8 +32,8 @@
 #define _X3PUTILITIES_H
 
 #define SHARED_OPENGPS_LIBRARY 1
-//#define _UNICODE 1
-//#define UNICODE 1
+#define _UNICODE 1
+#define UNICODE 1
 
 #include <string>
 #include <tchar.h>

@@ -58,7 +58,7 @@ IDirX3P = ['-I"',InstallX3P,'include" ']
 LDirX3P = ['-L"',InstallX3P,'lib" ',...
            '-L"',InstallX3P,'bin" ']
 % Set library name of x3P DLL
-LibX3P= '-liso5436-2-xml64 '
+LibX3P= '-liso5436-2-xml64 -lzlibwapi -lzlib '
 
 % Path of x3p dll
 LibX3PPath = [InstallX3P,'bin',fs,'iso5436-2-xml64.dll']
@@ -106,10 +106,8 @@ if ispc()
     IDirCS=['-I"',cd(cd([DirCS,fs,up,'include'])),'" ']
     % ToDo: We stick to vc8 here, this may have to be changed
     warning('Assuming you are using Visual C10.0. If this is not the case please change the version of Codysynthesys libraries!');
-    LDirCS=['-L"',cd(cd([DirCS,fs,up,'lib64',fs,'vc-10.0'])),'" ',...
-            '-L"',DirCS,'" ']
-    % Path to xerces DLL
-    LibXercesPath = [DirCS,'64',fs,'xerces-c_3_1_vc100.dll']
+    LDirCS=['-L"',DirCS,'" ', '-L"',cd(cd([DirCS,fs,up,'lib64',fs,'vc-10.0'])),'" -lxerces-c_3 ']    % Path to xerces DLL
+    LibXercesPath = [DirCS,fs,'xerces-c_3_1_vc100.dll']
   end
 else
   error('Please specifiy the include and library path of codesynthesys Xerces library and remove this error message!');
@@ -118,7 +116,7 @@ else
 end
 
 %% Create compile commands
-cmex=['mex -compatibleArrayDims ',debug,IDirX3P,LDirX3P,LibX3P,IDirCS,LDirCS,'COMPFLAGS="$COMPFLAGS /Zc:wchar_t /VERBOSE /D_UNICODE /DUNICODE /nologo-" '];
+cmex=['mex -compatibleArrayDims ',debug,IDirX3P,IDirCS,LDirX3P,LibX3P,'COMPFLAGS="$COMPFLAGS /Zc:wchar_t /VERBOSE /nologo- " ',LDirCS];
 %cmex=['mex ',debug,IDirX3P,LDirX3P,LibX3P,IDirCS,LDirCS];
 cmexopenX3P=[cmex,'openX3P.cpp ','X3PUtilities.cpp '];
 cmexwriteX3P=[cmex,'writeX3P.cpp ','X3PUtilities.cpp '];
