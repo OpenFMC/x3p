@@ -70,7 +70,7 @@ function TestX3P()
       x1 = x;
     end
     if pinfor.isYIncremental
-      y1 = y(:,1);
+      y1 = y(1,:);
     else
       y1 = y;
     end

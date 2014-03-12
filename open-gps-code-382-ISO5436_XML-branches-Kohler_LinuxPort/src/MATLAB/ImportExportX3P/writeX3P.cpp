@@ -51,6 +51,7 @@
 #include "mex.h"
 #include <strstream>
 #include <limits>
+#include <iomanip>
 #include <opengps/cxx/opengps.hxx>
 #include <opengps/iso5436_2.h>
 #include <opengps/cxx/iso5436_2.hxx>
@@ -112,7 +113,7 @@ using namespace OpenGPS::Schemas::ISO5436_2;
 // Array must have at least two dimensions
 // Returns 0 for non incremental axis
 template <class T> double
-AxisIncrement(const mxArray *x)
+AxisIncrement(const mxArray *x, double &offset)
 {
   double curr,increment=0;
   // Element pointer
@@ -127,6 +128,7 @@ AxisIncrement(const mxArray *x)
   mxAssert(numel>1, "AxisIncrement Assertion: Number of elements in first two dimensions must be >= 2");
 
   // estimate increment from first element
+  offset = *ptr;
   increment = (*(ptr+1)) - (*ptr) ;
   while(numel-- > 0)
   {
@@ -145,13 +147,14 @@ AxisIncrement(const mxArray *x)
 // Check for incremental x or y axis from x or y data vector
 // Returns the increment or 0 for non incremental axis
 bool
-AxisIsIncremental(const mxArray *x, double &increment)
+AxisIsIncremental(const mxArray *x, double &increment, double &offset)
 {
   mwSize ndims = mxGetNumberOfDimensions(x);
   const mwSize *dims = mxGetDimensions(x);
 
   // Preset increment
   increment=0;
+  offset = 0;
   
   // Flag for coord vector
   bool isVector = false;
@@ -167,7 +170,8 @@ AxisIsIncremental(const mxArray *x, double &increment)
       ||((dims[1] == 1) && (dims[0] > 1)))
       // This is a 1d coordinate vector and can be checked to be incremental
       isVector=true;
-    else      return false;
+    else
+      return false;
   }
   else if (ndims==1)
     // 1d vector
@@ -184,16 +188,16 @@ AxisIsIncremental(const mxArray *x, double &increment)
   switch (mxGetClassID(x))
   {
     case mxDOUBLE_CLASS:
-      increment = AxisIncrement<OGPS_Double>(x);
+      increment = AxisIncrement<OGPS_Double>(x,offset);
       break;
     case mxSINGLE_CLASS:
-      increment = AxisIncrement<OGPS_Float>(x);
+      increment = AxisIncrement<OGPS_Float>(x,offset);
       break;
     case mxINT16_CLASS:
-      increment = AxisIncrement<OGPS_Int16>(x);
+      increment = AxisIncrement<OGPS_Int16>(x,offset);
       break;
     case mxINT32_CLASS:
-      increment = AxisIncrement<OGPS_Int32>(x);
+      increment = AxisIncrement<OGPS_Int32>(x,offset);
       break;
     default:
     {
@@ -516,6 +520,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
   // and contained values are close to beeing incremental
   double xIncrement=0;
   double yIncrement=0;
+  double xOffset=0;
+  double yOffset=0;
   // Flags for incremental axis
   bool xIncremental=false;
   bool yIncremental=false;
@@ -550,11 +556,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
       // Check the used axis for incremental type. The other axis is allways incremental.
       if (1==dim[0])
         xIncremental = true;
-      else if (AxisIsIncremental(inMatrixX, xIncrement))
+      else if (AxisIsIncremental(inMatrixX, xIncrement, xOffset))
         xIncremental = true;
       if (1==dim[1])
         yIncremental = true;
-      else if (AxisIsIncremental(inMatrixY, yIncrement))
+      else if (AxisIsIncremental(inMatrixY, yIncrement, yOffset))
         yIncremental = true;
       break;
     //********************** Surface Feature type
@@ -571,9 +577,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
       }
       
       // Check for incremental axis
-      if (AxisIsIncremental(inMatrixX, xIncrement))
+      if (AxisIsIncremental(inMatrixX, xIncrement, xOffset))
         xIncremental = true;
-      if (AxisIsIncremental(inMatrixY, yIncrement))
+      if (AxisIsIncremental(inMatrixY, yIncrement, yOffset))
         yIncremental = true;
       break;
     //********************** Point cloud Feature type
@@ -583,7 +589,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
       yIncremental = false;
       break;
   }
-  
   
   // Create records for document
   Record1Type::Revision_type revision(OGPS_ISO5436_2000_REVISION_NAME);
@@ -616,7 +621,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // Set translation to value specified in keyword argument
     xaxis.Offset(((double*)mxGetPr(inTranslation))[0]);
   else
-    xaxis.Offset(0.0);
+    if (xIncremental)
+      xaxis.Offset(xOffset);
+    else
+      xaxis.Offset(0.0);
   // Delete the axis type 
   delete xaxisType;
 
@@ -646,7 +654,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     // Set translation to value specified in keyword argument
     yaxis.Offset(((double*)mxGetPr(inTranslation))[1]);
   else
-    yaxis.Offset(0.0);
+    if (yIncremental)
+      yaxis.Offset(yOffset);
+    else
+      yaxis.Offset(0.0);
   // Delete the axis type 
   delete yaxisType;
 
