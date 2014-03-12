@@ -61,6 +61,49 @@
 #include <opengps/cxx/data_point.hxx>
 #include <opengps/cxx/string.hxx>
 #include <opengps/cxx/info.hxx>
+#include <sstream>
+#include <xsd/cxx/tree/stream-extraction.hxx>
+
+template<class DateTime_t>
+#ifdef _UNICODE
+DateTime_t *parseDateTime(const std::wstring &str)
+#else
+DateTime_t *parseDateTime(const std::string &str)
+#endif
+{
+    int year;
+    unsigned short month;
+    unsigned short day;
+    unsigned short hours;
+    unsigned short minutes;
+    double seconds;
+    short zone_hours(0);
+    short zone_minutes(0);
+#ifdef _UNICODE
+    wchar_t ch1, ch2, ch3, chz(0);
+    wistringstream ss(str);
+#else
+    char ch1, ch2, ch3, chz(0);
+    istringstream ss(str);
+#endif
+    
+    ss >> year >> ch1 >> month >> ch2 >> day >> ch3;
+    if (ch1 != '-' || ch2 != '-' || ch3 != 'T') return NULL;
+    ss >> hours >> ch1 >> minutes >> ch2 >> seconds >> chz;
+    if (ch1 != ':' || ch2 != ':') return NULL;
+    if (chz == '-' || chz == '+') {
+        ss >> zone_hours >> ch1 >> zone_minutes;
+        if (ch1 != ':') return NULL;
+        if (chz == '+') 
+            return new DateTime_t(year,month,day,hours,minutes,seconds,zone_hours,zone_minutes);
+        else
+            return new DateTime_t(year,month,day,hours,minutes,seconds,-zone_hours,-zone_minutes);
+    }
+    else {
+        return new DateTime_t(year,month,day,hours,minutes,seconds);
+    }
+}
+
 
 using namespace std;
 using namespace OpenGPS::Schemas::ISO5436_2;
@@ -648,26 +691,24 @@ void mexFunction( int nlhs, mxArray *plhs[],
   // Check for a date with correct length given in meta data field
   // TODO: We should at least do some format cecking
   mwSize dlen = mxGetNumberOfElements(mxGetField(meta, 0,"Date"));
-  if (dlen != 27)
+  // If length is less than 2 we assume it has been left blank intentionally
+  if (dlen > 1)
   {
-    // If length is less than 2 we assume it has been left blank intentionally
+    date = parseDateTime<Record2Type::Date_type>(ConvertMtoWStr(mxGetField(meta, 0,"Date")));
+  }
+  if (date == NULL)
+  {
     if (dlen > 1)
     {
       // Issue a warning
       mexWarnMsgIdAndTxt("openGPS:writeX3P:CreationDate",
-              "The creation date must have a length of 27 characters and a format\n"
-              "similar to '2007-04-30T13:58:02.6+02:00'. Using the current date as\n"
+              "The creation date must be formatted\n"
+              "similar to '2007-04-30T13:58:02.600000+02:00'. Using the current date as\n"
               "data set creation date\n");
     }
     // Use current date as creation date
-//    date = new Record2Type::Date_type(TimeStamp());
-    date = new Record2Type::Date_type(0,0);
+    date = parseDateTime<Record2Type::Date_type>(TimeStamp());
   }
-  else
-    // Use the given date
-//    date = new Record2Type::Date_type(ConvertMtoWStr(mxGetField(meta, 0,"Date")));
-    date = new Record2Type::Date_type(0,0);
-    
   
   // Instrument manufacturer
   Record2Type::Instrument_type::Manufacturer_type 
@@ -701,7 +742,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
   // Calibration date
 //  Record2Type::CalibrationDate_type 
 //          calibrationDate(ConvertMtoWStr(mxGetField(meta, 0,"CalibrationDate")));
-  Record2Type::CalibrationDate_type calibrationDate(0,0);
+  Record2Type::CalibrationDate_type *calibrationDate = NULL;
+  calibrationDate = parseDateTime<Record2Type::CalibrationDate_type>(ConvertMtoWStr(mxGetField(meta, 0,"CalibrationDate")));
 
   // Type of probing system: Contacting, non Contacting, Software 
   Record2Type::ProbingSystem_type::Type_type type(GetProbingSystemTypeEnum(meta));
@@ -712,11 +754,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
   Record2Type::ProbingSystem_type probingSystem(type, id);
 
   // Create Record2 from collected data
-  Record2Type record2(*date, instrument, calibrationDate, probingSystem);
+  Record2Type record2(*date, instrument, *calibrationDate, probingSystem);
   
-  // Delete date record
+  // Delete date records
   if (date)
     delete date;
+  if (calibrationDate)
+    delete calibrationDate;
 
   // Look out for comment field
   mxArray *cfield = mxGetField(meta, 0,"Comment");

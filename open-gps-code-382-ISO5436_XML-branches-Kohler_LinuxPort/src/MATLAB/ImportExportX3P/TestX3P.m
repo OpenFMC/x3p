@@ -42,13 +42,8 @@ function TestX3P()
     'ISO5436-sample3.x3p',...
     'ISO5436-sample4.x3p',...
     'ISO5436-sample4_bin.x3p',...
-    'simple.x3p',...
-    'medium.x3p',...
-    'medium_invalid_points.x3p',...
-    'performance_double.x3p',...
-    'performance_double_bin.x3p',...
-    'performance_int16.x3p',...
-    'performance_int16_bin.x3p'...
+    'SkiInfiniteFocus.x3p',...
+    'KautschukInfiniteFocus.x3p'
     };
   
   % Test all files
@@ -62,6 +57,7 @@ function TestX3P()
     
     % Print point info
     pinfor
+    meta
     
     % Test write
     disp(['Write file back to "','w_',testfiles{i},'"']);
@@ -89,18 +85,20 @@ function TestX3P()
     
     % Compare meta information
     if structcompare(meta,meta1)==false
-      warning('Warning: Meta information has changed on read write cycle!');
+      error('Error: Meta information has changed on read write cycle!');
     end
     % Compare point information
     if structcompare(pinfow,pinfow1)==false
-      pinfow1
-      warning('Warning: Point information structure has changed on read write cycle!');
+      error('Error: Point information structure has changed on read write cycle!');
     end
     % Compare coordinate vectors
     ErrMaxX = max(abs(x1(:)-x(:)));
     ErrMaxY = max(abs(y1(:)-y(:)));
     ErrMaxZ = max(abs(z1(:)-z(:)));
     fprintf(1,'Maximum coordinate differences [x,y,z] = [%g,%g,%g]\n',ErrMaxX,ErrMaxY,ErrMaxZ);
+    if any(abs(x1(:)-x(:)) > sqrt(eps(x1(:)))) || any(abs(y1(:)-y(:)) > sqrt(eps(y1(:)))) || any(abs(z1(:)-z(:)) > sqrt(eps(z1(:))))
+      error('Error: Significant coordinate differences');
+    end
     
     % Get dimensions and extend to 3
     dims = [size(z),1,1];
