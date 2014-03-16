@@ -1,7 +1,7 @@
 function [x,y,z,pinfo,meta] = readX3P(filename,units,varargin)
-% [x,y,z] = readX3P(filename,units)
-% [x,y,z,pinfo] = readX3P(filename,units)
-% [x,y,z,pinfo,meta] = readX3P(filename,units)
+% [x,y,z] = readX3P(filename,units,...)
+% [x,y,z,pinfo] = readX3P(filename,units,...)
+% [x,y,z,pinfo,meta] = readX3P(filename,units,...)
 %
 % Load an X3P file from disk in the specified units.
 %
