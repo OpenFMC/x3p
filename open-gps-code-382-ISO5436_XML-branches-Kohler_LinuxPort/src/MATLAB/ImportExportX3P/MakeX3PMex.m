@@ -118,20 +118,20 @@ end
 %% Create compile commands
 cmex=['mex -compatibleArrayDims ',debug,IDirX3P,IDirCS,LDirX3P,LibX3P,'COMPFLAGS="$COMPFLAGS /Zc:wchar_t /VERBOSE /nologo- " ',LDirCS];
 %cmex=['mex ',debug,IDirX3P,LDirX3P,LibX3P,IDirCS,LDirCS];
-cmexopenX3P=[cmex,'openX3P.cpp ','X3PUtilities.cpp '];
-cmexwriteX3P=[cmex,'writeX3P.cpp ','X3PUtilities.cpp '];
+cmexopenX3P=[cmex,'openX3P_mex.cpp ','X3PUtilities.cpp '];
+cmexwriteX3P=[cmex,'writeX3P_mex.cpp ','X3PUtilities.cpp '];
 
 %% Check date of mexfiles and compare to source files
-  datsrc(1) = dir('openX3P.cpp');
-  datsrc(2) = dir('writeX3P.cpp');
+  datsrc(1) = dir('openX3P_mex.cpp');
+  datsrc(2) = dir('writeX3P_mex.cpp');
   datsrc(3) = dir('X3PUtilities.h');
   datsrc(4) = dir('X3PUtilities.cpp');
   datsrc(5) = dir('MakeX3PMex.m');
-  datmex.openX3P_mex = dir(['openX3P.',mexext]);
-  datmex.writeX3P_mex = dir(['writeX3P.',mexext]);
+  datmex.openX3P_mex = dir(['openX3P_mex.',mexext]);
+  datmex.writeX3P_mex = dir(['writeX3P_mex.',mexext]);
   
   % Compare youngest source file to mex date
-  if numel(dir([d,'openX3P.',mexext]))==1
+  if numel(dir([d,'openX3P_mex.',mexext]))==1
     if (max([datsrc([1,3,4,5]).datenum]) >= datmex.openX3P_mex.datenum)
       build_openX3P=true;
     else
@@ -142,7 +142,7 @@ cmexwriteX3P=[cmex,'writeX3P.cpp ','X3PUtilities.cpp '];
   end
   
   % Compare youngest source file to mex date
-  if numel(dir([d,'writeX3P.',mexext])) == 1
+  if numel(dir([d,'writeX3P_mex.',mexext])) == 1
     if (max([datsrc([2,3,4,5]).datenum]) >= datmex.writeX3P_mex.datenum)
       build_writeX3P=true;
     else
@@ -154,19 +154,19 @@ cmexwriteX3P=[cmex,'writeX3P.cpp ','X3PUtilities.cpp '];
 
 %% compile
 if build_openX3P
-  disp(['openX3P.',mexext,' is out of date. Rebuilding.']);
+  disp(['openX3P_mex.',mexext,' is out of date. Rebuilding.']);
   disp(cmexopenX3P);
   eval(cmexopenX3P)
 else
-  disp(['openX3P.',mexext,' is up to date. Not touching.']);
+  disp(['openX3P_mex.',mexext,' is up to date. Not touching.']);
 end
 
 if build_writeX3P
-  disp(['writeX3P.',mexext,' is out of date. Rebuilding.']);
+  disp(['writeX3P_mex.',mexext,' is out of date. Rebuilding.']);
   disp(cmexwriteX3P);
   eval(cmexwriteX3P)
 else
-  disp(['writeX3P.',mexext,' is up to date. Not touching.']);
+  disp(['writeX3P_mex.',mexext,' is up to date. Not touching.']);
 end
 
 %% Copy the dlls to the same directory as the mex files

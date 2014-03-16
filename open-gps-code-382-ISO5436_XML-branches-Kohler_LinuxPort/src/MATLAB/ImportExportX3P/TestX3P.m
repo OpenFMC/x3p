@@ -51,7 +51,7 @@ function TestX3P()
     disp(' ');
     disp('****************************************************');
     disp(['Reading x3p file "',testfiles{i},'"...']);
-    [z,x,y,pinfor,meta] = openX3P(testfiles{i});
+    [z,x,y,pinfor,meta] = openX3P_mex(testfiles{i});
     % Get valid points
     valid = ~(isnan(z) | isnan(x) | isnan(y));
     
@@ -75,13 +75,13 @@ function TestX3P()
       y1 = y;
     end
     
-    pinfow = writeX3P(testfilename,pinfor.FeatureType,x1,y1,z,meta);
+    pinfow = writeX3P_mex(testfilename,pinfor.FeatureType,x1,y1,z,meta);
     
     % Print point info
     pinfow
 
     disp(['Rereading and comparing x3p file "',testfiles{i},'"...']);
-    [z1,x1,y1,pinfow1,meta1] = openX3P(testfilename);
+    [z1,x1,y1,pinfow1,meta1] = openX3P_mex(testfilename);
     
     % Compare meta information
     if structcompare(meta,meta1)==false
