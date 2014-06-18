@@ -1,0 +1,6 @@
+Build reqruirements:
+ - CMake http://cmake.org/
+ - XSD http://www.codesynthesis.com/products/xsd/download.xhtml
+
+To build on Windows run CMake with the src/ directory as the source and a build directory of your choice.
+
