@@ -1,6 +1,13 @@
 OpenFMC X3P Support Library
 
-Source is available at https://github.com/OpenFMC/x3p.
+Source is available at https://github.com/OpenFMC/x3p  This repository is a
+repackaged and updated version of the code produced by the openGPS
+http://open-gps.sourceforge.net project.  The changes made were targetted at 
+updating the build chain to work on a (relatively) modern Windows version.  
+This has been tested on Windows 7 with Visual Studio 10.  The library itself 
+should also build on Linux and Mac but this has not been widely tested.
+Patches, pull requests, etc to improve this code or its build process is 
+appreciated.
 
 Build requirements:
  - CMake http://cmake.org/
