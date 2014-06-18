@@ -1,19 +1,33 @@
 OpenFMC X3P Support Library
 
+The core of this library is C++ code to read/write X3P files.  We have also
+provided a MATLAB wrapper.
+
 Source is available at https://github.com/OpenFMC/x3p  This repository is a
 repackaged and updated version of the code produced by the openGPS
-http://open-gps.sourceforge.net project.  The changes made were targetted at 
+http://open-gps.sourceforge.net project.  The changes made were targeted at 
 updating the build chain to work on a (relatively) modern Windows version.  
 This has been tested on Windows 7 with Visual Studio 10.  The library itself 
 should also build on Linux and Mac but this has not been widely tested.
 Patches, pull requests, etc to improve this code or its build process is 
 appreciated.
 
+NOTE: The build process requires some knowledge and expertise of the Windows
+build environment.  The following is a rough guide to building but your own
+environment may require changes.  Changes which help smooth out the build
+process are greatly welcomed.
+
 Build requirements:
  - CMake http://cmake.org/
  - XSD http://www.codesynthesis.com/products/xsd/download.xhtml
 
-To build the library on Windows run CMake with the src/ directory as the source and a build directory of your choice.  Once the library is built, install it to a desired location.
+To build the library on Windows run CMake with the src/ directory as the source
+and a build directory of your choice.  Once the library is built, install it to
+a desired location.
 
-Once the library is built, the Matlab interface can be built by adjusting the paths in src/MATLAB/ImportExportX3P/MakeX3PMex.m and running it to compile the MEX functions.  The created MEX files (openX3P_mex and writeX3P_mex) should then be placed in src/MATLAB/X3PToolbox/private.  The rest of the interface is in src/MATLAB/X3PToolbox/ along with some documentation and testing scripts.
+Once the library is built, the Matlab interface can be built by adjusting the
+paths in src/MATLAB/ImportExportX3P/MakeX3PMex.m and running it to compile the
+MEX functions.  The created MEX files (openX3P_mex and writeX3P_mex) should then
+be placed in src/MATLAB/X3PToolbox/private.  The rest of the interface is in
+src/MATLAB/X3PToolbox/ along with some documentation and testing scripts.
 
