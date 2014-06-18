@@ -1,6 +1,12 @@
-Build reqruirements:
+OpenFMC X3P Support Library
+
+Source is available at https://github.com/OpenFMC/x3p.
+
+Build requirements:
  - CMake http://cmake.org/
  - XSD http://www.codesynthesis.com/products/xsd/download.xhtml
 
-To build on Windows run CMake with the src/ directory as the source and a build directory of your choice.
+To build the library on Windows run CMake with the src/ directory as the source and a build directory of your choice.  Once the library is built, install it to a desired location.
+
+Once the library is built, the Matlab interface can be built by adjusting the paths in src/MATLAB/ImportExportX3P/MakeX3PMex.m and running it to compile the MEX functions.  The created MEX files (openX3P_mex and writeX3P_mex) should then be placed in src/MATLAB/X3PToolbox/private.  The rest of the interface is in src/MATLAB/X3PToolbox/ along with some documentation and testing scripts.
 
