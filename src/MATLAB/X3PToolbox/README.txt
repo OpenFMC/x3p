@@ -47,5 +47,38 @@ Next, setup the meta information:
 >> meta = X3PMetaInfo();
 >> meta.Creator = 'X3P Toolbox User';
 
-Finally, create the X3P file.
+Note the use of the X3PMetaInfo() to return a default meta data structure. You can
+edit the fields of this data structure by editing the fields:
+  .Creator
+  .Date
+  .Instrument_Manufacturer 
+  .Instrument_Model
+  .Instrument_Serial
+  .Instrument_Version
+  .CalibrationDate
+  .ProbingSystem_Type
+  .ProbingSystem_Identification
+  .Comment
+Note that the .Creator field was edited above.
+
+Finally, create (save) the X3P file.
 >> pinfo = writeX3P('test.x3p','SUR','m',x,y,z,meta);
+
+
+Note that the x, y, z data can exist in two different formats:
+
+The first is a long list of points:
+ x(i) = x-position of ith point
+ y(i) = y-position of ith point
+ z(i) = z-position of ith point
+where i = 1 .. n (for n surface points)
+
+The second uses arrays for a grid of n by m points.
+ x(i) = the coordinate of the ith sample point in the x dimension (i = 1..n)
+ y(j) = the coordinate of the jth sample point in the y dimension (j = 1..m)
+ z(i,j) = the height of the point at (x(i),y(j)) (i=1..n, j=1..m)
+Where x is a one-dimensional vector with length n, y is a one dimensional
+vector with length m, and z is a two-dimensional vector with size n by m.
+
+
+
