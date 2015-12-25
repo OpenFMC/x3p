@@ -6,6 +6,7 @@
 #  XERCESC_LIBRARY - Link these to use Xerces-C
 #  XERCESC_VERSION - Xerces-C found version
 
+SET(PROGRAMFILES_X86 "ProgramFiles(x86)")
 
 IF (XERCESC_INCLUDE AND XERCESC_LIBRARY)
   # in cache already
@@ -27,6 +28,7 @@ IF (DEFINED MSVC_VERSION)
   #   1400 = VS  8.0
   #   1500 = VS  9.0
   #   1600 = VS 10.0
+  #   1800 = VS 12.0
   IF (MSVC_VERSION EQUAL 1300)
     SET(XERCES_LIB_POSTFIX "_vc70")
     SET(XERCES_LIBPATH_VERS_POSTFIX "vc-7.1/")
@@ -39,6 +41,9 @@ IF (DEFINED MSVC_VERSION)
   ELSEIF (MSVC_VERSION EQUAL 1600)
     SET(XERCES_LIB_POSTFIX "_vc100")
     SET(XERCES_LIBPATH_VERS_POSTFIX "vc-10.0/")  
+  ELSEIF (MSVC_VERSION EQUAL 1800)
+    SET(XERCES_LIB_POSTFIX "_vc120")
+    SET(XERCES_LIBPATH_VERS_POSTFIX "vc-12.0/")  
   ELSE (MSVC_VERSION EQUAL 1300)
     # since we don't knwo wether we are on windows or not, we just undefined and see what happens
     UNSET(XERCES_LIB_PATH_POSTFIX)
@@ -70,9 +75,9 @@ ENDIF (DEFINED MSVC_VERSION)
 SET (XERCESC_POSSIBLE_ROOT_DIRS
   "$ENV{XERCESC_INCLUDE_DIR}/.."
   "${XERCESC_INCLUDE_DIR}/.."
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0"
   /usr/local
   /usr
  "$ENV{PATH}"
@@ -90,9 +95,9 @@ FIND_PATH(XERCESC_INCLUDE NAMES xercesc/util/XercesVersion.hpp
   PATHS
   "$ENV{XERCESC_INCLUDE_DIR}"
   "${XERCESC_INCLUDE_DIR}"
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/include"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/include"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/include"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/include"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/include"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/include"
   /usr/local/include
   /usr/include
   "${XERCESC_ROOT_DIR}/include"
@@ -108,9 +113,9 @@ IF (BUILD_SHARED_LIBS)
    $ENV{XERCESC_LIBRARY_DIR}
    "${XERCESC_LIBRARY_DIR}"
    "${XERCESC_INCLUDE_DIR}/../lib"
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
    /usr/lib
    /usr/local/lib
     "${XERCESC_ROOT_DIR}"
@@ -125,9 +130,9 @@ IF (BUILD_SHARED_LIBS)
    $ENV{XERCESC_LIBRARY_DIR}
    "${XERCESC_LIBRARY_DIR}"
    "${XERCESC_INCLUDE_DIR}/../lib"
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
    /usr/lib
    /usr/local/lib
     "${XERCESC_ROOT_DIR}"
@@ -145,9 +150,9 @@ ELSE (BUILD_SHARED_LIBS)
    $ENV{XERCESC_LIBRARY_DIR}
    "${XERCESC_INCLUDE_DIR}/../lib"
    "${XERCESC_LIBRARY_DIR}"
-   "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-   "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-   "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
+   "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+   "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+   "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
    /usr/lib
    /usr/local/lib
    "${XERCESC_ROOT_DIR}"
@@ -162,9 +167,9 @@ ELSE (BUILD_SHARED_LIBS)
    $ENV{XERCESC_LIBRARY_DIR}
    "${XERCESC_LIBRARY_DIR}"
    "${XERCESC_INCLUDE_DIR}/../lib"
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/${XERCES_LIBPATH_POSTFIX}"
    /usr/lib
    /usr/local/lib
     "${XERCESC_ROOT_DIR}"
@@ -220,4 +225,3 @@ ENDIF(NOT XERCESC_FIND_QUIETLY)
 ELSE(XERCESC_FOUND)
    MESSAGE(FATAL_ERROR "Could not find Xerces-C !")
 ENDIF(XERCESC_FOUND)
-
