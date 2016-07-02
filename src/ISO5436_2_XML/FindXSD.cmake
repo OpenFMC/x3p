@@ -4,6 +4,8 @@
 # the 'bin' directory in the path given in the XSD_ROOT environment variable.
 # 
 
+SET(PROGRAMFILES_X86 "ProgramFiles(x86)")
+
 IF (XSD_INCLUDE_DIR AND XSD_EXECUTABLE)
 # in cache already
 SET(XSD_FIND_QUIETLY TRUE)
@@ -14,9 +16,9 @@ SET (XSD_POSSIBLE_ROOT_DIRS
   "$ENV{XSDDIR}"
   /usr/local
   /usr
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0"
   ${CMAKE_SOURCE_DIR}/../xsd/libxsd
  "$ENV{PATH}"
   )
@@ -46,9 +48,9 @@ FIND_PATH(XSD_INCLUDE_DIR xsd/cxx/parser/elements.hxx
   "$ENV{XSDDIR}/libxsd"
   /usr/local/include
   /usr/include
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/include"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/include"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/include"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/include"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/include"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/include"
   ${CMAKE_SOURCE_DIR}/../xsd/libxsd
   "${XSD_ROOT_DIR}/include"
   "${XSD_ROOT_DIR}/libxsd"
@@ -58,9 +60,9 @@ FIND_PATH(XSD_INCLUDE_DIR xsd/cxx/parser/elements.hxx
 FIND_PROGRAM(XSD_EXECUTABLE 
   NAMES xsdcxx xsd
   PATHS "[HKEY_CURRENT_USER\\xsd\\bin]" $ENV{XSDDIR}/bin
-  "$ENV{ProgramFiles}/CodeSynthesis XSD 3.3/bin"
-  "$ENV{ProgramFiles(x86)}/CodeSynthesis XSD 3.3/bin"
-  "$ENV{ProgramW6432}/CodeSynthesis XSD 3.3/bin"
+  "$ENV{ProgramFiles}/CodeSynthesis XSD 4.0/bin"
+  "$ENV{${PROGRAMFILES_X86}}/CodeSynthesis XSD 4.0/bin"
+  "$ENV{ProgramW6432}/CodeSynthesis XSD 4.0/bin"
   "$ENV{PATH}"
   "${XSD_ROOT_DIR}"
   "${XSD_ROOT_DIR}/bin"
@@ -96,11 +98,11 @@ if (NOT XSD_EXECUTABLE)
   UNSET(XSD_EXECUTABLE CACHE)
 endif (NOT XSD_EXECUTABLE)
 
-IF (NOT ((XSD_VERMAJ GREATER 2) AND (XSD_VERMIN GREATER 2)))
+IF (NOT (XSD_VERMAJ GREATER 3))
   SET(XSD_INCLUDE_DIR )
   UNSET(XSD_INCLUDE_DIR CACHE)
-  message (FATAL_ERROR "XSD version number mismatch")
-ENDIF (NOT ((XSD_VERMAJ GREATER 2) AND (XSD_VERMIN GREATER 2)))
+  message (FATAL_ERROR "XSD version must be greater or equal 4")
+ENDIF (NOT (XSD_VERMAJ GREATER 3))
 
 #
 # General CMake package configuration.
