@@ -32,68 +32,70 @@
 #include <opengps/cxx/info.hxx>
 #include <opengps/cxx/string.hxx>
 #include "messages_c.hxx"
+#include "../cxx/stdafx.hxx"
 
-size_t ogps_GetNameInfo(OGPS_Character* const text, const size_t size) throw()
+size_t ogps_GetNameInfo(OGPS_Character* text, size_t size)
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-      OpenGPS::String src; \
-      OpenGPS::Info::GetName(&src); \
-      return src.CopyTo(text, size); \
-      );
-   return 0;
+	return HandleExceptionRetval(0, [&]() {
+		String src;
+		Info::GetName(&src);
+		return src.CopyTo(text, size);
+	});
 }
 
-size_t ogps_GetAboutInfo(OGPS_Character* const text, const size_t size) throw()
+size_t ogps_GetAboutInfo(OGPS_Character* text, size_t size)
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-      OpenGPS::String src; \
-      OpenGPS::Info::GetAbout(&src); \
-      return src.CopyTo(text, size); \
-      );
-   return 0;
+	return HandleExceptionRetval(0, [&]() {
+		String src;
+		Info::GetAbout(&src);
+		return src.CopyTo(text, size);
+	});
 }
 
-size_t ogps_GetVersionInfo(OGPS_Character* const text, const size_t size) throw()
+size_t ogps_GetVersionInfo(OGPS_Character* text, size_t size)
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-      OpenGPS::String src; \
-      OpenGPS::Info::GetVersion(&src); \
-      return src.CopyTo(text, size); \
-      );
-   return 0;
+	return HandleExceptionRetval(0, [&]() {
+		String src;
+		Info::GetVersion(&src);
+		return src.CopyTo(text, size);
+	});
 }
 
-void ogps_PrintVersionInfo() throw()
+void ogps_PrintVersionInfo()
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(OpenGPS::Info::PrintVersion());
+	HandleException([&]() {
+		Info::PrintVersion();
+	});
 }
 
-size_t ogps_GetCopyrightInfo(OGPS_Character* const text, const size_t size) throw()
+size_t ogps_GetCopyrightInfo(OGPS_Character* text, size_t size)
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-      OpenGPS::String src; \
-      OpenGPS::Info::GetCopyright(&src); \
-      return src.CopyTo(text, size); \
-      );
-   return 0;
+	return HandleExceptionRetval(0, [&]() {
+		String src;
+		Info::GetCopyright(&src);
+		return src.CopyTo(text, size);
+	});
 }
 
-void ogps_PrintCopyrightInfo() throw()
+void ogps_PrintCopyrightInfo()
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(OpenGPS::Info::PrintCopyright());
+	HandleException([&]() {
+		Info::PrintCopyright();
+	});
 }
 
-size_t ogps_GetLicenseInfo(OGPS_Character* const text, const size_t size) throw()
+size_t ogps_GetLicenseInfo(OGPS_Character* text, size_t size)
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-      OpenGPS::String src; \
-      OpenGPS::Info::GetLicense(&src); \
-      return src.CopyTo(text, size); \
-      );
-   return 0;
+	return HandleExceptionRetval(0, [&]() {
+		String src;
+		Info::GetLicense(&src);
+		return src.CopyTo(text, size);
+	});
 }
 
-void ogps_PrintLicenseInfo() throw()
+void ogps_PrintLicenseInfo()
 {
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(OpenGPS::Info::PrintLicense());
+	HandleException([&]() {
+		Info::PrintLicense();
+	});
 }

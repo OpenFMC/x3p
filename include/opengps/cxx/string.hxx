@@ -40,140 +40,126 @@
 #ifndef _OPENGPS_CXX_STRING_HXX
 #define _OPENGPS_CXX_STRING_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-# include <opengps/cxx/opengps.hxx>
-#endif
-
+#include <opengps/cxx/opengps.hxx>
 #include <iostream>
-#include <sstream>
 #include <string>
-
-#if defined(SHARED_OPENGPS_LIBRARY) || defined(BUILD_ISO5436_2_XML_DLL)
-/* Wiora: Removed this part and changed to DLL-Runtime libs. This produces no errors.
-          The method used here created a linker error in release mode, I could not resolve.
-// Export std::wstring for use with Visual Studio VC8 compiler
-#  if _MSC_VER >= 1400
-      class _OPENGPS_EXPORT std::_String_base;
-      template class _OPENGPS_EXPORT std::allocator<OGPS_Character>;
-      template class _OPENGPS_EXPORT std::_String_val<OGPS_Character, std::allocator<OGPS_Character> >;
-      template class _OPENGPS_EXPORT std::basic_string<OGPS_Character, std::char_traits<OGPS_Character>, std::allocator<OGPS_Character> >;
-#  endif /* _MSC_VER */
-
-// TODO: other versions and compilers go here...
-
-#endif /* defined(SHARED_OPENGPS_LIBRARY) || defined(BUILD_ISO5436_2_XML_DLL) */
+#include <array>
+#include <memory>
 
 namespace OpenGPS
 {
-   /*!
-    * Stores an ::OGPS_Character sequence.
-    *
-    * @todo Add a streaming input operator
-    */
-   class _OPENGPS_EXPORT String : public
+	/*!
+	 * Stores an ::OGPS_Character sequence.
+	 *
+	 * @todo Add a streaming input operator
+	 */
+	class _OPENGPS_EXPORT String : public
 
 #ifdef _UNICODE
-      std::wstring
+		std::wstring
 #else
-      std::string
-#endif /* _UNICODE */
+		std::string
+#endif
 
-   {
+	{
 #ifdef _UNICODE
-      /*! The std::string<::OGPS_Character> type.*/
-      typedef std::wstring BaseType;
+		/*! The std::string<::OGPS_Character> type.*/
+		typedef std::wstring BaseType;
 #else
-      /*! The std::string<::OGPS_Character> type.*/
-      typedef std::string BaseType;
-#endif /* _UNICODE */
+		/*! The std::string<::OGPS_Character> type.*/
+		typedef std::string BaseType;
+#endif
 
-   public:
-      /*! The ::OGPS_Character type.*/
-      typedef OGPS_Character ElementType;
+	public:
+		/*! The ::OGPS_Character type.*/
+		typedef OGPS_Character ElementType;
 
-   public:
-      /*! Creates a new instance. */
-      String();
+	public:
+		/*! Creates a new instance. */
+		String();
 
-      /*!
-       * Creates a new instance.
-       *
-       * @param s Initialize the newly created object with the given character sequence.
-       */
-      String(const BaseType& s);
+		/*!
+		 * Creates a new instance.
+		 *
+		 * @param s Initialize the newly created object with the given character sequence.
+		 */
+		String(const BaseType& s);
 
-      /*!
-       * Creates a new instance.
-       *
-       * @param s Initialize the newly created object with the given character sequence.
-       */
-      String(const OGPS_Character* const s);
+		/*!
+		 * Creates a new instance.
+		 *
+		 * @param s Initialize the newly created object with the given character sequence.
+		 */
+		String(const OGPS_Character* s);
 
-      /*! Destructs an object. */
-      ~String();
+		String(const String& s);
 
-      /*!
-       * Converts the unicode character sequence to ANSI char.
-       * @returns An ANSI char pointer or NULL.
-       */
-      const char* ToChar();
+		String& operator=(const String& rhs);
 
-      /*!
-       * Stores an ANSI char squence.
-       * @param s An ANSI char squence to store as unicode internally.
-       */
-      void FromChar(const char* const s);
+		/*! Destructs an object. */
+		~String();
 
-      /*!
-       * Stores an ANSI char squence.
-       * @param s An ANSI char squence to store as unicode internally.
-       * @param length Amount of characters to be copied.
-       */
-      void FromChar(const char* const s, const size_t length);
+		/*!
+		 * Converts the unicode character sequence to ANSI char.
+		 * @returns An ANSI char pointer or nullptr.
+		 */
+		const char* ToChar();
 
-      /*!
-       * Stores an MD5 sum as a character sequence in hexadecimal format.
-       *
-       * @param md5 The 128-Bit MD5 value to be storedin hexadecimal format.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      OGPS_Boolean ConvertFromMd5(const OpenGPS::UnsignedByte md5[16]);
+		/*!
+		 * Stores an ANSI char squence.
+		 * @param s An ANSI char squence to store as unicode internally.
+		 */
+		void FromChar(const char* s);
 
-      /*!
-       * Converts the current character squence representing a 128-Bit MD5 sum
-       * in hexadecimal format to the binary representation of that MD5 sum.
-       *
-       * @param md5 Gets the converted MD5 binary values.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      OGPS_Boolean ConvertToMd5(OpenGPS::UnsignedByte md5[16]) const;
+		/*!
+		 * Stores an ANSI char squence.
+		 * @param s An ANSI char squence to store as unicode internally.
+		 * @param length Amount of characters to be copied.
+		 */
+		void FromChar(const char* s, size_t length);
 
-      /*!
-       * Copies the current character sequence to an external buffer.
-       *
-       * @param target The external buffer.
-       * @param size The size of the external buffer in characters.
-       * @returns On success returns the number of chracters copied to the
-       * target buffer without the terminating null character. On failure
-       * returns the number of characters the target buffer must be able to store.
-       */
-      size_t CopyTo(OGPS_Character* const target, const size_t size) const;
+		/*!
+		 * Stores an MD5 sum as a character sequence in hexadecimal format.
+		 *
+		 * @param md5 The 128-Bit MD5 value to be storedin hexadecimal format.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		bool ConvertFromMd5(const std::array<unsigned char, 16>& md5);
 
-      /*!
-       * Replaces all occurances of a given string with another.
-       *
-       * @param old_str The string to be replaced.
-       * @param new_str The string inserted for a match.
-       * @returns This instance.
-       */
-      String& ReplaceAll(const String& old_str, const String& new_str);
+		/*!
+		 * Converts the current character squence representing a 128-Bit MD5 sum
+		 * in hexadecimal format to the binary representation of that MD5 sum.
+		 *
+		 * @param md5 Gets the converted MD5 binary values.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		bool ConvertToMd5(std::array<unsigned char, 16>& md5) const;
+
+		/*!
+		 * Copies the current character sequence to an external buffer.
+		 *
+		 * @param target The external buffer.
+		 * @param size The size of the external buffer in characters.
+		 * @returns On success returns the number of chracters copied to the
+		 * target buffer without the terminating null character. On failure
+		 * returns the number of characters the target buffer must be able to store.
+		 */
+		size_t CopyTo(OGPS_Character* const target, const size_t size) const;
+
+		/*!
+		 * Replaces all occurances of a given string with another.
+		 *
+		 * @param old_str The string to be replaced.
+		 * @param new_str The string inserted for a match.
+		 * @returns This instance.
+		 */
+		String& ReplaceAll(const String& old_str, const String& new_str);
 
 #ifdef _UNICODE
-   private:
-      char* m_Chars;
-#endif /* _UNICODE */
-
-   };
+	private:
+		std::unique_ptr<char[]> m_Chars;
+#endif
+	};
 
 }
 
@@ -186,8 +172,8 @@ namespace OpenGPS
  */
 inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const std::basic_string<wchar_t>& text)
 {
-    OpenGPS::String buffer(text);
-    return os << buffer.ToChar();
+	OpenGPS::String buffer(text);
+	return os << buffer.ToChar();
 }
 
 /*!
@@ -197,8 +183,8 @@ inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const 
  */
 inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const OpenGPS::String& text)
 {
-    OpenGPS::String buffer(text);
-    return os << buffer.ToChar();
+	OpenGPS::String buffer(text);
+	return os << buffer.ToChar();
 }
 
 /*!
@@ -208,7 +194,7 @@ inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const 
  */
 inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, OpenGPS::String& text)
 {
-    return os << text.ToChar();
+	return os << text.ToChar();
 }
 
 /*!
@@ -216,7 +202,7 @@ inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, OpenGP
  */
 inline std::basic_ostream<wchar_t>& operator<<(std::basic_ostream<wchar_t>& os, const OpenGPS::String& text)
 {
-   return os << text.c_str();
+	return os << text.c_str();
 }
 #else
 /*!
@@ -224,11 +210,11 @@ inline std::basic_ostream<wchar_t>& operator<<(std::basic_ostream<wchar_t>& os, 
  */
 inline std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const OpenGPS::String& text)
 {
-   return os << text.c_str();
+	return os << text.c_str();
 }
-#endif /* _UNICODE */
+#endif
 
 
-#endif	/* _OPENGPS_CXX_STRING_HXX */
+#endif
 
 /*! @} */

@@ -38,7 +38,7 @@
 
 namespace OpenGPS
 {
-   class DataPoint;
+	class DataPoint;
 }
 
 /*!
@@ -48,9 +48,9 @@ namespace OpenGPS
  */
 typedef struct _OGPS_DATA_POINT
 {
-   /*! Gets/Sets the pointer to the internal C++ object acting behind the scenes. */
-   OpenGPS::DataPoint* instance;
-} OGPS_DataPoint, *OGPS_DataPointPtr; /*! Encapsulates the C++ structure
+	/*! Gets/Sets the pointer to the internal C++ object acting behind the scenes. */
+	OpenGPS::DataPoint* instance{};
+} OGPS_DataPoint, * OGPS_DataPointPtr; /*! Encapsulates the C++ structure
  * of a data point handle used as a backend of its corresponding C interface. */
 
-#endif /* _OPENGPS_C_DATA_POINT_HXX */
+#endif

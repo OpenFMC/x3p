@@ -33,316 +33,335 @@
 
 #include "stdafx.hxx"
 
-PointIterator::PointIterator()
-{
-}
-
-PointIterator::~PointIterator()
-{
-}
-
 ISO5436_2Container::PointIteratorImpl::PointIteratorImpl(
-                                     ISO5436_2Container * const handle,
-                                     const OGPS_Boolean isForward,
-                                     const OGPS_Boolean isMatrix) : PointIterator(), m_Handle(handle)
+	std::shared_ptr<ISO5436_2Container> handle,
+	bool isForward,
+	bool isMatrix)
+	:m_Handle{ handle },
+	m_IsForward{ isForward },
+	m_IsMatrix{ isMatrix }
 {
-   _ASSERT(handle);
-
-   m_IsForward = isForward;
-   m_IsMatrix = isMatrix;
-
-   m_U = m_V = m_W = 0;
-   m_IsReset = TRUE;
+	assert(handle);
 }
 
-ISO5436_2Container::PointIteratorImpl::~PointIteratorImpl()
+bool ISO5436_2Container::PointIteratorImpl::HasNext() const
 {
+	if (auto handle = m_Handle.lock())
+	{
+		return HasNext(*handle);
+	}
+
+	return false;
 }
 
-OGPS_Boolean ISO5436_2Container::PointIteratorImpl::HasNext() const
+bool ISO5436_2Container::PointIteratorImpl::HasPrev() const
 {
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+	if (auto handle = m_Handle.lock())
+	{
+		return HasPrev(*handle);
+	}
 
-   if(m_IsForward)
-   {
-      if(m_IsReset)
-      {
-         _ASSERT(m_U == 0 && m_V == 0 && m_W == 0);
-
-         return m_Handle->GetMaxU() > 0;
-      }
-
-      if(m_IsMatrix)
-      {
-         return ((m_W + 1) * (m_V + 1) * (m_U + 1) < m_Handle->GetMaxU() * m_Handle->GetMaxV() * m_Handle->GetMaxW());
-      }
-      else
-      {
-         _ASSERT(m_V == 0 && m_W == 0);
-
-         return ((m_U + 1) < m_Handle->GetMaxU());
-      }
-   }
-
-   return FALSE;
+	return false;
 }
 
-OGPS_Boolean ISO5436_2Container::PointIteratorImpl::HasPrev() const
+bool ISO5436_2Container::PointIteratorImpl::MoveNext()
 {
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+	if (auto handle = m_Handle.lock())
+	{
+		assert(handle->IsMatrix() == m_IsMatrix);
 
-   if(!m_IsForward)
-   {
-      if(m_IsReset)
-      {
-         _ASSERT(m_U == 0 && m_V == 0 && m_W == 0);
+		if (HasNext(*handle))
+		{
+			if (m_IsReset)
+			{
+				assert(m_U == 0 && m_V == 0 && m_W == 0);
 
-         return m_Handle->GetMaxU() > 0;
-      }
+				m_IsReset = false;
 
-      if(m_IsMatrix)
-      {
-         return (m_W > 0 && m_Handle->GetMaxW() > 0 || m_V > 0 && m_Handle->GetMaxV() > 0 || m_U > 0 && m_Handle->GetMaxU() > 0);
-      }
-      else
-      {
-         _ASSERT(m_V == 0 && m_W == 0);
+				return true;
+			}
 
-         return m_U > 0 && m_Handle->GetMaxU() > 0;
-      }
-   }
+			if (m_IsMatrix)
+			{
+				if (m_U + 1 < handle->GetMaxU())
+				{
+					++m_U;
 
-   return FALSE;
+					return true;
+				}
+
+				if (m_V + 1 < handle->GetMaxV())
+				{
+					++m_V;
+					m_U = 0;
+
+					return true;
+				}
+
+				if (m_W + 1 < handle->GetMaxW())
+				{
+					++m_W;
+					m_U = 0;
+					m_V = 0;
+
+					return true;
+				}
+			}
+			else
+			{
+				++m_U;
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
-OGPS_Boolean ISO5436_2Container::PointIteratorImpl::MoveNext()
+bool ISO5436_2Container::PointIteratorImpl::MovePrev()
 {
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+	if (auto handle = m_Handle.lock())
+	{
+		assert(handle->IsMatrix() == m_IsMatrix);
 
-   if(HasNext())
-   {
-      if(m_IsReset)
-      {
-         _ASSERT(m_U == 0 && m_V == 0 && m_W == 0);
+		if (HasPrev(*handle))
+		{
+			if (m_IsMatrix)
+			{
+				if (m_IsReset)
+				{
+					assert(m_W == 0 && m_V == 0 && m_U == 0);
+					assert(handle->GetMaxW() > 0 && handle->GetMaxV() > 0 && handle->GetMaxU() > 0);
 
-         m_IsReset = FALSE;
+					m_W = handle->GetMaxW() - 1;
+					m_V = handle->GetMaxV() - 1;
+					m_U = handle->GetMaxU() - 1;
 
-         return TRUE;
-      }
+					m_IsReset = false;
 
-      if(m_IsMatrix)
-      {
-         if(m_U + 1 < m_Handle->GetMaxU())
-         {
-            ++m_U;
+					return true;
+				}
 
-            return TRUE;
-         }
+				if (m_W > 0)
+				{
+					--m_W;
 
-         if(m_V + 1 < m_Handle->GetMaxV())
-         {
-            ++m_V;
-            m_U = 0;
+					return true;
+				}
 
-            return TRUE;
-         }
+				if (m_V > 0)
+				{
+					assert(handle->GetMaxW() > 0);
 
-         if(m_W + 1 < m_Handle->GetMaxW())
-         {
-            ++m_W;
-            m_U = 0;
-            m_V = 0;
+					m_W = handle->GetMaxW() - 1;
+					--m_V;
 
-            return TRUE;
-         }
-      }
-      else
-      {
-         ++m_U;
+					return true;
+				}
 
-         return TRUE;
-      }
-   }
+				if (m_U > 0)
+				{
+					assert(handle->GetMaxW() > 0);
+					assert(handle->GetMaxV() > 0);
 
-   return FALSE;
-}
+					m_W = handle->GetMaxW() - 1;
+					m_V = handle->GetMaxV() - 1;
+					--m_U;
 
-OGPS_Boolean ISO5436_2Container::PointIteratorImpl::MovePrev()
-{
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+					return true;
+				}
+			}
+			else
+			{
+				if (m_U > 0)
+				{
+					--m_U;
 
-   if(HasPrev())
-   {
-      if(m_IsMatrix)
-      {
-         if(m_IsReset)
-         {
-            _ASSERT(m_W == 0 && m_V == 0 && m_U == 0);
-            _ASSERT(m_Handle->GetMaxW() > 0 && m_Handle->GetMaxV() > 0 && m_Handle->GetMaxU() > 0);
+					return true;
+				}
 
-            m_W = m_Handle->GetMaxW() - 1;
-            m_V = m_Handle->GetMaxV() - 1;
-            m_U = m_Handle->GetMaxU() - 1;
+				if (m_IsReset)
+				{
+					assert(m_U == 0);
+					assert(handle->GetMaxU() > 0);
 
-            m_IsReset = FALSE;
+					m_U = handle->GetMaxU() - 1;
+					m_IsReset = false;
 
-            return TRUE;
-         }
+					return true;
+				}
+			}
+		}
+	}
 
-         if(m_W > 0)
-         {
-            --m_W;
-
-            return TRUE;
-         }
-
-         if(m_V > 0)
-         {
-            _ASSERT(m_Handle->GetMaxW() > 0);
-
-            m_W = m_Handle->GetMaxW() - 1;
-            --m_V;
-
-            return TRUE;
-         }
-
-         if(m_U > 0)
-         {
-            _ASSERT(m_Handle->GetMaxW() > 0);
-            _ASSERT(m_Handle->GetMaxV() > 0);
-
-            m_W = m_Handle->GetMaxW() - 1;
-            m_V = m_Handle->GetMaxV() - 1;
-            --m_U;
-
-            return TRUE;
-         }
-      }
-      else
-      {
-         if(m_U > 0)
-         {
-            --m_U;
-
-            return TRUE;
-         }
-
-         if(m_IsReset)
-         {
-            _ASSERT(m_U == 0);
-            _ASSERT(m_Handle->GetMaxU() > 0);
-
-            m_U = m_Handle->GetMaxU() - 1;
-            m_IsReset = FALSE;
-
-            return TRUE;
-         }
-      }
-   }
-
-   return FALSE;
+	return false;
 }
 
 void ISO5436_2Container::PointIteratorImpl::ResetNext()
 {
-   m_U = m_V = m_W = 0;
-   m_IsReset = TRUE;
-   m_IsForward = TRUE;
+	m_U = m_V = m_W = 0;
+	m_IsReset = true;
+	m_IsForward = true;
 }
 
 void ISO5436_2Container::PointIteratorImpl::ResetPrev()
 {
-   m_U = m_V = m_W = 0;
-   m_IsReset = TRUE;
-   m_IsForward = FALSE;
+	m_U = m_V = m_W = 0;
+	m_IsReset = true;
+	m_IsForward = false;
 }
 
 void ISO5436_2Container::PointIteratorImpl::GetCurrent(PointVector& vector)
 {
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+	if (auto handle = m_Handle.lock())
+	{
+		assert(handle->IsMatrix() == m_IsMatrix);
 
-   if(m_IsMatrix)
-   {
-      m_Handle->GetMatrixPoint(m_U, m_V, m_W, vector);
-   }
-   else
-   {
-      m_Handle->GetListPoint(m_U, vector);
-   }
+		if (m_IsMatrix)
+		{
+			handle->GetMatrixPoint(m_U, m_V, m_W, vector);
+		}
+		else
+		{
+			handle->GetListPoint(m_U, vector);
+		}
+	}
 }
 
 void ISO5436_2Container::PointIteratorImpl::GetCurrentCoord(PointVector& vector)
 {
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+	if (auto handle = m_Handle.lock())
+	{
+		assert(handle->IsMatrix() == m_IsMatrix);
 
-   OGPS_Double x, y, z;
+		OGPS_Double x{}, y{}, z{};
 
-   if(m_IsMatrix)
-   {
-      m_Handle->GetMatrixCoord(m_U, m_V, m_W, &x, &y, &z);
-   }
-   else
-   {
-      m_Handle->GetListCoord(m_U, &x, &y, &z);
-   }
+		if (m_IsMatrix)
+		{
+			handle->GetMatrixCoord(m_U, m_V, m_W, &x, &y, &z);
+		}
+		else
+		{
+			handle->GetListCoord(m_U, &x, &y, &z);
+		}
 
-   vector.SetXYZ(x, y, z);
+		vector.SetXYZ(x, y, z);
+	}
 }
 
-void ISO5436_2Container::PointIteratorImpl::SetCurrent(const PointVector* const vector)
+void ISO5436_2Container::PointIteratorImpl::SetCurrent(const PointVector* vector)
 {
-   _ASSERT(m_Handle && m_Handle->IsMatrix() == m_IsMatrix);
+	if (auto handle = m_Handle.lock())
+	{
+		assert(handle->IsMatrix() == m_IsMatrix);
 
-   if(m_IsMatrix)
-   {
-      m_Handle->SetMatrixPoint(m_U, m_V, m_W, vector);
-   }
-   else
-   {
-      // NULL vector (invalid point) makes no sense in list type
-      _ASSERT(vector);
-
-      m_Handle->SetListPoint(m_U, *vector);
-   }
+		if (m_IsMatrix)
+		{
+			handle->SetMatrixPoint(m_U, m_V, m_W, vector);
+		}
+		else
+		{
+			// nullptr vector (invalid point) makes no sense in list type
+			assert(vector);
+			handle->SetListPoint(m_U, *vector);
+		}
+	}
 }
 
-OGPS_Boolean ISO5436_2Container::PointIteratorImpl::GetPosition(OGPS_ULong * const index) const
+bool ISO5436_2Container::PointIteratorImpl::GetPosition(size_t* index) const
 {
-   _ASSERT(index);
+	assert(index);
 
-   if(!m_IsMatrix)
-   {
-      *index = m_U;
-      return TRUE;
-   }
+	if (!m_IsMatrix)
+	{
+		*index = m_U;
+		return true;
+	}
 
-   return FALSE;
+	return false;
 }
 
-OGPS_Boolean ISO5436_2Container::PointIteratorImpl::GetPosition(
-   OGPS_ULong * const u,
-   OGPS_ULong * const v,
-   OGPS_ULong * const w) const
+bool ISO5436_2Container::PointIteratorImpl::GetPosition(
+	size_t* u,
+	size_t* v,
+	size_t* w) const
 {
-   if(m_IsMatrix)
-   {
-      if(u)
-      {
-         *u = m_U;
-      }
+	if (m_IsMatrix)
+	{
+		if (u)
+		{
+			*u = m_U;
+		}
 
-      if(v)
-      {
-         *v = m_V;
-      }
+		if (v)
+		{
+			*v = m_V;
+		}
 
-      if(w)
-      {
-         *w = m_W;
-      }
+		if (w)
+		{
+			*w = m_W;
+		}
 
-      return TRUE;
-   }
+		return true;
+	}
 
-   return FALSE;
+	return false;
+}
+
+bool ISO5436_2Container::PointIteratorImpl::HasNext(const ISO5436_2Container& handle) const
+{
+	assert(handle.IsMatrix() == m_IsMatrix);
+
+	if (m_IsForward)
+	{
+		if (m_IsReset)
+		{
+			assert(m_U == 0 && m_V == 0 && m_W == 0);
+
+			return handle.GetMaxU() > 0;
+		}
+
+		if (m_IsMatrix)
+		{
+			return ((m_W + 1) * (m_V + 1) * (m_U + 1) < handle.GetMaxU() * handle.GetMaxV() * handle.GetMaxW());
+		}
+		else
+		{
+			assert(m_V == 0 && m_W == 0);
+
+			return ((m_U + 1) < handle.GetMaxU());
+		}
+	}
+
+	return false;
+}
+
+bool ISO5436_2Container::PointIteratorImpl::HasPrev(const ISO5436_2Container& handle) const
+{
+	assert(handle.IsMatrix() == m_IsMatrix);
+
+	if (!m_IsForward)
+	{
+		if (m_IsReset)
+		{
+			assert(m_U == 0 && m_V == 0 && m_W == 0);
+
+			return handle.GetMaxU() > 0;
+		}
+
+		if (m_IsMatrix)
+		{
+			return ((m_W > 0 && handle.GetMaxW() > 0) || (m_V > 0 && handle.GetMaxV() > 0) || (m_U > 0 && handle.GetMaxU() > 0));
+		}
+		else
+		{
+			assert(m_V == 0 && m_W == 0);
+
+			return m_U > 0 && handle.GetMaxU() > 0;
+		}
+	}
+
+	return false;
 }

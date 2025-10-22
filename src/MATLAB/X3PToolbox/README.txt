@@ -1,9 +1,9 @@
 === INSTALLATION AND TESTING ===
 
 This package contains a MATLAB toolbox for reading and writing X3P files.  It
-is compiled for Win64 and has been tested with MATLAB R2013a.  To use it simply
-place the contents of the archive in a directory, e.g., c:\X3PToolbox.  Within
-MATLAB, add the path to this toolbox to the command path with:
+has been tested with MATLAB R2024a.  To use it simply place the contents of the
+archive in a directory, e.g., c:\X3PToolbox.  Within MATLAB, add the path to this
+toolbox to the command path with:
 
 >> addpath c:\X3PToolbox
 
@@ -15,6 +15,13 @@ This will load, write and reload a number of test files to ensure that
 everything is functioning properly.  If this function completes without any
 errors everything is working as it should be.
 
+On Linux you may encounter the error "Invalid MEX-file '/.../X3PToolbox/private
+/openX3P_mex.mexa64': /usr/local/MATLAB/R20XXa/bin/glnxa64/../../sys/os/glnxa64/
+libstdc++.so.6: version `GLIBCXX_X.X.XX' not found (required by /.../X3PToolbox/
+private/openX3P_mex.mexa64)". This can be resolved by starting MATLAB with the
+following command: env LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 \
+/usr/local/MATLAB/R20XXa/bin/matlab -desktop. Furthermore, the libiso5436_2_xml
+library should be installed on your system.
 
 === Usage ===
 

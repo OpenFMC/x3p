@@ -36,9 +36,7 @@
 #ifndef _OPENGPS_C_POINT_ITERATOR_HXX
 #define _OPENGPS_C_POINT_ITERATOR_HXX
 
-#ifndef _OPENGPS_AUTO_PTR_TYPES_HXX
-#  include "../cxx/auto_ptr_types.hxx"
-#endif
+#include "../cxx/auto_ptr_types.hxx"
 
 /*!
  * Encapsulates the internal C++ structure of a point iterator handle used within
@@ -47,9 +45,9 @@
  */
 typedef struct _OGPS_POINT_ITERATOR
 {
-   /*! Gets/Sets the pointer to the internal C++ object behind the scenes. */
-   OpenGPS::PointIterator* instance;
-} OGPS_PointIterator, *OGPS_PointIteratorPtr; /*! Encapsulates the internal C++ structure
+	/*! Gets/Sets the pointer to the internal C++ object behind the scenes. */
+	OpenGPS::PointIteratorAutoPtr instance;
+} OGPS_PointIterator, * OGPS_PointIteratorPtr; /*! Encapsulates the internal C++ structure
  * of a data point handle used within the C interface. */
 
-#endif /* _OPENGPS_C_POINT_ITERATOR_HXX */
+#endif

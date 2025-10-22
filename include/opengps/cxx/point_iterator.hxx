@@ -39,159 +39,151 @@
 #ifndef _OPENGPS_CXX_POINT_ITERATOR_HXX
 #define _OPENGPS_CXX_POINT_ITERATOR_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
 
 namespace OpenGPS
 {
-   class ISO5436_2;
-   class PointVector;
+	class ISO5436_2;
+	class PointVector;
 
-   /*!
-    * Interface to a point iterator.
-    *
-    * The point iterator may be used to traverse all point vectors contained in
-    * an ISO5436-2 XML X3P file format container.
-    *
-    * @remarks An instance of OpenGPS::PointIterator can be obtained from
-    * OpenGPS::ISO5436_2::CreateNextPointIterator or OpenGPS::ISO5436_2::CreatePrevPointIterator.
-    */
-   class _OPENGPS_EXPORT PointIterator
-   {
-   protected:
-      /*!
-       * Creates a new instance.
-       */
-      PointIterator();
+	/*!
+	 * Interface to a point iterator.
+	 *
+	 * The point iterator may be used to traverse all point vectors contained in
+	 * an ISO5436-2 XML X3P file format container.
+	 *
+	 * @remarks An instance of OpenGPS::PointIterator can be obtained from
+	 * OpenGPS::ISO5436_2::CreateNextPointIterator or OpenGPS::ISO5436_2::CreatePrevPointIterator.
+	 */
+	class _OPENGPS_EXPORT PointIterator
+	{
+	public:
+		/*!
+		 * Destructs this instance.
+		 */
+		virtual ~PointIterator() = default;
 
-   public:
-      /*!
-       * Destructs this instance.
-       */
-      virtual ~PointIterator();
+		/*!
+		 * Asks if there is another point available to iterate.
+		 *
+		 * @remarks Use this function with an iterator handle obtained from OpenGPS::ISO5436_2::CreateNextPointIterator.
+		 *
+		 * @see PointIterator::MoveNext, PointIterator::HasPrev
+		 *
+		 * @returns Returns true if there is at least one more point available to iterate, false otherwise.
+		 */
+		virtual bool HasNext() const = 0;
 
-      /*!
-       * Asks if there is another point available to iterate.
-       *
-       * @remarks Use this function with an iterator handle obtained from OpenGPS::ISO5436_2::CreateNextPointIterator.
-       *
-       * @see PointIterator::MoveNext, PointIterator::HasPrev
-       *
-       * @returns Returns TRUE if there is at least one more point available to iterate, FALSE otherwise.
-       */
-      virtual OGPS_Boolean HasNext() const = 0;
+		/*!
+		 * Asks if there is another point available to iterate.
+		 *
+		 * @remarks Use this function with an iterator handle obtained from OpenGPS::ISO5436_2::CreatePrevPointIterator.
+		 *
+		 * @see PointIterator::MovePrev, PointIterator::HasNext
+		 *
+		 * @returns Returns true if there is at least one more point available to iterate, false otherwise.
+		 */
+		virtual bool HasPrev() const = 0;
 
-      /*!
-       * Asks if there is another point available to iterate.
-       *
-       * @remarks Use this function with an iterator handle obtained from OpenGPS::ISO5436_2::CreatePrevPointIterator.
-       *
-       * @see PointIterator::MovePrev, PointIterator::HasNext
-       *
-       * @returns Returns TRUE if there is at least one more point available to iterate, FALSE otherwise.
-       */
-      virtual OGPS_Boolean HasPrev() const = 0;
+		/*!
+		 * Moves the iterator forward.
+		 *
+		 * @remarks Use this function directly after initialising the iterator object with
+		 * OpenGPS::ISO5436_2::CreateNextPointIterator to move to the first point.
+		 *
+		 * @see PointIterator::HasNext
+		 *
+		 * @returns Returns true on success, false otherwise.
+		 */
+		virtual bool MoveNext() = 0;
 
-      /*!
-       * Moves the iterator forward.
-       *
-       * @remarks Use this function directly after initialising the iterator object with
-       * OpenGPS::ISO5436_2::CreateNextPointIterator to move to the first point.
-       *
-       * @see PointIterator::HasNext
-       *
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual OGPS_Boolean MoveNext() = 0;
+		/*!
+		 * Moves the iterator backward.
+		 *
+		 * @remarks Use this function directly after initialising the iterator object with
+		 * OpenGPS::ISO5436_2::CreatePrevPointIterator to move to the first point.
+		 *
+		 * @see PointIterator::HasPrev
+		 *
+		 * @returns Returns true on success, false otherwise.
+		 */
+		virtual bool MovePrev() = 0;
 
-      /*!
-       * Moves the iterator backward.
-       *
-       * @remarks Use this function directly after initialising the iterator object with
-       * OpenGPS::ISO5436_2::CreatePrevPointIterator to move to the first point.
-       *
-       * @see PointIterator::HasPrev
-       *
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual OGPS_Boolean MovePrev() = 0;
+		/*!
+		 * Resets the iterator to the beginning and turns this iterator instance into a forward iterator.
+		 */
+		virtual void ResetNext() = 0;
 
-      /*!
-       * Resets the iterator to the beginning and turns this iterator instance into a forward iterator.
-       */
-      virtual void ResetNext() = 0;
+		/*!
+		 * Resets the iterator to the beginning and turns this iterator instance into a backward iterator.
+		 */
+		virtual void ResetPrev() = 0;
 
-      /*!
-       * Resets the iterator to the beginning and turns this iterator instance into a backward iterator.
-       */
-      virtual void ResetPrev() = 0;
+		/*!
+		 * Gets the value of the current point vector.
+		 *
+		 * Retrieves the raw point data without offsets and increments applied.
+		 * A specific instance may throw an OpenGPS::Exception on failure,
+		 *
+		 * @see PointIterator::GetCurrentCoord
+		 * @see PointIterator::MoveNext
+		 *
+		 * @param vector Gets a copy of the vector at the current iterator position.
+		 */
+		virtual void GetCurrent(PointVector& vector) = 0;
 
-      /*!
-       * Gets the value of the current point vector.
-       *
-       * Retrieves the raw point data without offsets and increments applied.
-       * A specific instance may throw an OpenGPS::Exception on failure,
-       *
-       * @see PointIterator::GetCurrentCoord
-       * @see PointIterator::MoveNext
-       *
-       * @param vector Gets a copy of the vector at the current iterator position.
-       */
-      virtual void GetCurrent(PointVector& vector) = 0;
+		/*!
+		 * Gets the value of the current coordinate vector.
+		 *
+		 * Retrieves coordinate data, where offsets and increments have been readily applied to the underlying point data.
+		 * A specific instance may throw an OpenGPS::Exception on failure,
+		 *
+		 * @see PointIterator::GetCurrent
+		 * @see PointIterator::MoveNext
+		 *
+		 * @param vector Gets a copy of the coordinate at the current iterator position.
+		 */
+		virtual void GetCurrentCoord(PointVector& vector) = 0;
 
-      /*!
-       * Gets the value of the current coordinate vector.
-       *
-       * Retrieves coordinate data, where offsets and increments have been readily applied to the underlying point data.
-       * A specific instance may throw an OpenGPS::Exception on failure,
-       *
-       * @see PointIterator::GetCurrent
-       * @see PointIterator::MoveNext
-       *
-       * @param vector Gets a copy of the coordinate at the current iterator position.
-       */
-      virtual void GetCurrentCoord(PointVector& vector) = 0;
+		/*!
+		 * Sets the value of the current point vector.
+		 *
+		 * A specific instance may throw an OpenGPS::Exception on failure,
+		 *
+		 * @see PointIterator::MoveNext
+		 *
+		 * @param vector New value of the current point vector. May be nullptr to indicate an invalid point.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		virtual void SetCurrent(const PointVector* vector) = 0;
 
-      /*!
-       * Sets the value of the current point vector.
-       *
-       * A specific instance may throw an OpenGPS::Exception on failure,
-       *
-       * @see PointIterator::MoveNext
-       *
-       * @param vector New value of the current point vector. May be NULL to indicate an invalid point.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual void SetCurrent(const PointVector* const vector) = 0;
+		/*!
+		 * Gets the current position of the iterator in topology coordinates.
+		 *
+		 * @see PointIterator::MoveNext
+		 *
+		 * @param u Gets the position index of the u component of the surface. If this parameter is set to nullptr, it will be safely ignored and nothing returns here.
+		 * @param v Gets the position index of the v component of the surface. If this parameter is set to nullptr, it will be safely ignored and nothing returns here.
+		 * @param w Gets the position index of the w component of the surface. If this parameter is set to nullptr, it will be safely ignored and nothing returns here.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		virtual bool GetPosition(
+			size_t* u,
+			size_t* v,
+			size_t* w) const = 0;
 
-      /*!
-       * Gets the current position of the iterator in topology coordinates.
-       *
-       * @see PointIterator::MoveNext
-       *
-       * @param u Gets the position index of the u component of the surface. If this parameter is set to NULL, it will be safely ignored and nothing returns here.
-       * @param v Gets the position index of the v component of the surface. If this parameter is set to NULL, it will be safely ignored and nothing returns here.
-       * @param w Gets the position index of the w component of the surface. If this parameter is set to NULL, it will be safely ignored and nothing returns here.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual OGPS_Boolean GetPosition(
-         OGPS_ULong * const u,
-         OGPS_ULong * const v,
-         OGPS_ULong * const w) const = 0;
-
-      /*!
-       * Gets the current position of the iterator.
-       *
-       * @see PointIterator::MoveNext
-       *
-       * @param index Gets the position index.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual OGPS_Boolean GetPosition(OGPS_ULong * const index) const = 0;
-   };
+		/*!
+		 * Gets the current position of the iterator.
+		 *
+		 * @see PointIterator::MoveNext
+		 *
+		 * @param index Gets the position index.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		virtual bool GetPosition(size_t* index) const = 0;
+	};
 }
 
-#endif /* _OPENGPS_CXX_POINT_ITERATOR_HXX */
+#endif
 
 /*! @} */

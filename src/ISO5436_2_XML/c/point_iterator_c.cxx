@@ -39,104 +39,124 @@
 
 #include "../cxx/stdafx.hxx"
 
-OGPS_Boolean ogps_HasNextPoint(const OGPS_PointIteratorPtr iterator)
+bool ogps_HasNextPoint(const OGPS_PointIteratorPtr iterator)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(iterator->instance->HasNext());
+	return HandleExceptionRetval(false, [&]() {
+		return iterator->instance->HasNext();
+	});
 }
 
-OGPS_Boolean ogps_HasPrevPoint(const OGPS_PointIteratorPtr iterator)
+bool ogps_HasPrevPoint(const OGPS_PointIteratorPtr iterator)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(iterator->instance->HasPrev());
+	return HandleExceptionRetval(false, [&]() {
+		return iterator->instance->HasPrev();
+	});
 }
 
-OGPS_Boolean ogps_MoveNextPoint(OGPS_PointIteratorPtr const iterator)
+bool ogps_MoveNextPoint(OGPS_PointIteratorPtr iterator)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(iterator->instance->MoveNext());
+	return HandleExceptionRetval(false, [&]() {
+		return iterator->instance->MoveNext();
+	});
 }
 
-OGPS_Boolean ogps_MovePrevPoint(OGPS_PointIteratorPtr const iterator)
+bool ogps_MovePrevPoint(OGPS_PointIteratorPtr iterator)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(iterator->instance->MovePrev());
+	return HandleExceptionRetval(false, [&]() {
+		return iterator->instance->MovePrev();
+	});
 }
 
-void ogps_ResetNextPointIterator(OGPS_PointIteratorPtr const iterator)
+void ogps_ResetNextPointIterator(OGPS_PointIteratorPtr iterator)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(iterator->instance->ResetNext());
+	HandleException([&]() {
+		iterator->instance->ResetNext();
+	});
 }
 
-void ogps_ResetPrevPointIterator(OGPS_PointIteratorPtr const iterator)
+void ogps_ResetPrevPointIterator(OGPS_PointIteratorPtr iterator)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(iterator->instance->ResetPrev());
+	HandleException([&]() {
+		iterator->instance->ResetPrev();
+	});
 }
 
 void ogps_GetCurrentPoint(
-        const OGPS_PointIteratorPtr iterator,
-        OGPS_PointVectorPtr const vector)
+	const OGPS_PointIteratorPtr iterator,
+	OGPS_PointVectorPtr vector)
 {
-   _ASSERT(iterator && iterator->instance && vector);
+	assert(iterator && iterator->instance && vector);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(iterator->instance->GetCurrent(vector->instance));
+	HandleException([&]() {
+		iterator->instance->GetCurrent(vector->instance);
+	});
 }
 
 void ogps_GetCurrentCoord(
-        const OGPS_PointIteratorPtr iterator,
-        OGPS_PointVectorPtr const vector)
+	const OGPS_PointIteratorPtr iterator,
+	OGPS_PointVectorPtr vector)
 {
-   _ASSERT(iterator && iterator->instance && vector);
+	assert(iterator && iterator->instance && vector);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(iterator->instance->GetCurrentCoord(vector->instance));
+	HandleException([&]() {
+		iterator->instance->GetCurrentCoord(vector->instance);
+	});
 }
 
 void ogps_SetCurrentPoint(
-        const OGPS_PointIteratorPtr iterator,
-        const OGPS_PointVectorPtr vector)
+	const OGPS_PointIteratorPtr iterator,
+	const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(iterator->instance->SetCurrent(vector ? &vector->instance : NULL));
+	HandleException([&]() {
+		iterator->instance->SetCurrent(vector ? &vector->instance : nullptr);
+	});
 }
 
-OGPS_Boolean ogps_GetMatrixPosition(
-        const OGPS_PointIteratorPtr iterator,
-        OGPS_ULong * u,
-        OGPS_ULong * v,
-        OGPS_ULong * w)
+bool ogps_GetMatrixPosition(
+	const OGPS_PointIteratorPtr iterator,
+	size_t* u,
+	size_t* v,
+	size_t* w)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(iterator->instance->GetPosition(u, v, w));
+	return HandleExceptionRetval(false, [&]() {
+		return iterator->instance->GetPosition(u, v, w);
+	});
 }
 
-OGPS_Boolean ogps_GetListPosition(
-        const OGPS_PointIteratorPtr iterator,
-        OGPS_ULong * index)
+bool ogps_GetListPosition(
+	const OGPS_PointIteratorPtr iterator,
+	size_t* index)
 {
-   _ASSERT(iterator && iterator->instance);
+	assert(iterator && iterator->instance);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(iterator->instance->GetPosition(index));
+	return HandleExceptionRetval(false, [&]() {
+		return iterator->instance->GetPosition(index);
+	});
 }
 
-void ogps_FreePointIterator(OGPS_PointIteratorPtr * const iterator)
+void ogps_FreePointIterator(OGPS_PointIteratorPtr* iterator)
 {
-   if(*iterator)
-   {
-      _ASSERT((*iterator)->instance);
-
-      _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-         _OPENGPS_DELETE((*iterator)->instance); \
-         _OPENGPS_DELETE(*iterator); \
-         );
-   }
+	if (*iterator)
+	{
+		HandleException([&]() {
+			delete* iterator;
+		});
+		*iterator = nullptr;
+	}
 }

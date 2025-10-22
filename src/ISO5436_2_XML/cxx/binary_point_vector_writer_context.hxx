@@ -35,78 +35,79 @@
 #ifndef _OPENGPS_BINARY_POINT_VECTOR_WRITER_CONTEXT_HXX
 #define _OPENGPS_BINARY_POINT_VECTOR_WRITER_CONTEXT_HXX
 
-#ifndef _OPENGPS_POINT_VECTOR_WRITER_CONTEXT_HXX
-#  include "point_vector_writer_context.hxx"
-#endif
-
-#ifndef _OPENGPS_ZIP_STREAM_BUFFER_HXX
-#  include "zip_stream_buffer.hxx"
-#endif
+#include "point_vector_writer_context.hxx"
+#include "zip_stream_buffer.hxx"
+#include <memory>
 
 namespace OpenGPS
 {
-   /*!
-    * Implements OpenGPS::PointVectorWriterContext for writing to
-    * compressed binary streams of point vectors. Usually
-    * this points to a file descriptor within a zip archive.
-    */
-   class BinaryPointVectorWriterContext : public PointVectorWriterContext
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param handle The zip-stream where binary data is written to.
-       */
-      BinaryPointVectorWriterContext(zipFile handle);
+	/*!
+	 * Implements OpenGPS::PointVectorWriterContext for writing to
+	 * compressed binary streams of point vectors. Usually
+	 * this points to a file descriptor within a zip archive.
+	 */
+	class BinaryPointVectorWriterContext : public PointVectorWriterContext
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param handle The zip-stream where binary data is written to.
+		 */
+		BinaryPointVectorWriterContext(zipFile handle);
 
-      /*!
-       * Closes the internal handle to the binary stream and frees its resources.
-       */
-      virtual void Close();
+		/*! Destroys this instance. */
+		~BinaryPointVectorWriterContext() override;
 
-      virtual void Skip();
-      virtual void MoveNext();
+		/*!
+		 * Closes the internal handle to the binary stream and frees its resources.
+		 */
+		void Close();
 
-      /*!
-       * Gets the md5 checksum of all bytes written.
-       * When called this resets the currently computed md5 sum. Future
-       * calls to this method will ignore older md5 data.
-       */
-      void GetMd5(OpenGPS::UnsignedByte md5[16]);
+		void Skip() override;
+		void MoveNext() override;
 
-   protected:
-      /*! Destroys this instance. */
-      virtual ~BinaryPointVectorWriterContext();
+		/*!
+		 * Gets the md5 checksum of all bytes written.
+		 * When called this resets the currently computed md5 sum. Future
+		 * calls to this method will ignore older md5 data.
+		 */
+		void GetMd5(std::array<unsigned char, 16>& md5);
 
-      /*!
-       * Gets the internal binary stream.
-       * @returns Returns the target binary stream or NULL.
-       */
-      std::ostream* GetStream();
+	protected:
+		/*!
+		 * Gets the internal binary stream.
+		 * @returns Returns the target binary stream or nullptr.
+		 */
+		std::ostream* GetStream();
 
-      /*!
-       * Asks whether there is a target stream available.
-       * @returns Returns TRUE if there is an operable target
-       * stream for point data, FALSE otherwise.
-       * @see BinaryPointVectorWriterContext::IsGood
-       */
-      OGPS_Boolean HasStream() const;
+		/*!
+		 * Asks whether there is a target stream available.
+		 * @returns Returns true if there is an operable target
+		 * stream for point data, false otherwise.
+		 * @see BinaryPointVectorWriterContext::IsGood
+		 */
+		bool HasStream() const;
 
-      /*!
-       * Asks if the underlying data stream is still valid.
-       * @returns Returns TRUE if no previous access to the underlying
-       * data stream was harmful. Returns FALSE if any damage occured.
-       */
-      OGPS_Boolean IsGood() const;
+		/*!
+		 * Asks if the underlying data stream is still valid.
+		 * @returns Returns true if no previous access to the underlying
+		 * data stream was harmful. Returns false if any damage occured.
+		 */
+		bool IsGood() const override;
 
-   private:
-      /*! The target buffer where compressed binary data gets stored. */
-      ZipStreamBuffer* m_Buffer;
+		/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
+		void CheckStreamAndThrowException();
 
-      /*! The stream buffer which makes BinaryPointVectorWriterContext::m_Buffer
-       * accessible through the more abstract std::ostream interface. */
-      ZipOutputStream* m_Stream;
-   };
+		/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
+		void CheckIsGoodAndThrowException();
+	private:
+		/*! The target buffer where compressed binary data gets stored. */
+		std::unique_ptr<ZipStreamBuffer> m_Buffer;
+
+		/*! The stream buffer which makes BinaryPointVectorWriterContext::m_Buffer
+		 * accessible through the more abstract std::ostream interface. */
+		std::unique_ptr<ZipOutputStream> m_Stream;
+	};
 }
 
-#endif /* _OPENGPS_BINARY_POINT_VECTOR_WRITER_CONTEXT_HXX */
+#endif

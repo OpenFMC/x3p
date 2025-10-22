@@ -36,70 +36,56 @@
 #ifndef _OPENGPS_CXX_EXCPTIONS_HXX
 #define _OPENGPS_CXX_EXCPTIONS_HXX
 
-#include <exception>
-
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_MESSAGES_H
-#  include <opengps/messages.h>
-#endif
-
-#ifndef _OPENGPS_CXX_STRING_HXX
-#  include <opengps/cxx/string.hxx>
-#endif
-
-#if defined(SHARED_OPENGPS_LIBRARY) || defined(BUILD_ISO5436_2_XML_DLL)
-   class _OPENGPS_EXPORT std::exception;
-#endif /* defined(SHARED_OPENGPS_LIBRARY) || defined(BUILD_ISO5436_2_XML_DLL) */
+#include <stdexcept>
+#include <opengps/cxx/opengps.hxx>
+#include <opengps/messages.h>
+#include <opengps/cxx/string.hxx>
 
 namespace OpenGPS
 {
-   /*!
-    * Describes a general exception.
-    */
-   class _OPENGPS_EXPORT Exception : public std::exception
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       *
-       * @param id Type of the exception object.
-       * @param text Brief description of the exception.
-       * @param details Detailed description of the exception. May be set to NULL.
-       * @param method The name of the method wherein the failure condition occured. May be set to NULL.
-       */
-      Exception(const OGPS_ExceptionId id, const OGPS_ExceptionChar *text, const OGPS_ExceptionChar *details, const OGPS_ExceptionChar *method);
-      /*!
-       * Creates a new instance.
-       *
-       * @param rhs The instance to copy from.
-       */
-      Exception(const Exception& rhs) throw();
+	/*!
+	 * Describes a general exception.
+	 */
+	class _OPENGPS_EXPORT Exception : public std::runtime_error
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 *
+		 * @param id Type of the exception object.
+		 * @param text Brief description of the exception.
+		 * @param details Detailed description of the exception. May be set to nullptr.
+		 * @param method The name of the method wherein the failure condition occured. May be set to nullptr.
+		 */
+		Exception(OGPS_ExceptionId id, const OGPS_ExceptionChar* text, const OGPS_ExceptionChar* details, const OGPS_ExceptionChar* method);
+		/*!
+		 * Creates a new instance.
+		 *
+		 * @param rhs The instance to copy from.
+		 */
+		Exception(const Exception& rhs);
 
-      /*! Destroys this instance. */
-      virtual ~Exception() throw();
+		Exception& operator=(const Exception& rhs);
 
-      /*! Gets an identifier for the current type of excpetion. */
-      OGPS_ExceptionId id() const throw();
+		/*! Gets an identifier for the current type of excpetion. */
+		OGPS_ExceptionId id() const;
 
-      /*! Gets a detailed description possible with hints to its avoidance. */
-      const OpenGPS::String& details() const throw();
+		/*! Gets a detailed description possible with hints to its avoidance. */
+		const String& details() const;
 
-      /*! Gets the name of the method where the exception occured or NULL. */
-      const OpenGPS::String& method() const throw();
+		/*! Gets the name of the method where the exception occured or nullptr. */
+		const String& method() const;
 
-   private:
-      /*! Describes the type of failure. */
-      OGPS_ExceptionId m_Id;
+	private:
+		/*! Describes the type of failure. */
+		OGPS_ExceptionId m_Id;
 
-      /*! Detailed description of the failure. */
-      OpenGPS::String m_Details;
+		/*! Detailed description of the failure. */
+		String m_Details;
 
-      /*! Name of the method wherein the failure occured. */
-      OpenGPS::String m_Method;
-   };
+		/*! Name of the method wherein the failure occured. */
+		String m_Method;
+	};
 }
 
-#endif /* _OPENGPS_CXX_EXCPTIONS_HXX */
+#endif

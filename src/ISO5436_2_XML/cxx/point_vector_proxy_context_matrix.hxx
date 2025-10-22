@@ -35,74 +35,66 @@
 #ifndef _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_MATRIX_HXX
 #define _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_MATRIX_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_HXX
-#  include "point_vector_proxy_context.hxx"
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include "point_vector_proxy_context.hxx"
 
 namespace OpenGPS
 {
-   /*!
-    * Indexing of point data managed by OpenGPS::VectorBuffer.
-    * The indexes are calculated for point measurements stored in
-    * a matrix structure that saves extra topology information.
-    */
-   class PointVectorProxyContextMatrix : public PointVectorProxyContext
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param maxU The maximum index possible in X direction of the topology mapping.
-       * @param maxV The maximum index possible in Y direction of the topology mapping.
-       * @param maxW The maximum index possible in Z direction of the topology mapping.
-       */
-      PointVectorProxyContextMatrix(
-         const OGPS_ULong maxU,
-         const OGPS_ULong maxV,
-         const OGPS_ULong maxW);
+	/*!
+	 * Indexing of point data managed by OpenGPS::VectorBuffer.
+	 * The indexes are calculated for point measurements stored in
+	 * a matrix structure that saves extra topology information.
+	 */
+	class PointVectorProxyContextMatrix : public PointVectorProxyContext
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param maxU The maximum index possible in X direction of the topology mapping.
+		 * @param maxV The maximum index possible in Y direction of the topology mapping.
+		 * @param maxW The maximum index possible in Z direction of the topology mapping.
+		 */
+		PointVectorProxyContextMatrix(
+			size_t maxU,
+			size_t maxV,
+			size_t maxW);
 
-      /*! Destroys this instance. */
-      virtual ~PointVectorProxyContextMatrix();
+		/*!
+		 * Sets the current index.
+		 * @param u The new arbitrary index in X direction of the topology mapping.
+		 * @param v The new arbitrary index in Y direction of the topology mapping.
+		 * @param w The new arbitrary index in Z direction of the topology mapping.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		void SetIndex(
+			size_t u,
+			size_t v,
+			size_t w);
 
-      /*!
-       * Sets the current index.
-       * @param u The new arbitrary index in X direction of the topology mapping.
-       * @param v The new arbitrary index in Y direction of the topology mapping.
-       * @param w The new arbitrary index in Z direction of the topology mapping.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      void SetIndex(
-         const OGPS_ULong u,
-         const OGPS_ULong v,
-         const OGPS_ULong w);
+		size_t GetIndex() const override;
+		bool CanIncrementIndex() const override;
+		bool IncrementIndex() override;
+		bool IsMatrix() const override;
 
-      virtual OGPS_ULong GetIndex() const;
-      virtual OGPS_Boolean CanIncrementIndex() const;
-      virtual OGPS_Boolean IncrementIndex();
-      virtual OGPS_Boolean IsMatrix() const;
+	private:
+		/*! The current index in X direction of the topology mapping. */
+		size_t m_U{};
 
-   private:
-      /*! The current index in X direction of the topology mapping. */
-      OGPS_ULong m_U;
+		/*! The current index in Y direction of the topology mapping. */
+		size_t m_V{};
 
-      /*! The current index in Y direction of the topology mapping. */
-      OGPS_ULong m_V;
+		/*! The current index in Z direction of the topology mapping. */
+		size_t m_W{};
 
-      /*! The current index in Z direction of the topology mapping. */
-      OGPS_ULong m_W;
+		/*! The maximum index possible in X direction. */
+		size_t m_MaxU;
 
-      /*! The maximum index possible in X direction. */
-      OGPS_ULong m_MaxU;
+		/*! The maximum index possible in Y direction. */
+		size_t m_MaxV;
 
-      /*! The maximum index possible in Y direction. */
-      OGPS_ULong m_MaxV;
-
-      /*! The maximum index possible in Z direction. */
-      OGPS_ULong m_MaxW;
-   };
+		/*! The maximum index possible in Z direction. */
+		size_t m_MaxW;
+	};
 }
 
-#endif /* _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_MATRIX_HXX */
+#endif

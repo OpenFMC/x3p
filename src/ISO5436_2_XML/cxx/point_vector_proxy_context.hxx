@@ -28,44 +28,38 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-/*! @file
- * Indexing of point data managed by OpenGPS::VectorBuffer.
- */
+ /*! @file
+  * Indexing of point data managed by OpenGPS::VectorBuffer.
+  */
 
 #ifndef _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_HXX
 #define _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
 
 namespace OpenGPS
 {
-   /*!
-    * Indexing of point data managed by OpenGPS::VectorBuffer.
-    */
-   class PointVectorProxyContext
-   {
-   public:
-      /*! Destroys this instance. */
-      virtual ~PointVectorProxyContext();
+	/*!
+	 * Indexing of point data managed by OpenGPS::VectorBuffer.
+	 */
+	class PointVectorProxyContext
+	{
+	public:
+		/*! Destroys this instance. */
+		virtual ~PointVectorProxyContext() = default;
 
-      /*! Gets the current index. */
-      virtual OGPS_ULong GetIndex() const;
+		/*! Gets the current index. */
+		virtual size_t GetIndex() const;
 
-      /*! Can the current index be incremented? */
-      virtual OGPS_Boolean CanIncrementIndex() const;
+		/*! Can the current index be incremented? */
+		virtual bool CanIncrementIndex() const;
 
-      /*! Increments the current index by one. */
-      virtual OGPS_Boolean IncrementIndex();
+		/*! Increments the current index by one. */
+		virtual bool IncrementIndex();
 
-      /*! Asks whether this context is for points managed in matrices or lists. */
-      virtual OGPS_Boolean IsMatrix() const = 0;
-
-   protected:
-      /*! Creates a new instance. */
-      PointVectorProxyContext();
-   };
+		/*! Asks whether this context is for points managed in matrices or lists. */
+		virtual bool IsMatrix() const = 0;
+	};
 }
 
-#endif /* _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_HXX */
+#endif

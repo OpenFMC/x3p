@@ -33,83 +33,52 @@
 
 #include <opengps/cxx/string.hxx>
 
-PointVectorWhitespaceFacet::PointVectorWhitespaceFacet(const size_t refs)
-: BaseType(refs)
-{
-}
-
-PointVectorWhitespaceFacet::~PointVectorWhitespaceFacet()
-{
-}
-
 bool PointVectorWhitespaceFacet::do_is(mask msk, OGPS_Character ch) const
 {
-   if(ch == _T(';') && msk == space)
-   {
-      return true;
-   }
+	if (ch == _T(';') && msk == space)
+	{
+		return true;
+	}
 
-   return BaseType::do_is(msk, ch);
+	return BaseType::do_is(msk, ch);
 }
 
 PointVectorInvariantLocale::PointVectorInvariantLocale()
-: BaseType(std::locale::classic(), new PointVectorWhitespaceFacet())
-{
-}
-
-PointVectorInvariantLocale::~PointVectorInvariantLocale()
+	:std::locale{ std::locale::classic(), new PointVectorWhitespaceFacet() }
 {
 }
 
 PointVectorInputStringStream::PointVectorInputStringStream()
-: BaseType(std::ios_base::in)
+	:BaseType{ std::ios_base::in }
 {
-   imbue(m_Locale);
+	imbue(m_Locale);
 }
 
-PointVectorInputStringStream::PointVectorInputStringStream(const OpenGPS::String& s)
-: BaseType(std::ios_base::in)
+PointVectorInputStringStream::PointVectorInputStringStream(const String& s)
+	:BaseType{ std::ios_base::in }
 {
-   imbue(m_Locale);
-   str(s);
-}
-
-PointVectorInputStringStream::~PointVectorInputStringStream()
-{
+	imbue(m_Locale);
+	str(s);
 }
 
 PointVectorOutputStringStream::PointVectorOutputStringStream()
-: BaseType(std::ios_base::out)
+	: BaseType{ std::ios_base::out }
 {
-   imbue(m_Locale);
+	imbue(m_Locale);
 }
 
-PointVectorOutputStringStream::~PointVectorOutputStringStream()
+InputBinaryFileStream::InputBinaryFileStream(const String& filePath)
 {
+	imbue(m_Locale);
+
+	String buf(filePath);
+	open(buf.ToChar(), std::ios_base::in | std::ios_base::binary);
 }
 
-InputBinaryFileStream::InputBinaryFileStream(const OpenGPS::String& filePath)
-: BaseType()
+OutputBinaryFileStream::OutputBinaryFileStream(const String& filePath)
 {
-   imbue(m_Locale);
+	imbue(m_Locale);
 
-   OpenGPS::String buf(filePath);
-   open(buf.ToChar(), std::ios_base::in | std::ios_base::binary);
-}
-
-InputBinaryFileStream::~InputBinaryFileStream()
-{
-}
-
-OutputBinaryFileStream::OutputBinaryFileStream(const OpenGPS::String& filePath)
-: BaseType()
-{
-   imbue(m_Locale);
-
-   OpenGPS::String buf(filePath);
-   open(buf.ToChar(), std::ios_base::out | std::ios_base::binary);
-}
-
-OutputBinaryFileStream::~OutputBinaryFileStream()
-{
+	String buf(filePath);
+	open(buf.ToChar(), std::ios_base::out | std::ios_base::binary);
 }

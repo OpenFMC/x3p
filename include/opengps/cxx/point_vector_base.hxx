@@ -40,81 +40,61 @@
 #ifndef _OPENGPS_CXX_POINT_VECTOR_BASE_HXX
 #define _OPENGPS_CXX_POINT_VECTOR_BASE_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include <memory>
 
 namespace OpenGPS
 {
-   class DataPoint;
+	class DataPoint;
 
-   /*!
-    * Typesafe and very fundamental representation of three-dimensional point measurement data.
-    *
-    * @see OpenGPS::PointVector
-    */
-   class _OPENGPS_EXPORT PointVectorBase
-   {
-   public:
-      /*! Destructs this object. */
-      virtual ~PointVectorBase();
+	/*!
+	 * Typesafe and very fundamental representation of three-dimensional point measurement data.
+	 *
+	 * @see OpenGPS::PointVector
+	 */
+	class _OPENGPS_EXPORT PointVectorBase
+	{
+	public:
+		/*! Destructs this object. */
+		virtual ~PointVectorBase() = default;
 
-      /*!
-       * Gets typesafe direct read-only access to the x component.
-       */
-      virtual const DataPoint* GetX() const = 0;
+		/*!
+		 * Gets typesafe direct access to the x component.
+		 */
+		virtual DataPoint* GetX() const = 0;
 
-      /*!
-       * Gets typesafe direct read-only access to the y component.
-       */
-      virtual const DataPoint* GetY() const = 0;
+		/*!
+		 * Gets typesafe direct access to the y component.
+		 */
+		virtual DataPoint* GetY() const = 0;
 
-      /*!
-       * Gets typesafe direct read-only access to the z component.
-       */
-      virtual const DataPoint* GetZ() const = 0;
+		/*!
+		 * Gets typesafe direct access to the z component.
+		 */
+		virtual DataPoint* GetZ() const = 0;
 
-      /*!
-       * Gets typesafe direct access to the x component.
-       */
-      virtual DataPoint* GetX() = 0;
+		/*!
+		 * Copies values from another OpenGPS::PointVector instance.
+		 *
+		 * A specific implementation may throw an OpenGPS::Exception if this operation
+		 * is not permitted due to the current state of the object instance.
+		 *
+		 * @param value OpenGPS::PointVectorBase object to copy from.
+		 */
+		virtual void Set(const PointVectorBase& value) = 0;
 
-      /*!
-       * Gets typesafe direct access to the y component.
-       */
-      virtual DataPoint* GetY() = 0;
-
-      /*!
-       * Gets typesafe direct access to the z component.
-       */
-      virtual DataPoint* GetZ() = 0;
-
-      /*!
-       * Copies values from another OpenGPS::PointVector instance.
-       *
-       * A specific implementation may throw an OpenGPS::Exception if this operation
-       * is not permitted due to the current state of the object instance.
-       *
-       * @param value OpenGPS::PointVectorBase object to copy from.
-       */
-      virtual void Set(const PointVectorBase& value) = 0;
-
-      /*!
-       * Copies values to another OpenGPS::PointVectorBase instance.
-       *
-       * A specific implementation may throw an OpenGPS::Exception if this operation
-       * is not permitted due to the current state of the object instance.
-       *
-       * @param value Retrieves values from the current instance as a copy.
-       */
-      virtual void Get(PointVectorBase& value) const = 0;
-
-   protected:
-      /*! Creates a new instance. */
-      PointVectorBase();
-   };
+		/*!
+		 * Copies values to another OpenGPS::PointVectorBase instance.
+		 *
+		 * A specific implementation may throw an OpenGPS::Exception if this operation
+		 * is not permitted due to the current state of the object instance.
+		 *
+		 * @param value Retrieves values from the current instance as a copy.
+		 */
+		virtual void Get(PointVectorBase& value) const = 0;
+	};
 }
 
-#endif /* _OPENGPS_CXX_POINT_VECTOR_BASE_HXX */
+#endif
 
 /*! @} */

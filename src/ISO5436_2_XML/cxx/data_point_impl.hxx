@@ -40,69 +40,68 @@
 
 namespace OpenGPS
 {
-   /*!
-    * A straightforward implementation of OpenGPS::DataPoint. This mainly
-    * supports OpenGPS::PointVector where typesafe storage
-    * of arbitrary point data must be maintained for its vector components.
-    */
-   class DataPointImpl : public DataPoint
-   {
-   public:
-      /*! Creates a new instance. */
-      DataPointImpl();
+	/*!
+	 * A straightforward implementation of OpenGPS::DataPoint. This mainly
+	 * supports OpenGPS::PointVector where typesafe storage
+	 * of arbitrary point data must be maintained for its vector components.
+	 */
+	class DataPointImpl : public DataPoint
+	{
+	public:
+		OGPS_DataPointType GetPointType() const override;
 
-      /*! Destroys this instance. */
-      virtual ~DataPointImpl();
+		void Get(OGPS_Int16* value) const override;
+		void Get(OGPS_Int32* value) const override;
+		void Get(OGPS_Float* value) const override;
+		void Get(OGPS_Double* value) const override;
 
-      virtual OGPS_DataPointType GetPointType() const throw();
+		OGPS_Double Get() const override;
 
-      virtual void Get(OGPS_Int16* const value) const;
-      virtual void Get(OGPS_Int32* const value) const;
-      virtual void Get(OGPS_Float* const value) const;
-      virtual void Get(OGPS_Double* const value) const;
+		bool IsValid() const override;
 
-      virtual OGPS_Double Get() const;
+		void Set(OGPS_Int16 value) override;
+		void Set(OGPS_Int32 value) override;
+		void Set(OGPS_Float value) override;
+		void Set(OGPS_Double value) override;
 
-      virtual OGPS_Boolean IsValid() const throw();
+		void Set(const DataPoint& src) override;
 
-      virtual void Set(const OGPS_Int16 value) throw();
-      virtual void Set(const OGPS_Int32 value) throw();
-      virtual void Set(const OGPS_Float value) throw();
-      virtual void Set(const OGPS_Double value) throw();
+	protected:
+		void Reset() override;
 
-      virtual void Set(const DataPoint& src);
+	private:
+		/*! This tag defines which value type is currently valid within DataPointImpl::m_Value.
+		 * This restricts access to the only safe element of DataPointImpl::m_Value. */
+		OGPS_DataPointType m_Type{ OGPS_MissingPointType };
 
-   protected:
-      virtual void Reset() throw();
+		/*! Typesafe storage for every possible type of point data. */
+		union OGPS_DataPointValue
+		{
+			OGPS_DataPointValue()
+				:doubleValue{ 0.0 }
+			{
+			}
 
-   private:
-      /*! This tag defines which value type is currently valid within DataPointImpl::m_Value.
-       * This restricts access to the only safe element of DataPointImpl::m_Value. */
-      OGPS_DataPointType m_Type;
+			/*! Stores a value of type ::OGPS_Int16. It is undefined if
+			DataPointImpl::m_Type does not equal ::OGPS_Int16PointType. */
+			OGPS_Int16 int16Value;
 
-      /*! Typesafe storage for every possible type of point data. */
-      typedef union _OGPS_DATA_POINT_VALUE
-      {
-         /*! Stores a value of type ::OGPS_Int16. It is undefined if
-         DataPointImpl::m_Type does not equal ::OGPS_Int16PointType. */
-         OGPS_Int16 int16Value;
+			/*! Stores a value of type ::OGPS_Int32. It is undefined if
+			DataPointImpl::m_Type does not equal ::OGPS_Int32PointType. */
+			OGPS_Int32 int32Value;
 
-         /*! Stores a value of type ::OGPS_Int32. It is undefined if
-         DataPointImpl::m_Type does not equal ::OGPS_Int32PointType. */
-         OGPS_Int32 int32Value;
+			/*! Stores a value of type ::OGPS_Float. It is undefined if
+			DataPointImpl::m_Type does not equal ::OGPS_FloatPointType. */
+			OGPS_Float floatValue;
 
-         /*! Stores a value of type ::OGPS_Float. It is undefined if
-         DataPointImpl::m_Type does not equal ::OGPS_FloatPointType. */
-         OGPS_Float floatValue;
+			/*! Stores a value of type ::OGPS_Double. It is undefined if
+			DataPointImpl::m_Type does not equal ::OGPS_DoublePointType. */
+			OGPS_Double doubleValue;
+		};
 
-         /*! Stores a value of type ::OGPS_Double. It is undefined if
-         DataPointImpl::m_Type does not equal ::OGPS_DoublePointType. */
-         OGPS_Double doubleValue;
-      } OGPS_DataPointValue;/*! Typesafe storage for every possible data type. */
-
-      /*! The stored value of this data point. @see DataPointImpl::m_Type */
-      OGPS_DataPointValue m_Value;
-   };
+		/*! The stored value of this data point. @see DataPointImpl::m_Type */
+		OGPS_DataPointValue m_Value;
+	};
 }
 
-#endif /* _OPENGPS_DATA_POINT_IMPL_HXX */
+#endif

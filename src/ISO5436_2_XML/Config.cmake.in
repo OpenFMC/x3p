@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/iso5436_2_xmlTargets.cmake")
+
+check_required_components(iso5436_2_xml)
+find_package(XercesC 3.2 REQUIRED)

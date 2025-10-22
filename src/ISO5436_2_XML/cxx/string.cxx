@@ -37,196 +37,177 @@
 
 #include "stdafx.hxx"
 
-String::String() :
-BaseType()
+String::String()
+	:BaseType()
 {
-#ifdef _UNICODE
-   m_Chars = NULL;
-#endif
 }
 
-String::String(const BaseType& s) : BaseType(s)
+String::String(const BaseType& s)
+	:BaseType{ s }
 {
-#ifdef _UNICODE
-   m_Chars = NULL;
-#endif
 }
 
-String::String(const OGPS_Character* const s) : BaseType(s)
+String::String(const OGPS_Character* s)
+	:BaseType{ s }
 {
-#ifdef _UNICODE
-   m_Chars = NULL;
-#endif
 }
 
-String::~String()
+String::String(const String& s)
+	:BaseType{ s }
 {
-#ifdef _UNICODE
-   _OPENGPS_DELETE_ARRAY(m_Chars);
-#endif
 }
+
+String& String::operator=(const String& rhs)
+{
+	BaseType::operator=(rhs);
+	return *this;
+}
+
+String::~String() = default;
 
 const char* String::ToChar()
 {
-
 #ifdef _UNICODE
-   _OPENGPS_DELETE_ARRAY(m_Chars);
-
-   const size_t len = length();
-   m_Chars = new char[len + 1];
-   /// @bug: It would be safer to use wcstomb_s on windows systems but this function is not ANSI-standard.
-#pragma warning(suppress: 4996)
-   wcstombs(m_Chars, c_str(), len);
-   m_Chars[len] = 0;
-
-   return m_Chars;
+	const auto len{ length() };
+	auto chars = std::make_unique<char[]>(len + 1);
+	wcstombs(chars.get(), c_str(), len);
+	chars[len] = 0;
+	m_Chars = std::move(chars);
+	return m_Chars.get();
 #else
-   return c_str();
+	return c_str();
 #endif
-
 }
 
-void String::FromChar(const char* const s)
+void String::FromChar(const char* s)
 {
-   if(s)
-   {
+	if (s)
+	{
 #ifdef _UNICODE
-      const size_t len = strlen(s);
-      FromChar(s, len);
+		FromChar(s, strlen(s));
 #else
-      *this = s;
+		*this = s;
 #endif
-   }
-   else
-   {
-      clear();
-   }
+	}
+	else
+	{
+		clear();
+	}
 }
 
 void String::FromChar(const char* const s, const size_t length)
 {
-   if(s && length > 0)
-   {
+	if (s && length > 0)
+	{
 #ifdef _UNICODE
-      wchar_t* chars = new wchar_t[length];
-      /// @bug: It would be safer to use wcstomb_s on windows systems but this function is not ANSI-standard.
-#pragma warning(suppress: 4996)
-      mbstowcs(chars, s, length);
-      this->assign(chars, length);
-      _OPENGPS_DELETE_ARRAY(chars);
+		auto chars = std::make_unique<wchar_t[]>(length);
+		mbstowcs(chars.get(), s, length);
+		this->assign(chars.get(), length);
 #else
-      this->assign(s, length);
+		this->assign(s, length);
 #endif
-   }
-   else
-   {
-      clear();
-   }
+	}
+	else
+	{
+		clear();
+	}
 }
 
-size_t String::CopyTo(OGPS_Character *const target, const size_t size) const
+size_t String::CopyTo(OGPS_Character* const target, const size_t size) const
 {
-   const size_t len = length();
+	const auto len{ length() };
 
-   if(size < len + 1)
-   {
-      return (len + 1);
-   }
+	if (size < len + 1)
+	{
+		return (len + 1);
+	}
 
-   _ASSERT(target);
+	assert(target);
 
-   if(len > 0)
-   {
+	if (len > 0)
+	{
 #ifdef _UNICODE
-    #if !_WIN32 
-        wcsncpy(target, c_str(), size);
-    #else
-        wcscpy_s(target, size, c_str());
-    #endif
+		wcsncpy(target, c_str(), size);
 #else
-    #if !_WIN32 
-        strncpy(target, c_str(), size);
-    #else
-        strcpy_s(target, size, c_str());
-    #endif
+		strncpy(target, c_str(), size);
 #endif
-   }
-   else
-   {
-      target[len] = 0;
-   }
+	}
+	else
+	{
+		target[len] = 0;
+	}
 
-   return len;
+	return len;
 }
 
-OGPS_Boolean String::ConvertToMd5(OpenGPS::UnsignedByte md5[16]) const
+bool String::ConvertToMd5(std::array<unsigned char, 16>& md5) const
 {
-   if(size() != 32)
-   {
-      return FALSE;
-   }
+	if (size() != 32)
+	{
+		return false;
+	}
 
-   String str(*this);
+	String str(*this);
 
-   for(size_t n = 30; n > 0; n-=2)
-   {
-      str.insert(n, 1, _T(' '));
-   }
+	for (size_t n = 30; n > 0; n -= 2)
+	{
+		str.insert(n, 1, _T(' '));
+	}
 
 #ifdef _UNICODE
-   std::wistringstream buffer(str);
+	std::wistringstream buffer(str);
 #else
-   std::istringstream buffer(str);
-#endif /* _UNICODE */
+	std::istringstream buffer(str);
+#endif
 
-   int md5n[16];
-   for(size_t k = 0; k < 16; ++k)
-   {
-      buffer >> std::hex >> md5n[k];
+	std::array<int, 16> md5n{};
+	for (size_t k = 0; k < md5n.size(); ++k)
+	{
+		buffer >> std::hex >> md5n[k];
 
-      _ASSERT(md5n[k] >= 0 && md5n[k] < 256);
+		assert(md5n[k] >= 0 && md5n[k] < 256);
 
-      md5[k] = (OpenGPS::UnsignedByte)md5n[k];
-   }
+		md5[k] = static_cast<unsigned char>(md5n[k]);
+	}
 
-   return buffer.eof() && !buffer.fail();
+	return buffer.eof() && !buffer.fail();
 }
 
-OGPS_Boolean String::ConvertFromMd5(const OpenGPS::UnsignedByte md5[16])
+bool String::ConvertFromMd5(const std::array<unsigned char, 16>& md5)
 {
 #ifdef _UNICODE
-   std::wostringstream buffer;
+	std::wostringstream buffer;
 #else
-   std::ostringstream buffer;
-#endif /* _UNICODE */
+	std::ostringstream buffer;
+#endif
 
-   buffer.fill('0');
+	buffer.fill('0');
 
-   for(size_t k = 0; k < 16; ++k)
-   {
-      buffer << std::hex << std::setw(2) << md5[k];
-   }
+	for (size_t k = 0; k < md5.size(); ++k)
+	{
+		buffer << std::hex << std::setw(2) << md5[k];
+	}
 
-   if(buffer.good())
-   {
-      assign(buffer.str());
-      return TRUE;
-   }
+	if (buffer.good())
+	{
+		assign(buffer.str());
+		return true;
+	}
 
-   return FALSE;
+	return false;
 }
 
 String& String::ReplaceAll(const String& old_str, const String& new_str)
 {
-   size_t pos = 0;
-   do
-   {
-      pos = find(old_str, pos);
-      if(pos != String::npos)
-      {
-         replace(pos, old_str.length(), new_str);
-         pos += new_str.length();
-      }
-   } while(pos != String::npos);
-   return *this;
+	size_t pos{};
+	do
+	{
+		pos = find(old_str, pos);
+		if (pos != String::npos)
+		{
+			replace(pos, old_str.length(), new_str);
+			pos += new_str.length();
+		}
+	} while (pos != String::npos);
+	return *this;
 }

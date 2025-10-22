@@ -31,326 +31,117 @@
 #include "environment.hxx"
 #include "stdafx.hxx"
 
-#define _OGPS_SHORT_SIZE 2
-#define _OGPS_INT_SIZE 4
-#define _OGPS_FLOAT_SIZE 4
-#define _OGPS_DOUBLE_SIZE 8
+std::unique_ptr<Environment> Environment::m_Instance;
 
-Environment* Environment::m_Instance = NULL;
-
-const Environment* const Environment::GetInstance()
+const Environment* Environment::GetInstance()
 {
-   if(!m_Instance)
-   {
-      m_Instance = CreateInstance();
-   }
+	if (!m_Instance)
+	{
+		m_Instance = CreateInstance();
+	}
 
-   return m_Instance;
+	return m_Instance.get();
 }
 
 void Environment::Reset()
 {
-   _OPENGPS_DELETE(m_Instance);
+	m_Instance.reset();
 }
 
-Environment::Environment()
+Environment::Environment() = default;
+
+Environment::~Environment() = default;
+
+bool Environment::IsLittleEndian()
 {
+	unsigned char test[2] = { 0, 1 };
+
+	OGPS_Int16 value{};
+	ByteSwap(test, value);
+
+	assert(value == 1 || value == 256);
+
+	return (value == 1);
 }
 
-Environment::~Environment()
+inline static void ByteSwap16(const unsigned char* src, unsigned char* dst)
 {
+	assert(src && dst);
+	dst[0] = src[1];
+	dst[1] = src[0];
 }
 
-OGPS_Boolean Environment::IsLittleEndian() const
+inline static void ByteSwap32(const unsigned char* src, unsigned char* dst)
 {
-   OpenGPS::UnsignedByte test[2];
-   test[0] = 0;
-   test[1] = 1;
-
-   short value;
-   ByteSwap16(&test[0], &value);
-
-   _ASSERT(value == 1 || value == 256);
-
-   return (value == 1);
+	assert(src && dst);
+	dst[0] = src[3];
+	dst[1] = src[2];
+	dst[2] = src[1];
+	dst[3] = src[0];
 }
 
-OpenGPS::UnsignedBytePtr Environment::ByteSwap(const short* const value, OpenGPS::UnsignedBytePtr dst) const
+inline static void ByteSwap64(const unsigned char* src, unsigned char* dst)
 {
-   // short data type should be 16bit long on any 32bit or 64bit hardware (- my guess).
-   return ByteSwap16(value, dst);
+	assert(src && dst);
+	dst[0] = src[7];
+	dst[1] = src[6];
+	dst[2] = src[5];
+	dst[3] = src[4];
+	dst[4] = src[3];
+	dst[5] = src[2];
+	dst[6] = src[1];
+	dst[7] = src[0];
 }
 
-void Environment::ByteSwap(const OpenGPS::UnsignedBytePtr src, short* const value) const
+unsigned char* Environment::ByteSwap(OGPS_Int16 value, unsigned char* dst)
 {
-   // short data type should be 16bit long on any 32bit or 64bit hardware (- my guess).
-   ByteSwap16(src, value);
+	auto src{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap16(src, dst);
+	return dst;
 }
 
-OpenGPS::UnsignedBytePtr Environment::ByteSwap16(const short* const value, OpenGPS::UnsignedBytePtr dst) const
+void Environment::ByteSwap(const unsigned char* src, OGPS_Int16& value)
 {
-   _ASSERT(value && dst && sizeof(*value) == _OGPS_SHORT_SIZE);
-
-   const OpenGPS::UnsignedBytePtr src = (const OpenGPS::UnsignedBytePtr)value;
-
-   dst[0] = src[1];
-   dst[1] = src[0];
-
-#  if _OGPS_SHORT_SIZE != 2
-#     pragma error
-#  endif
-
-   return dst;
+	auto dst{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap16(src, dst);
 }
 
-void Environment::ByteSwap16(const OpenGPS::UnsignedBytePtr src, short* const value) const
+unsigned char* Environment::ByteSwap(OGPS_Int32 value, unsigned char* dst)
 {
-   _ASSERT(value && src && sizeof(*value) == _OGPS_SHORT_SIZE);
-
-   const OpenGPS::UnsignedBytePtr dst = (const OpenGPS::UnsignedBytePtr)value;
-
-   dst[0] = src[1];
-   dst[1] = src[0];
-
-#  if _OGPS_SHORT_SIZE != 2
-#     pragma error
-#  endif
+	auto src{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap32(src, dst);
+	return dst;
 }
 
-OpenGPS::UnsignedBytePtr Environment::ByteSwap(const int* const value, OpenGPS::UnsignedBytePtr dst) const
+void Environment::ByteSwap(const unsigned char* src, OGPS_Int32& value)
 {
-   _ASSERT(value && dst && sizeof(*value) == _OGPS_INT_SIZE);
-
-   const OpenGPS::UnsignedBytePtr src = (const OpenGPS::UnsignedBytePtr)value;
-
-#if _OGPS_INT_SIZE == 2
-   dst[0] = src[1];
-   dst[1] = src[0];
-#endif
-
-#if _OGPS_INT_SIZE == 4
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = src[1];
-   dst[3] = src[0];
-#endif
-
-#if _OGPS_INT_SIZE == 8
-   dst[0] = src[7];
-   dst[1] = src[6];
-   dst[2] = src[5];
-   dst[3] = src[4];
-   dst[4] = src[3];
-   dst[5] = src[2];
-   dst[6] = src[1];
-   dst[7] = src[0];
-#endif
-
-#  if _OGPS_INT_SIZE != 2 && _OGPS_INT_SIZE != 4 && _OGPS_INT_SIZE != 8
-#     pragma error
-#  endif
-
-   return dst;
+	auto dst{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap32(src, dst);
 }
 
-void Environment::ByteSwap(const OpenGPS::UnsignedBytePtr src, int* const value) const
+unsigned char* Environment::ByteSwap(OGPS_Float value, unsigned char* dst)
 {
-   _ASSERT(src && value && sizeof(*value) == _OGPS_INT_SIZE);
-
-   OpenGPS::UnsignedBytePtr dst = (OpenGPS::UnsignedBytePtr)value;
-
-#if _OGPS_INT_SIZE == 2
-   dst[0] = src[1];
-   dst[1] = src[0];
-#endif
-
-#if _OGPS_INT_SIZE == 4
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = src[1];
-   dst[3] = src[0];
-#endif
-
-#if _OGPS_INT_SIZE == 8
-   dst[0] = src[7];
-   dst[1] = src[6];
-   dst[2] = src[5];
-   dst[3] = src[4];
-   dst[4] = src[3];
-   dst[5] = src[2];
-   dst[6] = src[1];
-   dst[7] = src[0];
-#endif
-
-#  if _OGPS_INT_SIZE != 2 && _OGPS_INT_SIZE != 4 && _OGPS_INT_SIZE != 8
-#     pragma error
-#  endif
+	auto src{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap32(src, dst);
+	return dst;
 }
 
-OpenGPS::UnsignedBytePtr Environment::ByteSwap32(const int* const value, OpenGPS::UnsignedBytePtr dst) const
+void Environment::ByteSwap(const unsigned char* src, OGPS_Float& value)
 {
-   _ASSERT(value && dst && sizeof(*value) == _OGPS_INT_SIZE);
-
-   const OpenGPS::UnsignedBytePtr src = (const OpenGPS::UnsignedBytePtr)value;
-
-#if _OGPS_INT_SIZE == 2
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = 0;
-   dst[3] = 0;
-#endif
-
-#if _OGPS_INT_SIZE == 4
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = src[1];
-   dst[3] = src[0];
-#endif
-
-#if _OGPS_INT_SIZE == 8
-   dst[0] = src[7];
-   dst[1] = src[6];
-   dst[2] = src[5];
-   dst[3] = src[4];   
-#endif
-
-#  if _OGPS_INT_SIZE != 2 && _OGPS_INT_SIZE != 4 && _OGPS_INT_SIZE != 8
-#     pragma error
-#  endif
-
-   return dst;
+	auto dst{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap32(src, dst);
 }
 
-void Environment::ByteSwap32(const OpenGPS::UnsignedBytePtr src, int* const value) const
+unsigned char* Environment::ByteSwap(OGPS_Double value, unsigned char* dst)
 {
-   _ASSERT(src && value && sizeof(*value) == _OGPS_INT_SIZE);
-
-   OpenGPS::UnsignedBytePtr dst = (OpenGPS::UnsignedBytePtr)value;
-
-#if _OGPS_INT_SIZE == 2
-   dst[0] = src[3];
-   dst[1] = src[2];
-#endif
-
-#if _OGPS_INT_SIZE == 4
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = src[1];
-   dst[3] = src[0];
-#endif
-
-#if _OGPS_INT_SIZE == 8
-   dst[0] = 0;
-   dst[1] = 0;
-   dst[2] = 0;
-   dst[3] = 0;
-   dst[4] = src[3];
-   dst[5] = src[2];
-   dst[6] = src[1];
-   dst[7] = src[0];   
-#endif
-
-#  if _OGPS_INT_SIZE != 2 && _OGPS_INT_SIZE != 4 && _OGPS_INT_SIZE != 8
-#     pragma error
-#  endif
+	auto src{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap64(src, dst);
+	return dst;
 }
 
-OpenGPS::UnsignedBytePtr Environment::ByteSwap(const float* const value, OpenGPS::UnsignedBytePtr dst) const
+void Environment::ByteSwap(const unsigned char* src, OGPS_Double& value)
 {
-   // float type should be 32bit long on any 32bit or 64bit hardware (- my guess).
-   return ByteSwap32(value, dst);
-}
-
-void Environment::ByteSwap(const OpenGPS::UnsignedBytePtr src, float* const value) const
-{
-   // float type should be 32bit long on any 32bit or 64bit hardware (- my guess).
-   ByteSwap32(src, value);
-}
-
-OpenGPS::UnsignedBytePtr Environment::ByteSwap32(const float* const value, OpenGPS::UnsignedBytePtr dst) const
-{
-   _ASSERT(value && dst && sizeof(*value) == _OGPS_FLOAT_SIZE);
-
-   const OpenGPS::UnsignedBytePtr src = (const OpenGPS::UnsignedBytePtr)value;
-
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = src[1];
-   dst[3] = src[0];
-
-#  if _OGPS_FLOAT_SIZE != 4
-#     pragma error
-#  endif
-
-   return dst;
-}
-
-void Environment::ByteSwap32(const OpenGPS::UnsignedBytePtr src, float* const value) const
-{
-   _ASSERT(src && value && sizeof(*value) == _OGPS_FLOAT_SIZE);
-
-   OpenGPS::UnsignedBytePtr dst = (OpenGPS::UnsignedBytePtr)value;
-
-   dst[0] = src[3];
-   dst[1] = src[2];
-   dst[2] = src[1];
-   dst[3] = src[0];
-
-#  if _OGPS_FLOAT_SIZE != 4
-#     pragma error
-#  endif
-}
-
-OpenGPS::UnsignedBytePtr Environment::ByteSwap(const double* const value, OpenGPS::UnsignedBytePtr dst) const
-{
-   // double type should be 64bit long on any 32bit or 64bit hardware (- my guess).
-   return ByteSwap64(value, dst);
-}
-
-void Environment::ByteSwap(const OpenGPS::UnsignedBytePtr src, double* const value) const
-{
-   // double type should be 64bit long on any 32bit or 64bit hardware (- my guess).
-   ByteSwap64(src, value);
-}
-
-OpenGPS::UnsignedBytePtr Environment::ByteSwap64(const double* const value, OpenGPS::UnsignedBytePtr dst) const
-{
-   _ASSERT(value && dst && sizeof(*value) == _OGPS_DOUBLE_SIZE);
-
-   const OpenGPS::UnsignedBytePtr src = (const OpenGPS::UnsignedBytePtr)value;
-
-   dst[0] = src[7];
-   dst[1] = src[6];
-   dst[2] = src[5];
-   dst[3] = src[4];
-   dst[4] = src[3];
-   dst[5] = src[2];
-   dst[6] = src[1];
-   dst[7] = src[0];
-
-#  if _OGPS_DOUBLE_SIZE != 8
-#     pragma error
-#  endif
-
-   return dst;
-}
-
-void Environment::ByteSwap64(const OpenGPS::UnsignedBytePtr src, double* const value) const
-{
-   _ASSERT(src && value && sizeof(*value) == _OGPS_DOUBLE_SIZE);
-
-   OpenGPS::UnsignedBytePtr dst = (OpenGPS::UnsignedBytePtr)value;
-
-   dst[0] = src[7];
-   dst[1] = src[6];
-   dst[2] = src[5];
-   dst[3] = src[4];
-   dst[4] = src[3];
-   dst[5] = src[2];
-   dst[6] = src[1];
-   dst[7] = src[0];
-
-#  if _OGPS_DOUBLE_SIZE != 8
-#     pragma error
-#  endif
+	assert(src && value);
+	auto dst{ reinterpret_cast<unsigned char*>(&value) };
+	ByteSwap64(src, dst);
 }

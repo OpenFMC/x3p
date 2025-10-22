@@ -37,9 +37,7 @@
 
 #ifdef _WIN32
 
-#ifndef _OPENGPS_ENVIRONMENT_HXX
-#  include "environment.hxx"
-#endif
+#include "environment.hxx"
 
 namespace OpenGPS
 {
@@ -54,32 +52,32 @@ namespace OpenGPS
       Win32Environment();
 
       /*! Destroys this instance. */
-      ~Win32Environment();
+      ~Win32Environment() override;
 
-      virtual OGPS_Character GetDirectorySeparator() const;
-      virtual OGPS_Character GetAltDirectorySeparator() const;
-      virtual OGPS_Boolean GetPathName(const OpenGPS::String& path, OpenGPS::String& clean_path) const;
-      virtual OpenGPS::String GetFileName(const OpenGPS::String& path) const;
-      virtual OpenGPS::String ConcatPathes(const OpenGPS::String& path1, const OpenGPS::String& path2) const;
-      virtual OGPS_Boolean PathExists(const OpenGPS::String& file) const;
-      virtual OGPS_Boolean RemoveFile(const OpenGPS::String& file) const;
-      virtual OpenGPS::String GetUniqueName() const;
-      virtual OGPS_Boolean CreateDir(const OpenGPS::String& path) const;
-      virtual OGPS_Boolean RemoveDir(const OpenGPS::String& path) const;
-      virtual OpenGPS::String GetTempDir() const;
-      virtual OGPS_Boolean RenameFile(const OpenGPS::String& src, const OpenGPS::String& dst) const;
-      virtual OGPS_Boolean GetVariable(const OpenGPS::String& varName, OpenGPS::String& value) const;
-      virtual OpenGPS::String GetLastErrorMessage() const;
+      OGPS_Character GetDirectorySeparator() const override;
+      OGPS_Character GetAltDirectorySeparator() const override;
+      bool GetPathName(const String& path, String& clean_path) const override;
+      String GetFileName(const String& path) const override;
+      String ConcatPathes(const String& path1, const String& path2) const override;
+      bool PathExists(const String& file) const override;
+      bool RemoveFile(const String& file) const override;
+      String GetUniqueName() const override;
+      bool CreateDir(const String& path) const override;
+      bool RemoveDir(const String& path) const override;
+      String GetTempDir() const override;
+      bool RenameFile(const String& src, const String& dst) const override;
+      bool GetVariable(const String& varName, String& value) const override;
+      String GetLastErrorMessage() const override;
 
    private:
       /*! Resets the last system error API code. */
       void ResetLastErrorCode() const;
 
       /*! Tracks whether the sofware randomization API still needs to be initialized before its usage. */
-      static OGPS_Boolean m_InitRandom;
+      static bool m_InitRandom;
    };
 }
 
-#endif /* _WIN32 */
+#endif
 
-#endif /* _OPENGPS_WIN32_ENVIRONMENT_HXX */
+#endif

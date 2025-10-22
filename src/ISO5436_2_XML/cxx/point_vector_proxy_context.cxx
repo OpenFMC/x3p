@@ -32,25 +32,17 @@
 
 #include "stdafx.hxx"
 
-PointVectorProxyContext::PointVectorProxyContext()
+size_t PointVectorProxyContext::GetIndex() const
 {
+	return 0;
 }
 
-PointVectorProxyContext::~PointVectorProxyContext()
+bool PointVectorProxyContext::CanIncrementIndex() const
 {
+	return false;
 }
 
-OGPS_ULong PointVectorProxyContext::GetIndex() const
+bool PointVectorProxyContext::IncrementIndex()
 {
-   return 0;
-}
-
-OGPS_Boolean PointVectorProxyContext::CanIncrementIndex() const
-{
-   return FALSE;
-}
-
-OGPS_Boolean PointVectorProxyContext::IncrementIndex()
-{
-   return FALSE;
+	return false;
 }

@@ -35,84 +35,87 @@
 
 #include "stdafx.hxx"
 
-/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
-#define _CHECK_STREAM_AND_THROW_EXCEPTION \
-   if(!m_Stream) \
-   { \
-   throw OpenGPS::Exception( \
-      OGPS_ExInvalidOperation, \
-      _EX_T("No binary file stream available."), \
-      _EX_T("The operation on the binary file stream failed, because the stream has been closed already."), \
-      _EX_T("OpenGPS::BinaryPointVectorReaderContext")); \
-   }
-
-
-BinaryPointVectorReaderContext::BinaryPointVectorReaderContext(const OpenGPS::String& filePath)
-: PointVectorReaderContext()
+BinaryPointVectorReaderContext::BinaryPointVectorReaderContext(const String& filePath)
+	:m_Stream{ std::make_unique<InputBinaryFileStream>(filePath) }
 {
-   m_Stream = new InputBinaryFileStream(filePath);
 }
 
 BinaryPointVectorReaderContext::~BinaryPointVectorReaderContext()
 {
-   Close();
+	Close();
 }
 
 void BinaryPointVectorReaderContext::Close()
 {
-   if(m_Stream)
-   {
-      m_Stream->close();
-      _OPENGPS_DELETE(m_Stream);
-   }
+	if (m_Stream)
+	{
+		m_Stream->close();
+		m_Stream.reset();
+	}
 }
 
-OGPS_Boolean BinaryPointVectorReaderContext::MoveNext()
+void BinaryPointVectorReaderContext::CheckStreamAndThrowException()
 {
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-
-   m_Stream->peek();
-   return !m_Stream->eof();
+	if (!m_Stream)
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("No binary file stream available."),
+			_EX_T("The operation on the binary file stream failed, because the stream has been closed already."),
+			_EX_T("OpenGPS::BinaryPointVectorReaderContext"));
+	}
 }
 
-OGPS_Boolean BinaryPointVectorReaderContext::IsValid() const
+void BinaryPointVectorReaderContext::CheckIsGoodAndThrowException()
 {
-   // If point data is read from a binary file, anytime - even if point data
-   // at the current position is invalid - a value itself is still available.
-   // Integer type default to null; floating point types here have set
-   // a special value indicating that current point data is invalid, but
-   // it can safely be read though.
-   return TRUE;
+	if (!IsGood())
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("The underlying binary stream object became invalid."),
+			_EX_T("A read/write error occured."),
+			_EX_T("OpenGPS::BinaryPointVectorReaderContext"));
+	}
+}
+
+bool BinaryPointVectorReaderContext::MoveNext()
+{
+	CheckStreamAndThrowException();
+
+	m_Stream->peek();
+	return !m_Stream->eof();
+}
+
+bool BinaryPointVectorReaderContext::IsValid() const
+{
+	// If point data is read from a binary file, anytime - even if point data
+	// at the current position is invalid - a value itself is still available.
+	// Integer type default to null; floating point types here have set
+	// a special value indicating that current point data is invalid, but
+	// it can safely be read though.
+	return true;
 }
 
 void BinaryPointVectorReaderContext::Skip()
 {
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-
-   if(!IsGood())
-   {
-      throw OpenGPS::Exception(
-         OGPS_ExInvalidOperation,
-         _EX_T("The underlying binary stream object became invalid."),
-         _EX_T("A read/write error occured."),
-         _EX_T("OpenGPS::BinaryPointVectorReaderContext::Skip"));
-   }
+	CheckStreamAndThrowException();
+	CheckIsGoodAndThrowException();
 }
 
-OGPS_Boolean BinaryPointVectorReaderContext::IsGood() const
+bool BinaryPointVectorReaderContext::IsGood() const
 {
-   _ASSERT(m_Stream);
+	assert(m_Stream);
 
-   const std::ios_base::io_state state = m_Stream->rdstate();
-   return (state == std::ios_base::goodbit || state == std::ios_base::eofbit);
+	const auto state{ m_Stream->rdstate() };
+	return (state == std::ios_base::goodbit || state == std::ios_base::eofbit);
 }
 
-OGPS_Boolean BinaryPointVectorReaderContext::HasStream() const
+bool BinaryPointVectorReaderContext::HasStream() const
 {
-   return m_Stream != NULL;
+	return m_Stream != nullptr;
 }
 
-InputBinaryFileStream* BinaryPointVectorReaderContext::GetStream()
+InputBinaryFileStream* BinaryPointVectorReaderContext::GetStream() const
 {
-   return m_Stream;
+	return m_Stream.get();
 }

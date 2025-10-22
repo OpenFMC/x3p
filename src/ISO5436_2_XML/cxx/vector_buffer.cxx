@@ -34,113 +34,69 @@
 
 #include "stdafx.hxx"
 
-VectorBuffer::VectorBuffer()
+void VectorBuffer::SetX(std::shared_ptr<PointBuffer> value)
 {
-   m_X = NULL;
-   m_Y = NULL;
-   m_Z = NULL;
+	assert(!m_X);
 
-   m_ValidityProvider = NULL;
-   m_ValidBuffer = NULL;
+	m_X = value;
 }
 
-VectorBuffer::~VectorBuffer()
+void VectorBuffer::SetY(std::shared_ptr<PointBuffer> value)
 {
-   _OPENGPS_DELETE(m_X);
-   _OPENGPS_DELETE(m_Y);
-   _OPENGPS_DELETE(m_Z);
+	assert(!m_Y);
 
-   _OPENGPS_DELETE(m_ValidityProvider);
+	m_Y = value;
 }
 
-void VectorBuffer::SetX(PointBuffer* const value)
+void VectorBuffer::SetZ(std::shared_ptr<PointBuffer> value)
 {
-   _ASSERT(!m_X);
+	assert(!m_Z);
 
-   m_X = value;
+	m_Z = value;
 }
 
-void VectorBuffer::SetY(PointBuffer* const value)
+void VectorBuffer::SetValidityProvider(std::shared_ptr<PointValidityProvider> value, std::shared_ptr<ValidBuffer> buffer)
 {
-   _ASSERT(!m_Y);
+	assert(!m_ValidityProvider);
+	assert(!m_ValidBuffer);
 
-   m_Y = value;
+	assert(buffer == nullptr || buffer == value);
+
+	m_ValidityProvider = value;
+	m_ValidBuffer = buffer;
 }
 
-void VectorBuffer::SetZ(PointBuffer* const value)
+std::shared_ptr<PointBuffer> VectorBuffer::GetX() const
 {
-   _ASSERT(!m_Z);
-
-   m_Z = value;
+	return m_X;
 }
 
-void VectorBuffer::SetValidityProvider(PointValidityProvider* const value, ValidBuffer* const buffer)
+std::shared_ptr<PointBuffer> VectorBuffer::GetY() const
 {
-   _ASSERT(!m_ValidityProvider);
-   _ASSERT(!m_ValidBuffer);
-
-   _ASSERT(buffer == NULL || buffer == value);
-
-   m_ValidityProvider = value;
-   m_ValidBuffer = buffer;
+	return m_Y;
 }
 
-PointBuffer* VectorBuffer::GetX()
+std::shared_ptr<PointBuffer> VectorBuffer::GetZ() const
 {
-   return m_X;
+	return m_Z;
 }
 
-PointBuffer* VectorBuffer::GetY()
+PointValidityProvider* VectorBuffer::GetValidityProvider() const
 {
-   return m_Y;
+	return m_ValidityProvider.get();
 }
 
-PointBuffer* VectorBuffer::GetZ()
+ValidBuffer* VectorBuffer::GetValidityBuffer() const
 {
-   return m_Z;
+	return m_ValidBuffer.get();
 }
 
-PointValidityProvider* VectorBuffer::GetValidityProvider()
+bool VectorBuffer::HasValidityBuffer() const
 {
-   return m_ValidityProvider;
+	return m_ValidBuffer != nullptr;
 }
 
-ValidBuffer* VectorBuffer::GetValidityBuffer()
+std::shared_ptr<PointVectorBase> VectorBuffer::CreatePointVectorProxy(std::shared_ptr<PointVectorProxyContext> context)
 {
-   return m_ValidBuffer;
-}
-
-const PointBuffer* VectorBuffer::GetX() const
-{
-   return m_X;
-}
-
-const PointBuffer* VectorBuffer::GetY() const
-{
-   return m_Y;
-}
-
-const PointBuffer* VectorBuffer::GetZ() const
-{
-   return m_Z;
-}
-
-const PointValidityProvider* VectorBuffer::GetValidityProvider() const
-{
-   return m_ValidityProvider;
-}
-
-const ValidBuffer* VectorBuffer::GetValidityBuffer() const
-{
-   return m_ValidBuffer;
-}
-
-OGPS_Boolean VectorBuffer::HasValidityBuffer() const
-{
-   return m_ValidBuffer != NULL;
-}
-
-PointVectorAutoPtr VectorBuffer::GetPointVectorProxy(const PointVectorProxyContext& context)
-{
-   return PointVectorAutoPtr(new PointVectorProxy(&context, this));
+	return std::make_shared<PointVectorProxy>(context, *this);
 }

@@ -28,15 +28,15 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-/*! \addtogroup C
- *  @{
- */
+ /*! \addtogroup C
+  *  @{
+  */
 
-/*! @file
- * An enumeration type which may describe the data type of
- * a current data point value. Used by various components throughout
- * this software library.
- */
+  /*! @file
+   * An enumeration type which may describe the data type of
+   * a current data point value. Used by various components throughout
+   * this software library.
+   */
 
 #ifndef _OPENGPS_DATA_POINT_TYPE_H
 #define _OPENGPS_DATA_POINT_TYPE_H
@@ -45,25 +45,25 @@
 extern "C" {
 #endif
 
-   /*!
-    * Possible types of data stored in an ::OGPS_DataPointPtr instance.
-    */
-   typedef enum _OGPS_DATA_POINT_TYPE {
-      /*! Describes an invalid type. */
-      OGPS_MissingPointType,
-      /*! Describes an instance of type ::OGPS_Int16. */
-      OGPS_Int16PointType,
-      /*! Describes an instance of type ::OGPS_Int32. */
-      OGPS_Int32PointType,
-      /*! Describes an instance of type ::OGPS_Float. */
-      OGPS_FloatPointType,
-      /*! Describes an instance of type ::OGPS_Double. */
-      OGPS_DoublePointType
-   } OGPS_DataPointType; /*! Possible types of data stored in an OGPS_DataPointPtr instance. */
+	/*!
+	 * Possible types of data stored in an ::OGPS_DataPointPtr instance.
+	 */
+	typedef enum _OGPS_DATA_POINT_TYPE {
+		/*! Describes an invalid type. */
+		OGPS_MissingPointType,
+		/*! Describes an instance of type ::OGPS_Int16. */
+		OGPS_Int16PointType,
+		/*! Describes an instance of type ::OGPS_Int32. */
+		OGPS_Int32PointType,
+		/*! Describes an instance of type ::OGPS_Float. */
+		OGPS_FloatPointType,
+		/*! Describes an instance of type ::OGPS_Double. */
+		OGPS_DoublePointType
+	} OGPS_DataPointType; /*! Possible types of data stored in an OGPS_DataPointPtr instance. */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _OPENGPS_DATA_POINT_TYPE_H */
+#endif
 /*! @} */

@@ -40,350 +40,332 @@
 #ifndef _OPENGPS_CXX_POINT_VECTOR_HXX
 #define _OPENGPS_CXX_POINT_VECTOR_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_CXX_POINT_VECTOR_BASE_HXX
-#  include <opengps/cxx/point_vector_base.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include <opengps/cxx/point_vector_base.hxx>
 
 namespace OpenGPS
 {
-   class DataPoint;
+	class DataPoint;
 
-   /*!
-    * Typesafe representation of three-dimensional point measurement data.
-    */
-   class _OPENGPS_EXPORT PointVector : public PointVectorBase
-   {
-   public:
-      /*! Creates a new instance. */
-      PointVector();
+	/*!
+	 * Typesafe representation of three-dimensional point measurement data.
+	 */
+	class _OPENGPS_EXPORT PointVector : public PointVectorBase
+	{
+	public:
+		/*! Creates a new instance. */
+		PointVector();
 
-      /*! Destructs this object. */
-      ~PointVector();
+		/*! Destroys this instance. */
+		~PointVector() override;
 
-      /*!
-       * Gets typesafe direct read-only access to the x component.
-       */
-      virtual const DataPoint* GetX() const;
+		/*!
+		 * Gets typesafe direct access to the x component.
+		 */
+		DataPoint* GetX() const override;
 
-      /*!
-       * Gets typesafe direct read-only access to the y component.
-       */
-      virtual const DataPoint* GetY() const;
+		/*!
+		 * Gets typesafe direct access to the y component.
+		 */
+		DataPoint* GetY() const override;
 
-      /*!
-       * Gets typesafe direct read-only access to the z component.
-       */
-      virtual const DataPoint* GetZ() const;
+		/*!
+		 * Gets typesafe direct access to the z component.
+		 */
+		DataPoint* GetZ() const override;
 
-      /*!
-       * Gets typesafe direct access to the x component.
-       */
-      virtual DataPoint* GetX();
+		/*!
+		 * Copies values from another OpenGPS::PointVector instance.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance.
+		 *
+		 * @param value OpenGPS::PointVectorBase object to copy from.
+		 */
+		void Set(const PointVectorBase& value) override;
 
-      /*!
-       * Gets typesafe direct access to the y component.
-       */
-      virtual DataPoint* GetY();
+		/*!
+		 * Copies values to another OpenGPS::PointVectorBase instance.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance.
+		 *
+		 * @param value Retrieves values from the current instance as a copy.
+		 */
+		void Get(PointVectorBase& value) const override;
 
-      /*!
-       * Gets typesafe direct access to the z component.
-       */
-      virtual DataPoint* GetZ();
+		/*!
+		 * Gets the value of the x component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetX(OGPS_Int16* value) const;
 
-      /*!
-       * Copies values from another OpenGPS::PointVector instance.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance.
-       *
-       * @param value OpenGPS::PointVectorBase object to copy from.
-       */
-      virtual void Set(const PointVectorBase& value);
+		/*!
+		 * Gets the value of the x component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetX(OGPS_Int32* value) const;
 
-      /*!
-       * Copies values to another OpenGPS::PointVectorBase instance.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance.
-       *
-       * @param value Retrieves values from the current instance as a copy.
-       */
-      virtual void Get(PointVectorBase& value) const;
+		/*!
+		 * Gets the value of the x component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetX(OGPS_Float* value) const;
 
-      /*!
-       * Gets the value of the x component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetX(OGPS_Int16* const value) const;
+		/*!
+		 * Gets the value of the x component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetX(OGPS_Double* value) const;
 
-      /*!
-       * Gets the value of the x component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetX(OGPS_Int32* const value) const;
+		/*!
+		 * Gets the value of the y component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetY(OGPS_Int16* value) const;
 
-      /*!
-       * Gets the value of the x component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetX(OGPS_Float* const value) const;
+		/*!
+		 * Gets the value of the y component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetY(OGPS_Int32* value) const;
 
-      /*!
-       * Gets the value of the x component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetX(OGPS_Double* const value) const;
+		/*!
+		 * Gets the value of the y component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetY(OGPS_Float* value) const;
 
-      /*!
-       * Gets the value of the y component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetY(OGPS_Int16* const value) const;
+		/*!
+		 * Gets the value of the y component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetY(OGPS_Double* value) const;
 
-      /*!
-       * Gets the value of the y component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetY(OGPS_Int32* const value) const;
+		/*!
+		 * Gets the value of the z component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetZ(OGPS_Int16* value) const;
 
-      /*!
-       * Gets the value of the y component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetY(OGPS_Float* const value) const;
+		/*!
+		 * Gets the value of the z component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetZ(OGPS_Int32* value) const;
 
-      /*!
-       * Gets the value of the y component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetY(OGPS_Double* const value) const;
+		/*!
+		 * Gets the value of the z component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetZ(OGPS_Float* value) const;
 
-      /*!
-       * Gets the value of the z component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetZ(OGPS_Int16* const value) const;
+		/*!
+		 * Gets the value of the z component of the given vector.
+		 *
+		 * Throws an OpenGPS::Exception if this operation is not permitted
+		 * due to the current state of the object instance or conflicting types.
+		 *
+		 * @see ::OGPS_DataPointType
+		 *
+		 * @param value Stores the current value on success.
+		 */
+		void GetZ(OGPS_Double* value) const;
 
-      /*!
-       * Gets the value of the z component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetZ(OGPS_Int32* const value) const;
+		/*!
+		 * Sets the new value for the x component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetX(OGPS_Int16 value);
 
-      /*!
-       * Gets the value of the z component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetZ(OGPS_Float* const value) const;
+		/*!
+		 * Sets the new value for the x component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetX(OGPS_Int32 value);
 
-      /*!
-       * Gets the value of the z component of the given vector.
-       *
-       * Throws an OpenGPS::Exception if this operation is not permitted
-       * due to the current state of the object instance or conflicting types.
-       *
-       * @see ::OGPS_DataPointType
-       *
-       * @param value Stores the current value on success.
-       */
-      void GetZ(OGPS_Double* const value) const;
+		/*!
+		 * Sets the new value for the x component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetX(OGPS_Float value);
 
-      /*!
-       * Sets the new value for the x component.
-       *
-       * @param value The new value.
-       */
-      void SetX(const OGPS_Int16 value);
+		/*!
+		 * Sets the new value for the x component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetX(OGPS_Double value);
 
-      /*!
-       * Sets the new value for the x component.
-       *
-       * @param value The new value.
-       */
-      void SetX(const OGPS_Int32 value);
+		/*!
+		 * Sets the new value for the y component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetY(OGPS_Int16 value);
 
-      /*!
-       * Sets the new value for the x component.
-       *
-       * @param value The new value.
-       */
-      void SetX(const OGPS_Float value);
+		/*!
+		 * Sets the new value for the y component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetY(OGPS_Int32 value);
 
-      /*!
-       * Sets the new value for the x component.
-       *
-       * @param value The new value.
-       */
-      void SetX(const OGPS_Double value);
+		/*!
+		 * Sets the new value for the y component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetY(OGPS_Float value);
 
-      /*!
-       * Sets the new value for the y component.
-       *
-       * @param value The new value.
-       */
-      void SetY(const OGPS_Int16 value);
+		/*!
+		 * Sets the new value for the y component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetY(OGPS_Double value);
 
-      /*!
-       * Sets the new value for the y component.
-       *
-       * @param value The new value.
-       */
-      void SetY(const OGPS_Int32 value);
+		/*!
+		 * Sets the new value for the z component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetZ(OGPS_Int16 value);
 
-      /*!
-       * Sets the new value for the y component.
-       *
-       * @param value The new value.
-       */
-      void SetY(const OGPS_Float value);
+		/*!
+		 * Sets the new value for the z component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetZ(OGPS_Int32 value);
 
-      /*!
-       * Sets the new value for the y component.
-       *
-       * @param value The new value.
-       */
-      void SetY(const OGPS_Double value);
+		/*!
+		 * Sets the new value for the z component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetZ(OGPS_Float value);
 
-      /*!
-       * Sets the new value for the z component.
-       *
-       * @param value The new value.
-       */
-      void SetZ(const OGPS_Int16 value);
+		/*!
+		 * Sets the new value for the z component.
+		 *
+		 * @param value The new value.
+		 */
+		void SetZ(OGPS_Double value);
 
-      /*!
-       * Sets the new value for the z component.
-       *
-       * @param value The new value.
-       */
-      void SetZ(const OGPS_Int32 value);
+		/*!
+		 * Gets the values of each component.
+		 *
+		 * @param x Gets the value of the x component. If this parameter is set to nullptr, this does nothing.
+		 * @param y Gets the value of the y component. If this parameter is set to nullptr, this does nothing.
+		 * @param z Gets the value of the z component. If this parameter is set to nullptr, this does nothing.
+		 */
+		void GetXYZ(
+			OGPS_Double* x,
+			OGPS_Double* y,
+			OGPS_Double* z) const;
 
-      /*!
-       * Sets the new value for the z component.
-       *
-       * @param value The new value.
-       */
-      void SetZ(const OGPS_Float value);
+		/*!
+		 * Sets the values of each component.
+		 *
+		 * @param x Sets the value of the x component.
+		 * @param y Sets the value of the y component.
+		 * @param z Sets the value of the z component.
+		 */
+		void SetXYZ(
+			OGPS_Double x,
+			OGPS_Double y,
+			OGPS_Double z) const;
 
-      /*!
-       * Sets the new value for the z component.
-       *
-       * @param value The new value.
-       */
-      void SetZ(const OGPS_Double value);
+		/*!
+		 * Asks if this point vector stores a valid data point.
+		 *
+		 * A valid point vector does not have components where some or all of its values are missing.
+		 * Missing or invalid points are indicated by ::OGPS_MissingPointType.
+		 *
+		 * @returns Returns true if this point vector contains valid point components only, false otherwise.
+		 */
+		bool IsValid() const;
 
-      /*!
-       * Gets the values of each component.
-       *
-       * @param x Gets the value of the x component. If this parameter is set to NULL, this does nothing.
-       * @param y Gets the value of the y component. If this parameter is set to NULL, this does nothing.
-       * @param z Gets the value of the z component. If this parameter is set to NULL, this does nothing.
-       */
-      void GetXYZ(
-         OGPS_Double* const x,
-         OGPS_Double* const y,
-         OGPS_Double* const z) const;
+		PointVector& operator=(const PointVector& src);
 
-      /*!
-       * Sets the values of each component.
-       *
-       * @param x Sets the value of the x component.
-       * @param y Sets the value of the y component.
-       * @param z Sets the value of the z component.
-       */
-      void SetXYZ(
-         const OGPS_Double x,
-         const OGPS_Double y,
-         const OGPS_Double z) const;
+		PointVector(const PointVector& src) = delete;
 
-      /*!
-       * Asks if this point vector stores a valid data point.
-       *
-       * A valid point vector does not have components where some or all of its values are missing.
-       * Missing or invalid points are indicated by ::OGPS_MissingPointType.
-       *
-       * @returns Returns TRUE if this point vector contains valid point components only, FALSE otherwise.
-       */
-      virtual OGPS_Boolean IsValid() const;
-
-      PointVector& operator=(const PointVector& src);
-
-   private:
-      DataPoint* m_X;
-      DataPoint* m_Y;
-      DataPoint* m_Z;
-   };
+	private:
+		std::unique_ptr<DataPoint> m_X;
+		std::unique_ptr<DataPoint> m_Y;
+		std::unique_ptr<DataPoint> m_Z;
+	};
 }
 
-#endif /* _OPENGPS_CXX_POINT_VECTOR_HXX */
+#endif
 /*! @} */

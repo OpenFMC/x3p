@@ -36,9 +36,8 @@
 #ifndef _OPENGPS_C_POINT_VECTOR_HXX
 #define _OPENGPS_C_POINT_VECTOR_HXX
 
-#ifndef _OPENGPS_CXX_POINT_VECTOR_HXX
-#  include <opengps/cxx/point_vector.hxx>
-#endif
+#include <opengps/cxx/point_vector.hxx>
+#include "data_point_c.hxx"
 
 /*!
  * Encapsulates the internal C++ structure of a point vector handle used within
@@ -47,27 +46,29 @@
  */
 typedef struct _OGPS_POINT_VECTOR
 {
-   /*! Gets/Sets the pointer to the internal C++ object behind the scenes. */
-   OpenGPS::PointVector instance;
+	~_OGPS_POINT_VECTOR();
 
-   /*!
-    * Gets/Sets the buffered C interface wrapper for typesafe access to the X member
-    * of the internal C++ OpenGPS::PointVector instance.
-    */
-   OGPS_DataPointPtr x;
+	/*! Gets/Sets the pointer to the internal C++ object behind the scenes. */
+	OpenGPS::PointVector instance;
 
-   /*!
-    * Gets/Sets the buffered C interface wrapper for typesafe access to the Y member
-    * of the internal C++ OpenGPS::PointVector instance.
-    */
-   OGPS_DataPointPtr y;
+	/*!
+	 * Gets/Sets the buffered C interface wrapper for typesafe access to the X member
+	 * of the internal C++ OpenGPS::PointVector instance.
+	 */
+	OGPS_DataPointPtr x{};
 
-   /*!
-    * Gets/Sets the buffered C interface wrapper for typesafe access to the Z member
-    * of the internal C++ OpenGPS::PointVector instance.
-    */
-   OGPS_DataPointPtr z;
-} OGPS_PointVector, *OGPS_PointVectorPtr; /*! Encapsulates the internal C++ structure
+	/*!
+	 * Gets/Sets the buffered C interface wrapper for typesafe access to the Y member
+	 * of the internal C++ OpenGPS::PointVector instance.
+	 */
+	OGPS_DataPointPtr y{};
+
+	/*!
+	 * Gets/Sets the buffered C interface wrapper for typesafe access to the Z member
+	 * of the internal C++ OpenGPS::PointVector instance.
+	 */
+	OGPS_DataPointPtr z{};
+} OGPS_PointVector, * OGPS_PointVectorPtr; /*! Encapsulates the internal C++ structure
  * of a data point handle used within the C interface. */
 
-#endif /* _OPENGPS_C_POINT_VECTOR_HXX */
+#endif

@@ -126,7 +126,7 @@ function TestX3P()
           % Is a surface profile?
           if strcmp(pinfor.FeatureType,'SUR')
             % This is a matrix plot it layer by layer
-            hold all;
+            hold on;
             surface(x(:,:,layer),y(:,:,layer),z(:,:,layer));
             hold off;
           elseif strcmp(pinfor.FeatureType,'PRF')

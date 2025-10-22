@@ -32,50 +32,47 @@
 #include <opengps/cxx/string.hxx>
 #include "stdafx.hxx"
 
-Exception::Exception(const OGPS_ExceptionId id,
-                     const OGPS_ExceptionChar *text,
-                     const OGPS_ExceptionChar *details,
-                     const OGPS_ExceptionChar *method)
-#if _WIN32
-   : std::exception(text)
-#else
-   : std::exception()
-#endif
+Exception::Exception(OGPS_ExceptionId id,
+	const OGPS_ExceptionChar* text,
+	const OGPS_ExceptionChar* details,
+	const OGPS_ExceptionChar* method)
+	:std::runtime_error{ text },
+	m_Id{ id }
 {
-#if !_WIN32
-   std::cerr << text << std::endl;
-#endif
+	assert(text && details);
 
-   _ASSERT(text && details);
-
-   m_Id = id;
-   m_Details.FromChar(details);
-   m_Method.FromChar(method);
+	m_Details.FromChar(details);
+	m_Method.FromChar(method);
 }
 
-Exception::Exception(const Exception& rhs) throw()
-   : std::exception(rhs)
-{
-   m_Id = rhs.m_Id;
-   m_Details = rhs.m_Details;
-   m_Method = rhs.m_Method;
-}
-
-Exception::~Exception() throw()
+Exception::Exception(const Exception& rhs)
+	:std::runtime_error{ rhs },
+	m_Id{ rhs.m_Id },
+	m_Details{ rhs.m_Details },
+	m_Method{ rhs.m_Method }
 {
 }
 
-OGPS_ExceptionId Exception::id() const throw()
+Exception& Exception::operator=(const Exception& rhs)
 {
-   return m_Id;
+	std::runtime_error::operator=(rhs);
+	m_Id = rhs.m_Id;
+	m_Details = rhs.m_Details;
+	m_Method = rhs.m_Method;
+	return *this;
 }
 
-const OpenGPS::String& Exception::details() const throw()
+OGPS_ExceptionId Exception::id() const
 {
-   return m_Details;
+	return m_Id;
 }
 
-const OpenGPS::String& Exception::method() const throw()
+const String& Exception::details() const
 {
-   return m_Method;
+	return m_Details;
+}
+
+const String& Exception::method() const
+{
+	return m_Method;
 }

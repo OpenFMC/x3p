@@ -36,145 +36,126 @@
 #include <opengps/cxx/string.hxx>
 #include <opengps/cxx/exceptions.hxx>
 
-/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
-#define _CHECK_STREAM_AND_THROW_EXCEPTION \
-   if(!m_Stream) \
-   { \
-   throw OpenGPS::Exception( \
-      OGPS_ExInvalidOperation, \
-      _EX_T("No stream object available."), \
-      _EX_T("The operation on the stream object failed, because the stream has been released already."), \
-      _EX_T("OpenGPS::XmlPointVectorReaderContext")); \
-   }
-
-/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
-#define _CHECK_ISGOOD_AND_THROW_EXCEPTION \
-   if(!IsGood()) \
-   { \
-   throw OpenGPS::Exception( \
-      OGPS_ExInvalidOperation, \
-      _EX_T("The underlying stream object became invalid."), \
-      _EX_T("A read/write error occured."), \
-      _EX_T("OpenGPS::XmlPointVectorReaderContext")); \
-   }
-
-PointVectorReaderContext::PointVectorReaderContext()
+XmlPointVectorReaderContext::XmlPointVectorReaderContext(const StringList* pointVectorList)
+	:m_PointVectorList{ pointVectorList }
 {
-}
-
-PointVectorReaderContext::~PointVectorReaderContext()
-{
-}
-
-XmlPointVectorReaderContext::XmlPointVectorReaderContext(const StringList* const pointVectorList)
-: PointVectorReaderContext(), m_PointVectorList(pointVectorList)
-{
-   _ASSERT(pointVectorList);
-
-   m_Next = 0;
-   m_Stream = NULL;
+	assert(pointVectorList);
 }
 
 XmlPointVectorReaderContext::~XmlPointVectorReaderContext()
 {
-   Reset();
+	Reset();
 }
 
-void XmlPointVectorReaderContext::Set(const OpenGPS::String& buf)
+void XmlPointVectorReaderContext::Set(const String& buf)
 {
-   _ASSERT(m_Stream);
+	assert(m_Stream);
 
-   m_Stream->clear(); // reset current state
-   m_Stream->str(buf); // set new buffer
+	m_Stream->clear();
+	m_Stream->str(buf);
 }
 
 void XmlPointVectorReaderContext::Reset()
 {
-   _OPENGPS_DELETE(m_Stream);
+	m_Stream.reset();
 
-   m_Next = 0;
+	m_Next = 0;
 }
 
-void XmlPointVectorReaderContext::Read(OGPS_Int16* const value)
+template<typename T>
+inline void XmlPointVectorReaderContext::ReadT(T& value)
 {
-   _ASSERT(value);
-
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-   *m_Stream >> *value;
-   _CHECK_ISGOOD_AND_THROW_EXCEPTION;
+	CheckStreamAndThrowException();
+	*m_Stream >> value;
+	CheckIsGoodAndThrowException();
 }
 
-void XmlPointVectorReaderContext::Read(OGPS_Int32* const value)
+void XmlPointVectorReaderContext::Read(OGPS_Int16& value)
 {
-   _ASSERT(value);
-
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-   *m_Stream >> *value;
-   _CHECK_ISGOOD_AND_THROW_EXCEPTION;
+	ReadT<OGPS_Int16>(value);
 }
 
-void XmlPointVectorReaderContext::Read(OGPS_Float* const value)
+void XmlPointVectorReaderContext::Read(OGPS_Int32& value)
 {
-   _ASSERT(value);
-
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-   *m_Stream >> *value;
-   _CHECK_ISGOOD_AND_THROW_EXCEPTION;
+	ReadT<OGPS_Int32>(value);
 }
 
-void XmlPointVectorReaderContext::Read(OGPS_Double* const value)
+void XmlPointVectorReaderContext::Read(OGPS_Float& value)
 {
-   _ASSERT(value);
+	ReadT<OGPS_Float>(value);
+}
 
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-   *m_Stream >> *value;
-   _CHECK_ISGOOD_AND_THROW_EXCEPTION;
+void XmlPointVectorReaderContext::Read(OGPS_Double& value)
+{
+	ReadT<OGPS_Double>(value);
 }
 
 void XmlPointVectorReaderContext::Skip()
 {
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-   _CHECK_ISGOOD_AND_THROW_EXCEPTION;
+	CheckStreamAndThrowException();
+	CheckIsGoodAndThrowException();
 }
 
-OGPS_Boolean XmlPointVectorReaderContext::IsGood() const
+bool XmlPointVectorReaderContext::IsGood() const
 {
-   _ASSERT(m_Stream);
+	assert(m_Stream);
 
-   const std::ios_base::io_state state = m_Stream->rdstate();
-   return (state == std::ios_base::goodbit || state == std::ios_base::eofbit);
+	return (m_Stream->rdstate() == std::ios_base::goodbit || m_Stream->rdstate() == std::ios_base::eofbit);
 }
 
-OGPS_Boolean XmlPointVectorReaderContext::MoveNext()
+bool XmlPointVectorReaderContext::MoveNext()
 {
-   _ASSERT(m_PointVectorList);
+	assert(m_PointVectorList);
 
-   if(m_Next > 0)
-   {
-      if(m_Next < m_PointVectorList->size())
-      {
-         Set(m_PointVectorList->at(m_Next++));
-         return TRUE;
-      }
+	if (m_Next > 0)
+	{
+		if (m_Next < m_PointVectorList->size())
+		{
+			Set(m_PointVectorList->at(m_Next++));
+			return true;
+		}
 
-      Reset();
-      return FALSE;
-   }
+		Reset();
+		return false;
+	}
 
-   // non-empty vector list
-   if(m_PointVectorList->size() > 0)
-   {
-      _ASSERT(!m_Stream);
+	if (m_PointVectorList->size() > 0)
+	{
+		assert(!m_Stream);
 
-      m_Stream = new PointVectorInputStringStream(m_PointVectorList->at(m_Next++));
+		m_Stream = std::make_unique<PointVectorInputStringStream>(m_PointVectorList->at(m_Next++));
 
-      return TRUE;
-   }
+		return true;
+	}
 
-   return FALSE;
+	return false;
 }
 
-OGPS_Boolean XmlPointVectorReaderContext::IsValid() const
+bool XmlPointVectorReaderContext::IsValid() const
 {
-   return (m_Stream && m_Stream->str().length() > 0);
+	return (m_Stream && m_Stream->str().length() > 0);
+}
+
+void XmlPointVectorReaderContext::CheckStreamAndThrowException()
+{
+	if (!m_Stream)
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("No stream object available."),
+			_EX_T("The operation on the stream object failed, because the stream has been released already."),
+			_EX_T("OpenGPS::XmlPointVectorReaderContext"));
+	}
+}
+
+void XmlPointVectorReaderContext::CheckIsGoodAndThrowException()
+{
+	if (!IsGood())
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("The underlying stream object became invalid."),
+			_EX_T("A read/write error occured."),
+			_EX_T("OpenGPS::XmlPointVectorReaderContext"));
+	}
 }

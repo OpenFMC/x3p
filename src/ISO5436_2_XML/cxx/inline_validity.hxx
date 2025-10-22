@@ -35,83 +35,95 @@
 #ifndef _OPENGPS_INLINE_VALIDITY_HXX
 #define _OPENGPS_INLINE_VALIDITY_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_POINT_VALIDITY_PROVIDER_HXX
-#  include "point_validity_provider.hxx"
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include <opengps/cxx/exceptions.hxx>
+#include "point_validity_provider.hxx"
+#include "point_buffer.hxx"
+#include <limits>
 
 namespace OpenGPS
 {
-   /*!
-    * Implements OpenGPS::PointValidityProvider as a lookup
-    * of a special IEEE754 value.
-    *
-    * If the value of the point data stored for the Z component
-    * of a point vector equals the special IEEE754 value
-    * of not-a-number, then the point measurement is identified as invalid.
-    */
-   class FloatInlineValidity : public PointValidityProvider
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param value The point buffer of the Z axis.
-       * @param allowInvalidPoints Whether the point buffer is allowed to contain
-       * invalid points.
-       */
-      FloatInlineValidity(PointBuffer* const value, const bool allowInvalidPoints);
+	/*!
+	 * Implements OpenGPS::PointValidityProvider as a lookup
+	 * of a special IEEE754 value.
+	 *
+	 * If the value of the point data stored for the Z component
+	 * of a point vector equals the special IEEE754 value
+	 * of not-a-number, then the point measurement is identified as invalid.
+	 */
+	template<typename T, OGPS_DataPointType TPoint> class InlineValidityT : public PointValidityProvider
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param value The point buffer of the Z axis.
+		 * @param allowInvalidPoints Whether the point buffer is allowed to contain
+		 * invalid points.
+		 */
+		InlineValidityT(std::shared_ptr<PointBuffer> value, bool allowInvalidPoints);
 
-      /*! Destroys this instance. */
-      ~FloatInlineValidity();
+		void SetValid(size_t index, bool value) override;
+		bool IsValid(size_t index) const override;
 
-      virtual void SetValid(const unsigned int index, const OGPS_Boolean value);
-      virtual OGPS_Boolean IsValid(const unsigned int index) const;
+	private:
+		/*! Defines whether the point buffer is allowed to contain invalid points. */
+		const bool m_AllowInvalidPoints;
 
-   private:
-      /*! Defines whether the point buffer is allowed to contain invalid points. */
-      const bool m_AllowInvalidPoints;
+		/*! Not implemented. */
+		InlineValidityT(const InlineValidityT& src) = delete;
+		InlineValidityT& operator=(const InlineValidityT& src) = delete;
+	};
 
-      /*! Not implemented. */
-      FloatInlineValidity(const FloatInlineValidity& src);
-      FloatInlineValidity& operator=(const FloatInlineValidity& src);
-   };
+	template<typename T, OGPS_DataPointType TPoint>
+	inline InlineValidityT<T, TPoint>::InlineValidityT(std::shared_ptr<PointBuffer> value, bool allowInvalidPoints)
+		:PointValidityProvider(value),
+		m_AllowInvalidPoints(allowInvalidPoints)
+	{
+		assert(value && value->GetPointType() == TPoint);
+	}
 
-   /*!
-    * Implements OpenGPS::PointValidityProvider as a lookup
-    * of a special IEEE754 value.
-    *
-    * If the value of the point data stored for the Z component
-    * of a point vector equals the special IEEE754 value
-    * of not-a-number, then the point measurement is identified as invalid.
-    */
-   class DoubleInlineValidity : public PointValidityProvider
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param value The point buffer of the Z axis.
-       * @param allowInvalidPoints Whether the point buffer is allowed to contain
-       * invalid points.
-       */
-      DoubleInlineValidity(PointBuffer* const value, const bool allowInvalidPoints);
+	template<typename T, OGPS_DataPointType TPoint>
+	inline void InlineValidityT<T, TPoint>::SetValid(size_t index, bool value)
+	{
+		static_assert(std::numeric_limits<T>::has_quiet_NaN, "Type for InlineValidityT has no NaN");
 
-      /*! Destroys this instance. */
-      ~DoubleInlineValidity();
+		if (!value)
+		{
+			if (!m_AllowInvalidPoints)
+			{
+				throw Exception(
+					OGPS_ExInvalidOperation,
+					_EX_T("This point data set may not contain invalid points."),
+					_EX_T("An attempt was made to set an invalid point, although this has been explicitly forbidden. E.g. point clouds of record1 feature type PCL are not allowed to contain invalid points."),
+					_EX_T("OpenGPS::InlineValidityT::SetValid"));
+			}
 
-      virtual void SetValid(const unsigned int index, const OGPS_Boolean value);
-      virtual OGPS_Boolean IsValid(const unsigned int index) const;
+			GetPointBuffer()->Set(index, std::numeric_limits<T>::quiet_NaN());
+		}
+	}
 
-   private:
-      /*! Defines whether the point buffer is allowed to contain invalid points. */
-      const bool m_AllowInvalidPoints;
+	template<typename T, OGPS_DataPointType TPoint>
+	inline bool InlineValidityT<T, TPoint>::IsValid(size_t index) const
+	{
+		static_assert(std::numeric_limits<T>::has_quiet_NaN, "Type for InlineValidityT has no NaN");
 
-      /*! Not implemented. */
-      DoubleInlineValidity(const DoubleInlineValidity& src);
-      DoubleInlineValidity& operator=(const DoubleInlineValidity& src);
-   };
+		T value{};
+		GetPointBuffer()->Get(index, value);
+		// Comparing a NaN to itself is allways false
+		const bool isValid = (value == value);
+		if (!isValid && !m_AllowInvalidPoints)
+		{
+			throw Exception(
+				OGPS_ExWarning,
+				_EX_T("This point data set may not contain invalid points."),
+				_EX_T("Although this has been explicitly forbidden the current point data contains invalid points. This may be ignored, but e.g. for point clouds of record1 feature type PCL it makes no sense to contain invalid points. These points should not be within the cloud, afterall."),
+				_EX_T("OpenGPS::InlineValidityT::IsValid"));
+		}
+		return isValid;
+	}
+
+	typedef InlineValidityT<OGPS_Float, OGPS_FloatPointType> FloatInlineValidity;
+	typedef InlineValidityT<OGPS_Double, OGPS_DoublePointType> DoubleInlineValidity;
 }
 
-#endif /* _OPENGPS_INLINE_VALIDITY_HXX */
+#endif

@@ -27,13 +27,13 @@ This files are untested yet and are intented for testing purposes only.
 The files have the following contents:
 
 1. areal data set in matrix representation with incremental x/y axis.
-2. same as 1. with 100 µm offset for second layer
+2. same as 1. with 100 Âµm offset for second layer
 3. same as 1. with missing data area of 20 by 10 pixel in the center of the image
 4. same as 1. with a rotation matrix roating 10 deg. around x-axis and an offset vector [x,y,z]=[1e-6,5e-3,1e0] meter
 5. same as 4. with absolute x/y axis
-6. same as 5. with a random 500nm jitter on x/y point positions added.
+6. same as 5. with a random 500 nm jitter on x/y point positions added.
 7. line profile extracted from 1. at line 500.
-8. 2-layer profile with 100 µm z-offset.
+8. 2-layer profile with 100 Âµm z-offset.
 9. line profile with rotation and translation matrix.
 
 Dr. Georg Wiora

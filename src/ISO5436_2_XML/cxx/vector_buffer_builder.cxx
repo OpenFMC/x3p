@@ -33,171 +33,147 @@
 
 #include "inline_validity.hxx"
 
-#include "int16_point_buffer.hxx"
-#include "int32_point_buffer.hxx"
-#include "float_point_buffer.hxx"
-#include "double_point_buffer.hxx"
+#include "point_buffer_impl.hxx"
 
 #include <opengps/cxx/exceptions.hxx>
 
 #include "stdafx.hxx"
 
-VectorBufferBuilder::VectorBufferBuilder()
+bool VectorBufferBuilder::BuildBuffer()
 {
-   m_Buffer = NULL;
+	assert(!m_Buffer);
+
+	m_Buffer = std::make_shared<VectorBuffer>();
+
+	return true;
 }
 
-VectorBufferBuilder::~VectorBufferBuilder()
+bool VectorBufferBuilder::BuildX(OGPS_DataPointType dataType, size_t size)
 {
-   _OPENGPS_DELETE(m_Buffer);
+	assert(m_Buffer);
+
+	bool success{};
+	m_Buffer->SetX(CreatePointBuffer(dataType, size, success));
+	return success;
 }
 
-OGPS_Boolean VectorBufferBuilder::BuildBuffer()
+bool VectorBufferBuilder::BuildY(OGPS_DataPointType dataType, size_t size)
 {
-   _ASSERT(!m_Buffer);
+	assert(m_Buffer);
 
-   m_Buffer = new VectorBuffer();
-
-   return TRUE;
+	bool success{};
+	m_Buffer->SetY(CreatePointBuffer(dataType, size, success));
+	return success;
 }
 
-OGPS_Boolean VectorBufferBuilder::BuildX(const OGPS_DataPointType dataType, const OGPS_ULong size)
+bool VectorBufferBuilder::BuildZ(OGPS_DataPointType dataType, size_t size)
 {
-   _ASSERT(m_Buffer);
+	assert(m_Buffer);
+	assert(dataType != OGPS_MissingPointType);
 
-   OGPS_Boolean success = FALSE;
-   m_Buffer->SetX(CreatePointBuffer(dataType, size, &success));
-   return success;
+	bool success{};
+	m_Buffer->SetZ(CreatePointBuffer(dataType, size, success));
+	return success;
 }
 
-OGPS_Boolean VectorBufferBuilder::BuildY(const OGPS_DataPointType dataType, const OGPS_ULong size)
+bool VectorBufferBuilder::BuildValidityProvider(bool allowInvalidPoints)
 {
-   _ASSERT(m_Buffer);
+	assert(m_Buffer);
+	assert(m_Buffer->GetZ());
 
-   OGPS_Boolean success = FALSE;
-   m_Buffer->SetY(CreatePointBuffer(dataType, size, &success));
-   return success;
+	std::shared_ptr<PointValidityProvider> provider;
+	std::shared_ptr<ValidBuffer> validBuffer;
+
+	auto zBuffer{ m_Buffer->GetZ() };
+	const auto dataType{ zBuffer->GetPointType() };
+
+	switch (dataType)
+	{
+	case OGPS_Int16PointType:
+	{
+		auto validityInt16{ std::make_shared<Int16ValidBuffer>(zBuffer) };
+		provider = validityInt16;
+		if (allowInvalidPoints)
+		{
+			validBuffer = validityInt16;
+		}
+	} break;
+	case OGPS_Int32PointType:
+	{
+		auto validityInt32{ std::make_shared<Int32ValidBuffer>(zBuffer) };
+		provider = validityInt32;
+		if (allowInvalidPoints)
+		{
+			validBuffer = validityInt32;
+		}
+	} break;
+	case OGPS_FloatPointType:
+	{
+		provider = std::make_shared<FloatInlineValidity>(zBuffer, allowInvalidPoints);
+	} break;
+	case OGPS_DoublePointType:
+	{
+		provider = std::make_shared<DoubleInlineValidity>(zBuffer, allowInvalidPoints);
+	} break;
+	case OGPS_MissingPointType:
+	{
+		assert(false);
+	} break;
+	default:
+	{
+		assert(false);
+	} break;
+	}
+
+	if (provider)
+	{
+		m_Buffer->SetValidityProvider(provider, validBuffer);
+		return true;
+	}
+
+	return false;
 }
 
-OGPS_Boolean VectorBufferBuilder::BuildZ(const OGPS_DataPointType dataType, const OGPS_ULong size)
+std::shared_ptr<VectorBuffer> VectorBufferBuilder::GetBuffer() const
 {
-   _ASSERT(m_Buffer);
-   _ASSERT(dataType != OGPS_MissingPointType);
-
-   OGPS_Boolean success = FALSE;
-   m_Buffer->SetZ(CreatePointBuffer(dataType, size, &success));
-   return success;
+	return m_Buffer;
 }
 
-OGPS_Boolean VectorBufferBuilder::BuildValidityProvider(const bool allowInvalidPoints)
+std::shared_ptr<PointBuffer> VectorBufferBuilder::CreatePointBuffer(OGPS_DataPointType dataType, size_t size, bool& retval) const
 {
-   _ASSERT(m_Buffer);
-   _ASSERT(m_Buffer->GetZ());
+	std::shared_ptr<PointBuffer> point;
 
-   PointValidityProvider* provider = NULL;
-   ValidBuffer* validBuffer = NULL;
+	switch (dataType)
+	{
+	case OGPS_Int16PointType:
+		point = std::make_shared<Int16PointBuffer>();
+		retval = true;
+		break;
+	case OGPS_Int32PointType:
+		point = std::make_shared<Int32PointBuffer>();
+		retval = true;
+		break;
+	case OGPS_FloatPointType:
+		point = std::make_shared<FloatPointBuffer>();
+		retval = true;
+		break;
+	case OGPS_DoublePointType:
+		point = std::make_shared<DoublePointBuffer>();
+		retval = true;
+		break;
+	case OGPS_MissingPointType:
+		retval = true;
+		break;
+	default:
+		retval = false;
+		assert(false);
+		break;
+	}
 
-   PointBuffer * const zBuffer = m_Buffer->GetZ();
-   const OGPS_DataPointType dataType = zBuffer->GetPointType();
+	if (point)
+	{
+		point->Allocate(size);
+	}
 
-   switch(dataType)
-   {
-   case OGPS_Int16PointType:
-      {
-         Int16ValidBuffer* validityInt16 = new Int16ValidBuffer(zBuffer);
-         provider = validityInt16;
-         if(allowInvalidPoints)
-         {
-            validBuffer = validityInt16;
-         }
-      } break;
-   case OGPS_Int32PointType:
-      {
-         Int32ValidBuffer* validityInt32 = new Int32ValidBuffer(zBuffer);
-         provider = validityInt32;
-         if(allowInvalidPoints)
-         {
-            validBuffer = validityInt32;
-         }
-      } break;
-   case OGPS_FloatPointType:
-      {
-         provider = new FloatInlineValidity(zBuffer, allowInvalidPoints);
-      } break;
-   case OGPS_DoublePointType:
-      {
-         provider = new DoubleInlineValidity(zBuffer, allowInvalidPoints);
-      } break;
-   case OGPS_MissingPointType:
-      {
-         _ASSERT(FALSE);
-      } break;
-   default:
-      {
-         _ASSERT(FALSE);
-      } break;
-   }
-
-   if(provider)
-   {
-      m_Buffer->SetValidityProvider(provider, validBuffer);
-      return TRUE;
-   }
-
-   return FALSE;
-}
-
-VectorBuffer* VectorBufferBuilder::GetBuffer()
-{
-   return m_Buffer;
-}
-
-PointBuffer* VectorBufferBuilder::CreatePointBuffer(const OGPS_DataPointType dataType, const OGPS_ULong size, OGPS_Boolean* const retval) const
-{
-   _ASSERT(retval);
-
-   PointBuffer* point = NULL;
-
-   switch(dataType)
-   {
-   case OGPS_Int16PointType:
-      point = new Int16PointBuffer();
-      *retval = TRUE;
-      break;
-   case OGPS_Int32PointType:
-      point = new Int32PointBuffer();
-      *retval = TRUE;
-      break;
-   case OGPS_FloatPointType:
-      point = new FloatPointBuffer();
-      *retval = TRUE;
-      break;
-   case OGPS_DoublePointType:
-      point = new DoublePointBuffer();
-      *retval = TRUE;
-      break;
-   case OGPS_MissingPointType:
-      *retval = TRUE;
-      break;
-   default:
-      *retval = FALSE;
-      _ASSERT(FALSE);
-      break;
-   }
-
-   if(point)
-   {
-      try
-      {
-         point->Allocate(size);
-      }
-      catch(const OpenGPS::Exception& ex)
-      {
-         _OPENGPS_DELETE(point);
-
-         throw OpenGPS::Exception(ex);
-      }
-   }
-
-   return point;
+	return point;
 }

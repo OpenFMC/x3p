@@ -39,21 +39,18 @@
 #ifndef _OPENGPS_CXX_ISO5436_2_XSD_UTILS_HXX
 #define _OPENGPS_CXX_ISO5436_2_XSD_UTILS_HXX
 
-#include <xsd/cxx/version.hxx>
+#include <opengps/cxx/iso5436_2_xsd.hxx>
 
-#if (XSD_INT_VERSION >= 3020000L)
+#if (LIBXSD_VERSION >= 400000000000000ULL)
 
 // Explicitly instantiate char-based (not only wchar_t-based, which is done
 // automatically) serialziation macros.
-#include <xsd/cxx/tree/bits/literals.hxx>
-
 #include <opengps/opengps.h>
-#include <xsd/cxx/tree/date-time.hxx>
 #include <ostream>
 
 namespace xml_schema
 {
-   typedef ::xsd::cxx::tree::date_time< wchar_t, ::xsd::cxx::tree::simple_type < ::xsd::cxx::tree::type > > date_time;
+	typedef ::xsd::cxx::tree::date_time<wchar_t, ::xsd::cxx::tree::simple_type<wchar_t, ::xsd::cxx::tree::type>> date_time;
 }
 
 /*!
@@ -68,8 +65,8 @@ _OPENGPS_EXPORT std::basic_ostream<char>& operator<<(std::basic_ostream<char>& o
 _OPENGPS_EXPORT std::basic_ostream<wchar_t>& operator<<(std::basic_ostream<wchar_t>& os, const xml_schema::date_time& datetime);
 #endif
 
-#endif /* XSD_INT_VERSION */
+#endif
 
-#endif /* _OPENGPS_CXX_ISO5436_2_XSD_UTILS_HXX */
+#endif
 
 /*! @} */

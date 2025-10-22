@@ -36,65 +36,59 @@
 #ifndef _OPENGPS_DATA_POINT_PARSER_HXX
 #define _OPENGPS_DATA_POINT_PARSER_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
 
 namespace OpenGPS
 {
-   class PointVectorReaderContext;
-   class PointVectorWriterContext;
-   class DataPoint;
+	class PointVectorReaderContext;
+	class PointVectorWriterContext;
+	class DataPoint;
 
-   /*!
-    * Interface for reading/writing point data.
-    * Reads/writes point data from/to specified media.
-    * This interface is implemented
-    * for every possible type of point data
-    * (::OGPS_DataPointType).
-    */
-   class DataPointParser
-   {
-   public:
-      /*! Destroys this instance. */
-      virtual ~DataPointParser();
+	/*!
+	 * Interface for reading/writing point data.
+	 * Reads/writes point data from/to specified media.
+	 * This interface is implemented
+	 * for every possible type of point data
+	 * (::OGPS_DataPointType).
+	 */
+	class DataPointParser
+	{
+	public:
+		/*! Destroys this instance. */
+		virtual ~DataPointParser() = default;
 
-      /*!
-       * Reads point data from a given context/media.
-       * Using the appropriate access method of the given implementation of
-       * OpenGPS::PointVectorReaderContext the current point value read
-       * gets stored in a OpenGPS::DataPoint instance. This operation is
-       * typesafe.
-       *
-       * A specific implementation may throw an OpenGPS::Exception if this operation
-       * is not permitted due to the current state of the object instance.
-       *
-       * @param context Provides read access to the media.
-       * @param value Buffer where the point data read gets stored.
-       */
-      virtual void Read(PointVectorReaderContext& context, DataPoint& value) = 0;
+		/*!
+		 * Reads point data from a given context/media.
+		 * Using the appropriate access method of the given implementation of
+		 * OpenGPS::PointVectorReaderContext the current point value read
+		 * gets stored in a OpenGPS::DataPoint instance. This operation is
+		 * typesafe.
+		 *
+		 * A specific implementation may throw an OpenGPS::Exception if this operation
+		 * is not permitted due to the current state of the object instance.
+		 *
+		 * @param context Provides read access to the media.
+		 * @param value Buffer where the point data read gets stored.
+		 */
+		virtual void Read(PointVectorReaderContext& context, DataPoint& value) = 0;
 
-      /*!
-       * Writes point data to a given context/media.
-       * Using the appropriate access method of the given implementation of
-       * OpenGPS::PointVectorWriterContext the point value currently
-       * stored in the OpenGPS::DataPoint instance gets written to the media.
-       * This operation is typesafe and will fail if the type of point data
-       * stored in the value object does not exacly match the current implementation of
-       * the OpenGPS::DataPointParser interface.
-       *
-       * A specific implementation may throw an OpenGPS::Exception if this operation
-       * is not permitted due to the current state of the object instance.
-       *
-       * @param context Provides write access to the media.
-       * @param value Buffer where the point data to be written is stored.
-       */
-      virtual void Write(PointVectorWriterContext& context, const DataPoint& value) = 0;
-
-   protected:
-      /*! Creates a new instance. */
-      DataPointParser();
-   };
+		/*!
+		 * Writes point data to a given context/media.
+		 * Using the appropriate access method of the given implementation of
+		 * OpenGPS::PointVectorWriterContext the point value currently
+		 * stored in the OpenGPS::DataPoint instance gets written to the media.
+		 * This operation is typesafe and will fail if the type of point data
+		 * stored in the value object does not exacly match the current implementation of
+		 * the OpenGPS::DataPointParser interface.
+		 *
+		 * A specific implementation may throw an OpenGPS::Exception if this operation
+		 * is not permitted due to the current state of the object instance.
+		 *
+		 * @param context Provides write access to the media.
+		 * @param value Buffer where the point data to be written is stored.
+		 */
+		virtual void Write(PointVectorWriterContext& context, const DataPoint& value) = 0;
+	};
 }
 
-#endif /* _OPENGPS_DATA_POINT_PARSER_HXX */
+#endif

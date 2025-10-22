@@ -28,15 +28,15 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-/*! @file
- * Standard includes and defines.
- */
+ /*! @file
+  * Standard includes and defines.
+  */
 
 #ifndef _OPENGPS_STDAFX_HXX
 #define _OPENGPS_STDAFX_HXX
 
-#if !(defined linux | defined __APPLE__)
-    #include <tchar.h>
+#ifdef _WIN32
+#include <tchar.h>
 #endif
 
 #include "version.h"
@@ -61,47 +61,27 @@ using namespace OpenGPS;
 #define _OPENGPS_ENV_OPENGPS_LOCATION _T("OPENGPS_LOCATION")
 #define _OPENGPS_ISO5436_LOCATION _T("iso5436_2.xsd")
 
+#include <cassert>
+
 #ifdef _DEBUG
 
-#include <assert.h>
-
-#ifndef _ASSERT
-#  define _ASSERT(x) assert(x)
-#endif
-
 #ifndef _VERIFY
-#  define _VERIFY(func, retval) _ASSERT(func == retval)
+#  define _VERIFY(func, retval) assert(func == retval)
 #endif
 
-#else /* _DEBUG */
-
-#ifndef _ASSERT
-#  define _ASSERT(x) ((void)0)
-#endif
+#else
 
 #ifndef _VERIFY
 #  define _VERIFY(func, retval) func
 #endif
 
-#endif /* _DEBUG */
+#endif
 
 #define _OPENGPS_EXCEPTION_MESG(x) x
 
-#if !_OPENGPS_CLEAN_BUILD_FLAG
-  #define _OPENGPS_EXPERIMENTAL _T(" (Experimental Version!)")
-#else
-  #if !_OPENGPS_CLEAN_REVISION_FLAG
-    #define _OPENGPS_EXPERIMENTAL _T(" (Experimental Version!)")
-  #endif
-#endif
-
-#ifndef _OPENGPS_EXPERIMENTAL
-  #define _OPENGPS_EXPERIMENTAL
-#endif
-
 /// Name of the program
-#define _OPENGPS_NAME _T("openGPS ISO 5436-2 XML") _OPENGPS_EXPERIMENTAL
+#define _OPENGPS_NAME _T("openGPS ISO 5436-2 XML")
 /// Short description of the library
 #define _OPENGPS_DESCRIPTION _T("openGPS class library implementing an xml-version of ISO 5436-2 file format.")
 
-#endif /* _OPENGPS_STDAFX_HXX */
+#endif

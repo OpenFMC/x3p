@@ -30,39 +30,38 @@
 
 #include <opengps/cxx/iso5436_2_xsd_utils.hxx>
 
-#if (XSD_INT_VERSION >= 3020000L)
+#if (LIBXSD_VERSION >= 400000000000000ULL)
 
 #include <opengps/cxx/string.hxx>
 #include <iomanip>
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const xml_schema::date_time& datetime)
 {
-   os << std::setfill('0') << std::setw(4) << datetime.year() << '-' << std::setw(2) << datetime.month()
-      << '-' << std::setw(2) << datetime.day() << 'T' << std::setw(2) << datetime.hours()
-      << ':' << std::setw(2) << datetime.minutes() << ':' << std::setw(2) << datetime.seconds();
-   
-   if(datetime.zone_present())
-   {
-      int offset_h = datetime.zone_hours();
-      OpenGPS::String tzoffsign;
-      if(offset_h < 0)
-      {
-         offset_h *= -1;
-         tzoffsign.assign(1, _T('-'));
-      }
-      else
-      {
-         tzoffsign.assign(1, _T('+'));
-      }
-      os << ".0" << tzoffsign.ToChar() << std::setw(2) << offset_h << ':' << std::setw(2) << datetime.zone_minutes();
-   }
+	os << std::setfill('0') << std::setw(4) << datetime.year() << '-' << std::setw(2) << datetime.month()
+		<< '-' << std::setw(2) << datetime.day() << 'T' << std::setw(2) << datetime.hours()
+		<< ':' << std::setw(2) << datetime.minutes() << ':' << std::setw(2) << datetime.seconds();
 
-   return os;
+	if (datetime.zone_present())
+	{
+		int offset_h = datetime.zone_hours();
+		OpenGPS::String tzoffsign;
+		if (offset_h < 0)
+		{
+			offset_h *= -1;
+			tzoffsign.assign(1, _T('-'));
+		}
+		else
+		{
+			tzoffsign.assign(1, _T('+'));
+		}
+		os << ".0" << tzoffsign.ToChar() << std::setw(2) << offset_h << ':' << std::setw(2) << datetime.zone_minutes();
+	}
+
+	return os;
 }
-
-
-
 
 #ifdef _UNICODE
 
@@ -70,19 +69,19 @@ std::basic_ostream<char>& operator<<(std::basic_ostream<char>& os, const xml_sch
 
 std::basic_ostream<wchar_t>& operator<<(std::basic_ostream<wchar_t>& os, const xml_schema::date_time& datetime)
 {
-   // std::ostringstream uses char as a base type (not wchar_t)
-   std::ostringstream char_stream;
-   // Uses the char-operator from above
-   char_stream << datetime;
+	// std::ostringstream uses char as a base type (not wchar_t)
+	std::ostringstream char_stream;
+	// Uses the char-operator from above
+	char_stream << datetime;
 
-   // Convert to wchar_t and write to wchar_t-stream
-   OpenGPS::String buffer;
-   buffer.FromChar(char_stream.str().c_str());
-   os << buffer;
+	// Convert to wchar_t and write to wchar_t-stream
+	OpenGPS::String buffer;
+	buffer.FromChar(char_stream.str().c_str());
+	os << buffer;
 
-   return os;
+	return os;
 }
 
-#endif /* _UNICODE */
+#endif
 
-#endif /* XSD_INT_VERSION */
+#endif

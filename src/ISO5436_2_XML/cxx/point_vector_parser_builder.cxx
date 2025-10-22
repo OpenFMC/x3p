@@ -34,47 +34,35 @@
 
 #include "stdafx.hxx"
 
-// TODO: use auto_ptr
-
-PointVectorParserBuilder::PointVectorParserBuilder()
-{
-   m_Parser = NULL;
-}
-
-PointVectorParserBuilder::~PointVectorParserBuilder()
-{
-   _OPENGPS_DELETE(m_Parser);
-}
-    
 void PointVectorParserBuilder::BuildParser()
 {
-   _ASSERT(!m_Parser);
+	assert(!m_Parser);
 
-   m_Parser = new PointVectorParser();
+	m_Parser = std::make_unique<PointVectorParser>();
 }
 
 void PointVectorParserBuilder::BuildX(const OGPS_DataPointType dataType)
 {
-   _ASSERT(m_Parser);
+	assert(m_Parser);
 
-   m_Parser->SetX(m_Parser->CreateDataPointParser(dataType));
+	m_Parser->SetX(m_Parser->CreateDataPointParser(dataType));
 }
 
 void PointVectorParserBuilder::BuildY(const OGPS_DataPointType dataType)
 {
-   _ASSERT(m_Parser);
+	assert(m_Parser);
 
-   m_Parser->SetY(m_Parser->CreateDataPointParser(dataType));
+	m_Parser->SetY(m_Parser->CreateDataPointParser(dataType));
 }
 
 void PointVectorParserBuilder::BuildZ(const OGPS_DataPointType dataType)
 {
-   _ASSERT(m_Parser);
+	assert(m_Parser);
 
-   m_Parser->SetZ(m_Parser->CreateDataPointParser(dataType));
+	m_Parser->SetZ(m_Parser->CreateDataPointParser(dataType));
 }
 
-PointVectorParser* PointVectorParserBuilder::GetParser()
+std::unique_ptr<PointVectorParser> PointVectorParserBuilder::GetParser()
 {
-   return m_Parser;
+	return std::move(m_Parser);
 }

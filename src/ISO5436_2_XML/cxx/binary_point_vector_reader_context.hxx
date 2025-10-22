@@ -36,62 +36,67 @@
 #ifndef _OPENGPS_BINARY_POINT_VECTOR_READER_CONTEXT_HXX
 #define _OPENGPS_BINARY_POINT_VECTOR_READER_CONTEXT_HXX
 
-#ifndef _OPENGPS_POINT_VECTOR_READER_CONTEXT_HXX
-#  include "point_vector_reader_context.hxx"
-#endif
+#include "point_vector_reader_context.hxx"
+#include <memory>
 
 namespace OpenGPS
 {
-   class InputBinaryFileStream;
-   class String;
+	class InputBinaryFileStream;
+	class String;
 
-   /*!
-    * Specialized OpenGPS::PointVectorReaderContext for binary streams.
-    */
-   class BinaryPointVectorReaderContext : public PointVectorReaderContext
-   {
-   public:
-      virtual void Skip();
-      virtual OGPS_Boolean MoveNext();
-      virtual OGPS_Boolean IsValid() const;
+	/*!
+	 * Specialized OpenGPS::PointVectorReaderContext for binary streams.
+	 */
+	class BinaryPointVectorReaderContext : public PointVectorReaderContext
+	{
+	public:
+		void Skip() override;
+		bool MoveNext() override;
+		bool IsValid() const override;
 
-   protected:
-      /*!
-       * Creates a new instance.
-       * @param filePath Absolute path to the binary file streamed herein.
-       */
-      BinaryPointVectorReaderContext(const OpenGPS::String& filePath);
+		/*!
+		 * Creates a new instance.
+		 * @param filePath Absolute path to the binary file streamed herein.
+		 */
+		BinaryPointVectorReaderContext(const String& filePath);
 
-      /*! Destroys this instance. */
-      virtual ~BinaryPointVectorReaderContext();
+		/*! Destroys this instance. */
+		~BinaryPointVectorReaderContext() override;
 
-      /*!
-       * Asks if the underlying data stream is still valid.
-       * @returns Returns TRUE if no previous access to the underlying
-       * data stream was harmful. Returns FALSE if any damage occured.
-       */
-      virtual OGPS_Boolean IsGood() const;
+	protected:
+		/*!
+		 * Asks if the underlying data stream is still valid.
+		 * @returns Returns true if no previous access to the underlying
+		 * data stream was harmful. Returns false if any damage occured.
+		 */
+		bool IsGood() const;
 
-      /*!
-       * Returns TRUE if the underlying stream object had successfully
-       * been allocated, FALSE otherwise.
-       */
-      OGPS_Boolean HasStream() const;
+		/*!
+		 * Returns true if the underlying stream object had successfully
+		 * been allocated, false otherwise.
+		 */
+		bool HasStream() const;
 
-      /*!
-       * Returns the underlying data stream for read access.
-       */
-      InputBinaryFileStream* GetStream();
+		/*!
+		 * Returns the underlying data stream for read access.
+		 */
+		InputBinaryFileStream* GetStream() const;
 
-      /*!
-       * Closes the internal handle to the binary file and releases its resources.
-       */
-      virtual void Close();
+		/*!
+		 * Closes the internal handle to the binary file and releases its resources.
+		 */
+		void Close();
 
-   private:
-      /*! Pointer to the underlying data stream of binary point vectors. */
-      InputBinaryFileStream* m_Stream;
-   };
+		/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
+		void CheckStreamAndThrowException();
+
+		/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
+		void CheckIsGoodAndThrowException();
+
+	private:
+		/*! Pointer to the underlying data stream of binary point vectors. */
+		std::unique_ptr<InputBinaryFileStream> m_Stream;
+	};
 }
 
-#endif /* _OPENGPS_BINARY_POINT_VECTOR_READER_CONTEXT_HXX */
+#endif

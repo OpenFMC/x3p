@@ -32,29 +32,15 @@
 #include "point_buffer.hxx"
 #include "stdafx.hxx"
 
-PointValidityProvider::PointValidityProvider(PointBuffer* const value)
+PointValidityProvider::PointValidityProvider(std::shared_ptr<PointBuffer> value)
+	:m_PointBuffer{ value }
 {
-   _ASSERT(value);
-
-   m_PointBuffer = value;
+	assert(value);
 }
 
-PointValidityProvider::PointValidityProvider()
-{
-   _ASSERT(FALSE);
-   m_PointBuffer = NULL;
-}
+PointValidityProvider::~PointValidityProvider() = default;
 
-PointValidityProvider::~PointValidityProvider()
+PointBuffer* PointValidityProvider::GetPointBuffer() const
 {
-}
-
-const PointBuffer* PointValidityProvider::GetPointBuffer() const
-{
-   return m_PointBuffer;
-}
-
-PointBuffer* PointValidityProvider::GetPointBuffer()
-{
-   return m_PointBuffer;
+	return m_PointBuffer.get();
 }

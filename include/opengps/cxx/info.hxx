@@ -38,77 +38,74 @@
 #ifndef _OPENGPS_CXX_INFO_HXX
 #define _OPENGPS_CXX_INFO_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-# include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
 
 namespace OpenGPS
 {
-   class String;
+	class String;
 
-   /*!
-    * Publishes license text, ownership and similar information.
-    */
-   class _OPENGPS_EXPORT Info
-   {
-   public:
-      /*!
-       * Gets a short name identifying this software library.
-       *
-       * @param text Contains the resulting message.
-       */
-      static void GetName(OpenGPS::String* const text);
+	/*!
+	 * Publishes license text, ownership and similar information.
+	 */
+	class _OPENGPS_EXPORT Info
+	{
+	public:
+		/*!
+		 * Gets a short name identifying this software library.
+		 *
+		 * @param text Contains the resulting message.
+		 */
+		static void GetName(String* text);
 
-      /*!
-       * Gets a short message describing the purpose of this software library.
-       *
-       * @param text Contains the resulting message.
-       */
-      static void GetAbout(OpenGPS::String* const text);
+		/*!
+		 * Gets a short message describing the purpose of this software library.
+		 *
+		 * @param text Contains the resulting message.
+		 */
+		static void GetAbout(String* text);
 
-      /*!
-       * Gets the version identifier of this software library.
-       *
-       * @param text Contains the resulting message.
-       */
-      static void GetVersion(OpenGPS::String* const text);
+		/*!
+		 * Gets the version identifier of this software library.
+		 *
+		 * @param text Contains the resulting message.
+		 */
+		static void GetVersion(String* text);
 
-      /*!
-       * Gets the copyright information of this software library.
-       *
-       * @param text Contains the resulting message.
-       */
-      static void GetCopyright(OpenGPS::String* const text);
+		/*!
+		 * Gets the copyright information of this software library.
+		 *
+		 * @param text Contains the resulting message.
+		 */
+		static void GetCopyright(String* text);
 
-      /*!
-       * Gets the license information of this software library.
-       *
-       * @param text Contains the resulting message.
-       */
-      static void GetLicense(OpenGPS::String* const text);
+		/*!
+		 * Gets the license information of this software library.
+		 *
+		 * @param text Contains the resulting message.
+		 */
+		static void GetLicense(String* text);
 
-      /*!
-       * Prints the version identifier of this software library to standard output.
-       */
-      static void PrintVersion();
+		/*!
+		 * Prints the version identifier of this software library to standard output.
+		 */
+		static void PrintVersion();
 
-      /*!
-       * Prints the copyright information of this software library to standard output.
-       */
-      static void PrintCopyright();
-      
-      /*!
-       * Prints the license information of this software library to standard output.
-       */
-      static void PrintLicense();
+		/*!
+		 * Prints the copyright information of this software library to standard output.
+		 */
+		static void PrintCopyright();
 
-   private:
-      Info();
-      ~Info();
-   };
+		/*!
+		 * Prints the license information of this software library to standard output.
+		 */
+		static void PrintLicense();
+
+	private:
+		Info() = delete;
+	};
 
 }
 
-#endif	/* _OPENGPS_CXX_INFO_HXX */
+#endif
 
 /*! @} */

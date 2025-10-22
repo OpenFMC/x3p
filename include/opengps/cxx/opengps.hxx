@@ -40,38 +40,25 @@
 #ifndef _OPENGPS_CXX_OPENGPS_HXX
 #define _OPENGPS_CXX_OPENGPS_HXX
 
-#ifndef _OPENGPS_H
-# include <opengps/opengps.h>
-#endif
+#include <opengps/opengps.h>
 
 /*! @namespace OpenGPS
  * The standard namespace for the openGPS software library.
  */
 namespace OpenGPS
 {
-   /*! @namespace OpenGPS::Schemas
-    * Holds the C++ representations of the structure of all
-    * supported XML documents.
-    */
-   namespace Schemas
-   {
-   }
+	/*! @namespace OpenGPS::Schemas
+	 * Holds the C++ representations of the structure of all
+	 * supported XML documents.
+	 */
+	namespace Schemas
+	{
+	}
 
-   /*! Data type of the size of one (possibly signed) byte. */
-   typedef char Byte;
-   /*! Pointer to a data type of the size of one (possibly signed) byte. */
-   typedef Byte* BytePtr;
+	/*! Character type used to provide more information about an exception. */
+	typedef char OGPS_ExceptionChar;
+}
 
-   /*! Data type of the size of one unsigned byte. */
-   typedef unsigned char UnsignedByte;
-   /*! Pointer to a data type of the size of one unsigned byte. */
-   typedef UnsignedByte* UnsignedBytePtr;
-
-   /*! Character type used to provide more information about an exception. */
-   typedef char OGPS_ExceptionChar;
-
-} /* namespace OpenGPS */
-
-#endif	/* _OPENGPS_CXX_OPENGPS_HXX */
+#endif
 
 /*! @} */

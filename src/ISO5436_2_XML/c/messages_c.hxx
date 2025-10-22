@@ -35,174 +35,137 @@
 #ifndef _OPENGPS_C_MESSAGES_HXX
 #define _OPENGPS_C_MESSAGES_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_CXX_EXCEPTIONS_HXX
-#  include <opengps/cxx/exceptions.hxx>
-#endif
-
-#ifndef _OPENGPS_CXX_STRING_HXX
-#  include <opengps/cxx/string.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include <opengps/cxx/exceptions.hxx>
+#include <opengps/cxx/string.hxx>
 
 namespace OpenGPS
 {
-   /*!
-    * Maintains a history of exceptions.
-    */
-   class ExceptionHistory
-   {
-   public:
-      /*!
-       * Sets an exception object as the last one that occured during execution.
-       * @param ex Add this exception object to the history of exceptions.
-       */
-      static void SetLastException(const OpenGPS::Exception& ex);
-      /*!
-       * Sets an exception object as the last one that occured during execution.
-       * @param ex Add this exception object to the history of exceptions.
-       */
-      static void SetLastException(const std::exception& ex);
-      /*!
-       * Notify that an unknown type of exception occured.
-       */
-      static void SetLastException();
+	/*!
+	 * Maintains a history of exceptions.
+	 */
+	class ExceptionHistory
+	{
+	public:
+		/*!
+		 * Sets an exception object as the last one that occured during execution.
+		 * @param ex Add this exception object to the history of exceptions.
+		 */
+		static void SetLastException(const Exception& ex);
+		/*!
+		 * Sets an exception object as the last one that occured during execution.
+		 * @param ex Add this exception object to the history of exceptions.
+		 */
+		static void SetLastException(const std::exception& ex);
+		/*!
+		 * Notify that an unknown type of exception occured.
+		 */
+		static void SetLastException();
 
-      /*!
-       * Reset the history of exceptions.
-       */
-      static void Reset();
+		/*!
+		 * Reset the history of exceptions.
+		 */
+		static void Reset();
 
-      /*!
-       * Gets the brief failure description of the last known exception or NULL.
-       */
-      static const OGPS_Character* GetLastErrorMessage();
+		/*!
+		 * Gets the brief failure description of the last known exception or nullptr.
+		 */
+		static const OGPS_Character* GetLastErrorMessage();
 
-      /*!
-       * Gets the detailed failure description of the last known exception or NULL.
-       */
-      static const OGPS_Character* GetLastErrorDescription();
+		/*!
+		 * Gets the detailed failure description of the last known exception or nullptr.
+		 */
+		static const OGPS_Character* GetLastErrorDescription();
 
-      /*!
-       * Gets the classifier of the last known exception or ::OGPS_ExNone if none
-       * is maintained so far.
-       */
-      static OGPS_ExceptionId GetLastErrorId();
+		/*!
+		 * Gets the classifier of the last known exception or ::OGPS_ExNone if none
+		 * is maintained so far.
+		 */
+		static OGPS_ExceptionId GetLastErrorId();
 
-   private:
-      /*! Creates a new instance. */
-      ExceptionHistory();
-      /*! Destroys this instance. */
-      ~ExceptionHistory();
+	private:
+		/*! Creates a new instance. */
+		ExceptionHistory() = delete;
 
-      /*! The brief description of the last known failure condition or empty. */
-      static OpenGPS::String m_LastErrorMessage;
+		/*! The brief description of the last known failure condition or empty. */
+		static String m_LastErrorMessage;
 
-      /*! The detailed description of the last known failure condition or empty. */
-      static OpenGPS::String m_LastErrorDescription;
+		/*! The detailed description of the last known failure condition or empty. */
+		static String m_LastErrorDescription;
 
-      /*! The classifier of the last known failure condition or ::OGPS_ExNone. */
-      static OGPS_ExceptionId m_LastErrorId;
+		/*! The classifier of the last known failure condition or ::OGPS_ExNone. */
+		static OGPS_ExceptionId m_LastErrorId;
 
-      /*! Source of the last error condition. */
-      static OpenGPS::String m_LastErrorSource;
+		/*! Source of the last error condition. */
+		static String m_LastErrorSource;
 
-      /*! Dumps a message to the error console. This works in _DEBUG only. */
-      static void DumpIt();
-   };
+		/*! Dumps a message to the error console. This works if _DEBUG is defined. */
+		static void DumpIt();
+	};
+
+	/*!
+	 * Helper for handling thrown exceptions.
+	 *
+	 * First resets the history of exceptions, see OpenGPS::ExceptionHistory::Reset. Then executes a statement
+	 * that is surrounded by a try-catch block. If an exception is thrown within the statement it is added to
+	 * the history of exceptions, see OpenGPS::ExceptionHistory::SetLastException.
+	 * 
+	 * @param defaultValue Default return value in case of exception.
+	 * @param statement A statement with return value to be executed.
+	 */
+	template <typename T1, typename T2>
+	inline auto HandleExceptionRetval(const T1& defaultValue, const T2&& statement)
+	{
+		ExceptionHistory::Reset();
+		try
+		{
+			return statement();
+		}
+		catch (const Exception& ex)
+		{
+			ExceptionHistory::SetLastException(ex);
+		}
+		catch (const std::exception& sx)
+		{
+			ExceptionHistory::SetLastException(sx);
+		}
+		catch (...)
+		{
+			ExceptionHistory::SetLastException();
+		}
+		return static_cast<decltype(statement())>(defaultValue);
+	}
+
+	/*!
+	 * Helper for handling thrown exceptions.
+	 *
+	 * First resets the history of exceptions, see OpenGPS::ExceptionHistory::Reset. Then executes a statement
+	 * that is surrounded by a try-catch block. If an exception is thrown within the statement it is added to
+	 * the history of exceptions, see OpenGPS::ExceptionHistory::SetLastException.
+	 *
+	 * @param statement A statement to be executed.
+	 */
+	template <typename T>
+	inline void HandleException(T&& statement)
+	{
+		ExceptionHistory::Reset();
+		try
+		{
+			statement();
+		}
+		catch (const Exception& ex)
+		{
+			ExceptionHistory::SetLastException(ex);
+		}
+		catch (const std::exception& sx)
+		{
+			ExceptionHistory::SetLastException(sx);
+		}
+		catch (...)
+		{
+			ExceptionHistory::SetLastException();
+		}
+	}
 }
 
-/*!
- * Helper for handling thrown exceptions.
- *
- * First resets the history of exceptions, see OpenGPS::ExceptionHistory::Reset. Then executes a statement
- * that is surrounded by a try-catch block. If an exception is thrown within the statement it is added to
- * the history of exceptions, see OpenGPS::ExceptionHistory::SetLastException.
- * 
- * @param STATEMENT A statement with boolean return value to be executed.
- */
-#define _OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL(STATEMENT) \
-   OpenGPS::ExceptionHistory::Reset(); \
-   try \
-   { \
-      return (STATEMENT); \
-   } \
-   catch(const OpenGPS::Exception& ex) \
-   { \
-      OpenGPS::ExceptionHistory::SetLastException(ex); \
-   } \
-   catch(const std::exception& sx) \
-   { \
-      OpenGPS::ExceptionHistory::SetLastException(sx); \
-   } \
-   catch(...) \
-   { \
-      OpenGPS::ExceptionHistory::SetLastException(); \
-   } \
-   return FALSE;
-
-/*!
- * Helper for handling thrown exceptions.
- *
- * First resets the history of exceptions, see OpenGPS::ExceptionHistory::Reset. Then executes a statement
- * that is surrounded by a try-catch block. If an exception is thrown within the statement it is added to
- * the history of exceptions, see OpenGPS::ExceptionHistory::SetLastException.
- * 
- * @param STATEMENT The statement to be executed within the try-block.
- * @param CLEANUP_STATEMENT The statement to be executed within the catch-block.
- */
-#define _OPENGPS_GENERIC_EXCEPTION_HANDLER_CLEANUP(STATEMENT, CLEANUP_STATEMENT) \
-   OpenGPS::ExceptionHistory::Reset(); \
-   try \
-   { \
-      STATEMENT; \
-   } \
-   catch(const OpenGPS::Exception& ex) \
-   { \
-      CLEANUP_STATEMENT; \
-      OpenGPS::ExceptionHistory::SetLastException(ex); \
-   } \
-   catch(const std::exception& sx) \
-   { \
-      CLEANUP_STATEMENT; \
-      OpenGPS::ExceptionHistory::SetLastException(sx); \
-   } \
-   catch(...) \
-   { \
-      CLEANUP_STATEMENT; \
-      OpenGPS::ExceptionHistory::SetLastException(); \
-   }
-
-/*!
- * Helper for handling thrown exceptions.
- *
- * First resets the history of exceptions, see OpenGPS::ExceptionHistory::Reset. Then executes a statement
- * that is surrounded by a try-catch block. If an exception is thrown within the statement it is added to
- * the history of exceptions, see OpenGPS::ExceptionHistory::SetLastException.
- *
- * See ::_OPENGPS_GENERIC_EXCEPTION_HANDLER_RETVALBOOL for statements of boolean return type.
- * 
- * @param STATEMENT A statement to be executed.
- */
-#define _OPENGPS_GENERIC_EXCEPTION_HANDLER(STATEMENT) \
-   OpenGPS::ExceptionHistory::Reset(); \
-   try \
-   { \
-      STATEMENT; \
-   } \
-   catch(const OpenGPS::Exception& ex) \
-   { \
-      OpenGPS::ExceptionHistory::SetLastException(ex); \
-   } \
-   catch(const std::exception& sx) \
-   { \
-      OpenGPS::ExceptionHistory::SetLastException(sx); \
-   } \
-   catch(...) \
-   { \
-      OpenGPS::ExceptionHistory::SetLastException(); \
-   }
-
-#endif /* _OPENGPS_C_MESSAGES_HXX */
+#endif

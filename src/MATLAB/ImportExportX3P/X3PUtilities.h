@@ -11,7 +11,7 @@
  *   "licence_GPL-3.0.txt".                                                *
  *                                                                         *
  *   openGPS is distributed in the hope that it will be useful,            *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        * 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU Lesser General Public License for more details.                   *
  *                                                                         *
@@ -27,17 +27,12 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-// Definitions for x3p utility functions
+ // Definitions for x3p utility functions
 #ifndef _X3PUTILITIES_H
 #define _X3PUTILITIES_H
 
-#define SHARED_OPENGPS_LIBRARY 1
-#define _UNICODE 1
-#define UNICODE 1
-
 #include <string>
-#include <tchar.h>
-#include "mex.h"
+#include <mex.h>
 #include <opengps/cxx/opengps.hxx>
 #include <opengps/iso5436_2.h>
 #include <opengps/cxx/iso5436_2.hxx>
@@ -50,14 +45,14 @@
 #define OGPS_VEXT_URI _T("http://www.mathworks.com/x3p/version_1")
 
 // convert wstring to matlab string.
-mxArray *ConvertWtoMStr(const std::wstring &inp);
+mxArray* ConvertWtoMStr(const std::wstring& inp);
 // Convert matlab string to wstring
-std::wstring ConvertMtoWStr(const mxArray *inp);
+std::wstring ConvertMtoWStr(const mxArray* inp);
 // Get point info structure
-mxArray *GetPointInfoStructure(OGPS_ISO5436_2Handle handle);
+mxArray* GetPointInfoStructure(OGPS_ISO5436_2Handle handle);
 // Get the name and version from X3P dll
-std::wstring GetX3P_Dll_ID(void);
+std::wstring GetX3P_Dll_ID();
 // Get a properly formated timestamp for the current date
-OpenGPS::String TimeStamp(void);
+OpenGPS::String TimeStamp();
 
 #endif

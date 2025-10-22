@@ -33,111 +33,103 @@
 #include "../cxx/stdafx.hxx"
 
 #ifdef _DEBUG
-#  include <iostream>
+	#include <iostream>
 #endif
 
 const OGPS_Character* ogps_GetErrorMessage()
 {
-   return OpenGPS::ExceptionHistory::GetLastErrorMessage();
+	return ExceptionHistory::GetLastErrorMessage();
 }
 
 const OGPS_Character* ogps_GetErrorDescription()
 {
-   return OpenGPS::ExceptionHistory::GetLastErrorDescription();
+	return ExceptionHistory::GetLastErrorDescription();
 }
 
 OGPS_ExceptionId ogps_GetErrorId()
 {
-   return OpenGPS::ExceptionHistory::GetLastErrorId();
+	return ExceptionHistory::GetLastErrorId();
 }
 
-OGPS_Boolean ogps_HasError()
+bool ogps_HasError()
 {
-   return OpenGPS::ExceptionHistory::GetLastErrorId() != OGPS_ExNone;
+	return ExceptionHistory::GetLastErrorId() != OGPS_ExNone;
 }
 
-void OpenGPS::ExceptionHistory::SetLastException(const OpenGPS::Exception& ex)
+void ExceptionHistory::SetLastException(const Exception& ex)
 {
-   OpenGPS::String msg;
-   msg.FromChar(ex.what());
+	String msg;
+	msg.FromChar(ex.what());
 
-   m_LastErrorMessage = msg;
-   m_LastErrorDescription = ex.details();
-   m_LastErrorId = ex.id();
-   m_LastErrorSource = ex.method();
+	m_LastErrorMessage = msg;
+	m_LastErrorDescription = ex.details();
+	m_LastErrorId = ex.id();
+	m_LastErrorSource = ex.method();
 
-   DumpIt();
+	DumpIt();
 }
 
-void OpenGPS::ExceptionHistory::SetLastException(const std::exception& ex)
+void ExceptionHistory::SetLastException(const std::exception& ex)
 {
-   OpenGPS::String msg;
-   msg.FromChar(ex.what());
+	String msg;
+	msg.FromChar(ex.what());
 
-   m_LastErrorMessage = msg;
-   m_LastErrorDescription.clear();
-   m_LastErrorId = OGPS_ExGeneral;
-   m_LastErrorSource.clear();
+	m_LastErrorMessage = msg;
+	m_LastErrorDescription.clear();
+	m_LastErrorId = OGPS_ExGeneral;
+	m_LastErrorSource.clear();
 
-   DumpIt();
+	DumpIt();
 }
 
-void OpenGPS::ExceptionHistory::SetLastException()
+void ExceptionHistory::SetLastException()
 {
-   /* An exception occured, but no further details are known. */
-   m_LastErrorMessage.clear();
-   m_LastErrorDescription.clear();
-   m_LastErrorSource.clear();
+	/* An exception occured, but no further details are known. */
+	m_LastErrorMessage.clear();
+	m_LastErrorDescription.clear();
+	m_LastErrorSource.clear();
 
-   /* At least there must have been an exception... */
-   m_LastErrorId = OGPS_ExGeneral;
+	/* At least there must have been an exception... */
+	m_LastErrorId = OGPS_ExGeneral;
 
-   DumpIt();
+	DumpIt();
 }
 
-void OpenGPS::ExceptionHistory::DumpIt()
+void ExceptionHistory::DumpIt()
 {
 #ifdef _DEBUG
-   OpenGPS::String title(_T("Exception:")), brief(_T("Brief: ")), detail(_T("Details: ")), method(_T("In method: "));
-   std::cerr << std::endl << title.ToChar() << std::endl <<
-      brief.ToChar() << m_LastErrorMessage.ToChar() << std::endl <<
-      detail.ToChar() << m_LastErrorDescription.ToChar() << std::endl <<
-      method.ToChar() << m_LastErrorSource.ToChar() << std::endl << std::endl;
+	String title(_T("Exception:")), brief(_T("Brief: ")), detail(_T("Details: ")), method(_T("In method: "));
+	std::cerr << std::endl << title.ToChar() << std::endl <<
+		brief.ToChar() << m_LastErrorMessage.ToChar() << std::endl <<
+		detail.ToChar() << m_LastErrorDescription.ToChar() << std::endl <<
+		method.ToChar() << m_LastErrorSource.ToChar() << std::endl << std::endl;
 #endif
 }
 
-void OpenGPS::ExceptionHistory::Reset()
+void ExceptionHistory::Reset()
 {
-   m_LastErrorMessage.clear();
-   m_LastErrorDescription.clear();
-   m_LastErrorSource.clear();
-   m_LastErrorId = OGPS_ExNone;
+	m_LastErrorMessage.clear();
+	m_LastErrorDescription.clear();
+	m_LastErrorSource.clear();
+	m_LastErrorId = OGPS_ExNone;
 }
 
-const OGPS_Character* OpenGPS::ExceptionHistory::GetLastErrorMessage()
+const OGPS_Character* ExceptionHistory::GetLastErrorMessage()
 {
-   return m_LastErrorMessage.empty() ? NULL : m_LastErrorMessage.c_str();
+	return m_LastErrorMessage.empty() ? nullptr : m_LastErrorMessage.c_str();
 }
 
-const OGPS_Character* OpenGPS::ExceptionHistory::GetLastErrorDescription()
+const OGPS_Character* ExceptionHistory::GetLastErrorDescription()
 {
-   return m_LastErrorDescription.empty() ? NULL : m_LastErrorDescription.c_str();
+	return m_LastErrorDescription.empty() ? nullptr : m_LastErrorDescription.c_str();
 }
 
-OGPS_ExceptionId OpenGPS::ExceptionHistory::GetLastErrorId()
+OGPS_ExceptionId ExceptionHistory::GetLastErrorId()
 {
-   return m_LastErrorId;
+	return m_LastErrorId;
 }
 
-OpenGPS::ExceptionHistory::ExceptionHistory()
-{
-}
-
-OpenGPS::ExceptionHistory::~ExceptionHistory()
-{
-}
-
-OpenGPS::String OpenGPS::ExceptionHistory::m_LastErrorMessage;
-OpenGPS::String OpenGPS::ExceptionHistory::m_LastErrorDescription;
-OpenGPS::String OpenGPS::ExceptionHistory::m_LastErrorSource;
-OGPS_ExceptionId OpenGPS::ExceptionHistory::m_LastErrorId = OGPS_ExNone;
+String ExceptionHistory::m_LastErrorMessage;
+String ExceptionHistory::m_LastErrorDescription;
+String ExceptionHistory::m_LastErrorSource;
+OGPS_ExceptionId ExceptionHistory::m_LastErrorId = OGPS_ExNone;

@@ -28,133 +28,113 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-/*! @file
- * Make the internal memory structure of distinct data point buffers
- * accessable as point vector data.
- */
+ /*! @file
+  * Make the internal memory structure of distinct data point buffers
+  * accessable as point vector data.
+  */
 
 #ifndef _OPENGPS_POINT_VECTOR_PROXY_HXX
 #define _OPENGPS_POINT_VECTOR_PROXY_HXX
 
-#ifndef _OPENGPS_CXX_POINT_VECTOR_BASE_HXX
-#  include <opengps/cxx/point_vector_base.hxx>
-#endif
-
-#ifndef _OPENGPS_CXX_DATA_POINT_HXX
-#  include <opengps/cxx/data_point.hxx>
-#endif
+#include <opengps/cxx/point_vector_base.hxx>
+#include <opengps/cxx/data_point.hxx>
 
 namespace OpenGPS
 {
-   class PointVectorProxyContext;
-   class VectorBuffer;
-   class PointBuffer;
+	class PointVectorProxyContext;
+	class VectorBuffer;
+	class PointBuffer;
 
-   /*!
-    * Serves one row of the three distinct buffers of data points managed
-    * by OpenGPS::VectorBuffer and raises the expression of accessing
-    * a single point vector.
-    */
-   class PointVectorProxy : public PointVectorBase
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param context Provides information which data row is currently proxied.
-       * This is read-only within the proxy object but can be changed from the outside.
-       * @param buffer Manages the whole set of all point vectors stacked together.
-       */
-      PointVectorProxy(
-         const PointVectorProxyContext* const context,
-         VectorBuffer* const buffer);
+	/*!
+	 * Serves one row of the three distinct buffers of data points managed
+	 * by OpenGPS::VectorBuffer and raises the expression of accessing
+	 * a single point vector.
+	 */
+	class PointVectorProxy : public PointVectorBase
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param context Provides information which data row is currently proxied.
+		 * This is read-only within the proxy object but can be changed from the outside.
+		 * @param buffer Manages the whole set of all point vectors stacked together.
+		 */
+		PointVectorProxy(
+			std::shared_ptr<PointVectorProxyContext> context,
+			const VectorBuffer& buffer);
 
-      /*! Destroys this instance. */
-      virtual ~PointVectorProxy();
+		~PointVectorProxy() override;
 
-      virtual const DataPoint* GetX() const;
-      virtual const DataPoint* GetY() const;
-      virtual const DataPoint* GetZ() const;
+		DataPoint* GetX() const override;
+		DataPoint* GetY() const override;
+		DataPoint* GetZ() const override;
 
-      virtual DataPoint* GetX();
-      virtual DataPoint* GetY();
-      virtual DataPoint* GetZ();
+		void Set(const PointVectorBase& value) override;
+		void Get(PointVectorBase& value) const override;
 
-      virtual void Set(const PointVectorBase& value);
-      virtual void Get(PointVectorBase& value) const;
+	private:
+		/*! Provides typesafe access to the point data of the current X component. */
+		std::unique_ptr<DataPoint> m_X;
 
-   private:
-      /*! Provides information which data row is currently proxied. */
-      const PointVectorProxyContext* const m_Context;
+		/*! Provides typesafe access to the point data of the current Y component. */
+		std::unique_ptr<DataPoint> m_Y;
 
-      /*! Provides access to the point data of all three axes. */
-      VectorBuffer* m_Buffer;
+		/*! Provides typesafe access to the point data of the current Z component. */
+		std::unique_ptr<DataPoint> m_Z;
 
-      /*! Provides typesafe access to the point data of the current X component. */
-      DataPoint* m_X;
+		/*! The copy-ctor is not implemented. This prevents its usage. */
+		PointVectorProxy(const PointVectorProxy& src) = delete;
+		/*! The assignment-operator is not implemented. This prevents its usage. */
+		PointVectorProxy& operator=(const PointVectorProxy& src) = delete;
 
-      /*! Provides typesafe access to the point data of the current Y component. */
-      DataPoint* m_Y;
+		/*!
+		 * Proxies one single data point
+		 * pointed to by the current context information.
+		 */
+		class DataPointProxy : public DataPoint
+		{
+		public:
+			/*!
+			 * Creates a new instance.
+			 * @param context Provides the information which row of point data is currently proxied.
+			 * @param buffer The buffer of all point data stacked together.
+			 */
+			DataPointProxy(
+				std::shared_ptr<PointVectorProxyContext> context,
+				std::shared_ptr<PointBuffer> buffer);
 
-      /*! Provides typesafe access to the point data of the current Z component. */
-      DataPoint* m_Z;
+			OGPS_DataPointType GetPointType() const override;
 
-      /*! The copy-ctor is not implemented. This prevents its usage. */
-      PointVectorProxy(const PointVectorProxy& src);
-      /*! The assignment-operator is not implemented. This prevents its usage. */
-      PointVectorProxy& operator=(const PointVectorProxy& src);
+			void Get(OGPS_Int16* value) const override;
+			void Get(OGPS_Int32* value) const override;
+			void Get(OGPS_Float* value) const override;
+			void Get(OGPS_Double* value) const override;
 
-      /*!
-       * Proxies one single data point
-       * pointed to by the current context information.
-       */
-      class DataPointProxy : public DataPoint
-      {
-      public:
-         /*!
-          * Creates a new instance.
-          * @param context Provides the information which row of point data is currently proxied.
-          * @param buffer The buffer of all point data stacked together.
-          */
-         DataPointProxy(
-             const PointVectorProxyContext* const context,
-             PointBuffer* const buffer);
+			OGPS_Double Get() const override;
 
-         /*! Destroys this instance. */
-         virtual ~DataPointProxy();
+			bool IsValid() const override;
 
-         virtual OGPS_DataPointType GetPointType() const;
+			void Set(OGPS_Int16 value) override;
+			void Set(OGPS_Int32 value) override;
+			void Set(OGPS_Float value) override;
+			void Set(OGPS_Double value) override;
 
-         virtual void Get(OGPS_Int16* const value) const;
-         virtual void Get(OGPS_Int32* const value) const;
-         virtual void Get(OGPS_Float* const value) const;
-         virtual void Get(OGPS_Double* const value) const;
+			void Set(const DataPoint& src) override;
 
-         virtual OGPS_Double Get() const;
+			void Reset() override;
 
-         virtual OGPS_Boolean IsValid() const;
+		private:
+			template<typename T> inline void GetT(T* value) const;
 
-         virtual void Set(const OGPS_Int16 value);
-         virtual void Set(const OGPS_Int32 value);
-         virtual void Set(const OGPS_Float value);
-         virtual void Set(const OGPS_Double value);
+			template<typename T> inline void SetT(T value);
 
-         virtual void Set(const DataPoint& src);
+			/*! Provides information which data row is currently proxied. */
+			std::shared_ptr<PointVectorProxyContext> m_Context;
 
-         virtual void Reset();
-
-      private:
-         /*! Provides information which data row is currently proxied. */
-         const PointVectorProxyContext* const m_Context;
-
-         /*! Provides access to the point data. */
-         PointBuffer* m_Buffer;
-
-         /*! The copy-ctor is not implemented. This prevents its usage. */
-         DataPointProxy(const DataPointProxy& src);
-         /*! The assignment-operator is not implemented. This prevents its usage. */
-         DataPointProxy& operator=(const DataPointProxy& src);
-      };
-   };
+			/*! Provides access to the point data. */
+			std::shared_ptr<PointBuffer> m_Buffer;
+		};
+	};
 }
 
-#endif /* _OPENGPS_POINT_VECTOR_PROXY_HXX */
+#endif

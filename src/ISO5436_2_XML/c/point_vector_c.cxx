@@ -38,358 +38,345 @@
 
 #include "../cxx/stdafx.hxx"
 
-OGPS_PointVectorPtr ogps_CreatePointVector(void)
+_OGPS_POINT_VECTOR::~_OGPS_POINT_VECTOR()
 {
-   OGPS_PointVectorPtr v = new OGPS_PointVector;
-
-   v->x = NULL;
-   v->y = NULL;
-   v->z = NULL;
-
-   return v;
+	delete x;
+	delete y;
+	delete z;
 }
 
-void ogps_FreePointVector(OGPS_PointVectorPtr * vector)
+OGPS_PointVectorPtr ogps_CreatePointVector(void)
 {
-   if(*vector)
-   {
-      _OPENGPS_GENERIC_EXCEPTION_HANDLER( \
-         _OPENGPS_DELETE((*vector)->x); \
-         _OPENGPS_DELETE((*vector)->y); \
-         _OPENGPS_DELETE((*vector)->z); \
-         _OPENGPS_DELETE(*vector); \
-         );
-   }
+	return new OGPS_PointVector;
+}
+
+void ogps_FreePointVector(OGPS_PointVectorPtr* vector)
+{
+	if (vector)
+	{
+		HandleException([&]() {
+			delete *vector;
+		});
+		*vector = nullptr;
+	}
+}
+
+template<typename T>
+static inline void ogps_SetXT(OGPS_PointVectorPtr vector, T value)
+{
+	assert(vector);
+
+	HandleException([&]() {
+		vector->instance.SetX(value);
+	});
 }
 
 void ogps_SetInt16X(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Int16 value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Int16 value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetX(value));
+	ogps_SetXT<OGPS_Int16>(vector, value);
 }
 
 void ogps_SetInt32X(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Int32 value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Int32 value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetX(value));
+	ogps_SetXT<OGPS_Int32>(vector, value);
 }
 
 void ogps_SetFloatX(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Float value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Float value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetX(value));
+	ogps_SetXT<OGPS_Float>(vector, value);
 }
 
 void ogps_SetDoubleX(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Double value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Double value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetX(value));
+	ogps_SetXT<OGPS_Double>(vector, value);
 }
 
+template<typename T>
+static inline void ogps_SetYT(OGPS_PointVectorPtr vector, T value)
+{
+	assert(vector);
+
+	HandleException([&]() {
+		vector->instance.SetY(value);
+	});
+}
 
 void ogps_SetInt16Y(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Int16 value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Int16 value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetY(value));
+	ogps_SetYT<OGPS_Int16>(vector, value);
 }
 
 void ogps_SetInt32Y(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Int32 value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Int32 value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetY(value));
+	ogps_SetYT<OGPS_Int32>(vector, value);
 }
 
 void ogps_SetFloatY(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Float value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Float value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetY(value));
+	ogps_SetYT<OGPS_Float>(vector, value);
 }
 
 void ogps_SetDoubleY(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Double value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Double value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetY(value));
+	ogps_SetYT<OGPS_Double>(vector, value);
 }
 
+template<typename T>
+static inline void ogps_SetZT(OGPS_PointVectorPtr vector, T value)
+{
+	assert(vector);
+
+	HandleException([&]() {
+		vector->instance.SetZ(value);
+	});
+}
 
 void ogps_SetInt16Z(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Int16 value)
+	OGPS_PointVectorPtr  vector,
+	OGPS_Int16 value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetZ(value));
+	ogps_SetZT<OGPS_Int16>(vector, value);
 }
 
 void ogps_SetInt32Z(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Int32 value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Int32 value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetZ(value));
+	ogps_SetZT<OGPS_Int32>(vector, value);
 }
 
 void ogps_SetFloatZ(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Float value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Float value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetZ(value));
+	ogps_SetZT<OGPS_Float>(vector, value);
 }
 
 void ogps_SetDoubleZ(
-    OGPS_PointVectorPtr const vector,
-    const OGPS_Double value)
+	OGPS_PointVectorPtr vector,
+	OGPS_Double value)
 {
-   _ASSERT(vector);
-
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetZ(value));
+	ogps_SetZT<OGPS_Double>(vector, value);
 }
 
-
 void ogps_GetXYZ(
-        const OGPS_PointVectorPtr vector,
-        OGPS_Double* const x,
-        OGPS_Double* const y,
-        OGPS_Double* const z)
+	const OGPS_PointVectorPtr vector,
+	OGPS_Double* x,
+	OGPS_Double* y,
+	OGPS_Double* z)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetXYZ(x, y, z));
+	HandleException([&]() {
+		vector->instance.GetXYZ(x, y, z);
+	});
 }
 
 void ogps_SetXYZ(
-        OGPS_PointVectorPtr vector,
-        const OGPS_Double x,
-        const OGPS_Double  y,
-        const OGPS_Double z)
+	const OGPS_PointVectorPtr vector,
+	OGPS_Double x,
+	OGPS_Double y,
+	OGPS_Double z)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.SetXYZ(x, y, z));
+	HandleException([&]() {
+		vector->instance.SetXYZ(x, y, z);
+	});
 }
 
-OGPS_DataPointPtr const ogps_GetX(OGPS_PointVectorPtr const vector)
+OGPS_DataPointPtr ogps_GetX(OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   if(!vector->x)
-   {
-      OpenGPS::DataPoint *p = NULL;
-      _OPENGPS_GENERIC_EXCEPTION_HANDLER(p = vector->instance.GetX());
-      if(p)
-      {
-         vector->x = new OGPS_DataPoint;
-         vector->x->instance = p;
-      }
-   }
+	if (!vector->x)
+	{
+		HandleException([&]() {
+			auto p{ vector->instance.GetX() };
+			vector->x = new OGPS_DataPoint;
+			vector->x->instance = p;
+		});
+	}
 
-   return vector->x;
+	return vector->x;
 }
 
-OGPS_DataPointPtr const ogps_GetY(OGPS_PointVectorPtr const vector)
+OGPS_DataPointPtr ogps_GetY(OGPS_PointVectorPtr  vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   if(!vector->y)
-   {
-      OpenGPS::DataPoint* p = NULL;
-      _OPENGPS_GENERIC_EXCEPTION_HANDLER(p = vector->instance.GetY());
-      if(p)
-      {
-         vector->y = new OGPS_DataPoint;
-         vector->y->instance = p;
-      }
-   }
+	if (!vector->y)
+	{
+		HandleException([&]() {
+			auto p{ vector->instance.GetY() };
+			vector->y = new OGPS_DataPoint;
+			vector->y->instance = p;
+		});
+	}
 
-   return vector->y;
+	return vector->y;
 }
 
-OGPS_DataPointPtr const ogps_GetZ(OGPS_PointVectorPtr const vector)
+OGPS_DataPointPtr ogps_GetZ(OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   if(!vector->z)
-   {
-      OpenGPS::DataPoint* p = NULL;
-      _OPENGPS_GENERIC_EXCEPTION_HANDLER(p = vector->instance.GetZ());
-      if(p)
-      {
-         vector->z = new OGPS_DataPoint;
-         vector->z->instance = p;
-      }
-   }
+	if (!vector->z)
+	{
+		HandleException([&]() {
+			auto p{ vector->instance.GetZ() };
+			vector->z = new OGPS_DataPoint;
+			vector->z->instance = p;
+		});
+	}
 
-   return vector->z;
+	return vector->z;
 }
 
-OGPS_Boolean ogps_IsValidPoint(const OGPS_PointVectorPtr vector)
-
+bool ogps_IsValidPoint(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   OGPS_Boolean retval = FALSE;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(retval = vector->instance.IsValid());
-   return retval;
+	return HandleExceptionRetval(false, [&]() {
+		return vector->instance.IsValid();
+	});
 }
 
 OGPS_DataPointType ogps_GetPointTypeX(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   OGPS_DataPointType value = OGPS_MissingPointType;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(value = vector->instance.GetX()->GetPointType());
-   return value;
+	return HandleExceptionRetval(OGPS_MissingPointType, [&]() {
+		return vector->instance.GetX()->GetPointType();
+	});
+}
+
+template<typename T>
+static inline T ogps_GetXT(const OGPS_PointVectorPtr vector)
+{
+	assert(vector);
+
+	return HandleExceptionRetval(0, [&]() {
+		T value{};
+		vector->instance.GetX(&value);
+		return value;
+	});
 }
 
 OGPS_Int16 ogps_GetInt16X(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Int16 value = 0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetX(&value));
-   return value;
+	return ogps_GetXT<OGPS_Int16>(vector);
 }
 
 OGPS_Int32 ogps_GetInt32X(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Int32 value = 0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetX(&value));
-   return value;
+	return ogps_GetXT<OGPS_Int32>(vector);
 }
 
 OGPS_Float ogps_GetFloatX(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Float value = 0.0F;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetX(&value));
-   return value;
+	return ogps_GetXT<OGPS_Float>(vector);
 }
 
 OGPS_Double ogps_GetDoubleX(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Double value = 0.0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetX(&value));
-   return value;
+	return ogps_GetXT<OGPS_Double>(vector);
 }
 
 OGPS_DataPointType ogps_GetPointTypeY(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   OGPS_DataPointType value = OGPS_MissingPointType;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(value = vector->instance.GetY()->GetPointType());
-   return value;
+	return HandleExceptionRetval(OGPS_MissingPointType, [&]() {
+		return vector->instance.GetY()->GetPointType();
+	});
+}
+
+template<typename T>
+static inline T ogps_GetYT(const OGPS_PointVectorPtr vector)
+{
+	assert(vector);
+
+	return HandleExceptionRetval(0, [&]() {
+		T value{};
+		vector->instance.GetY(&value);
+		return value;
+	});
 }
 
 OGPS_Int16 ogps_GetInt16Y(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Int16 value = 0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetY(&value));
-   return value;
+	return ogps_GetYT<OGPS_Int16>(vector);
 }
 
-OGPS_Int32 ogps_GetInt32Y(const OGPS_PointVectorPtr vector)
+OGPS_Int32 ogps_GetInt32Y(OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Int32 value = 0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetY(&value));
-   return value;
+	return ogps_GetYT<OGPS_Int32>(vector);
 }
 
-OGPS_Float ogps_GetFloatY(const OGPS_PointVectorPtr vector)
+OGPS_Float ogps_GetFloatY(OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Float value = 0.0F;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetY(&value));
-   return value;
+	return ogps_GetYT<OGPS_Float>(vector);
 }
 
 OGPS_Double ogps_GetDoubleY(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Double value = 0.0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetY(&value));
-   return value;
+	return ogps_GetYT<OGPS_Double>(vector);
 }
 
 OGPS_DataPointType ogps_GetPointTypeZ(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
+	assert(vector);
 
-   OGPS_DataPointType value = OGPS_MissingPointType;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(value = vector->instance.GetZ()->GetPointType());
-   return value;
+	return HandleExceptionRetval(OGPS_MissingPointType, [&]() {
+		return vector->instance.GetZ()->GetPointType();
+	});
+}
+
+template<typename T>
+static inline T ogps_GetZT(const OGPS_PointVectorPtr vector)
+{
+	assert(vector);
+
+	return HandleExceptionRetval(0, [&] {
+		T value{};
+		vector->instance.GetZ(&value);
+		return value;
+	});
 }
 
 OGPS_Int16 ogps_GetInt16Z(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Int16 value = 0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetZ(&value));
-   return value;
+	return ogps_GetZT<OGPS_Int16>(vector);
 }
 
 OGPS_Int32 ogps_GetInt32Z(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Int32 value = 0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetZ(&value));
-   return value;
+	return ogps_GetZT<OGPS_Int32>(vector);
 }
 
 OGPS_Float ogps_GetFloatZ(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Float value = 0.0F;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetZ(&value));
-   return value;
+	return ogps_GetZT<OGPS_Float>(vector);
 }
 
 OGPS_Double ogps_GetDoubleZ(const OGPS_PointVectorPtr vector)
 {
-   _ASSERT(vector);
-
-   OGPS_Double value = 0.0;
-   _OPENGPS_GENERIC_EXCEPTION_HANDLER(vector->instance.GetZ(&value));
-   return value;
+	return ogps_GetZT<OGPS_Double>(vector);
 }

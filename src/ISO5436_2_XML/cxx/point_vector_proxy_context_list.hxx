@@ -35,53 +35,45 @@
 #ifndef _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_LIST_HXX
 #define _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_LIST_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_HXX
-#  include "point_vector_proxy_context.hxx"
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include "point_vector_proxy_context.hxx"
 
 namespace OpenGPS
 {
-   /*!
-    * Indexing of point data managed by OpenGPS::VectorBuffer.
-    * The indexes are calculated for point measurements stored in
-    * a simple list structure.
-    */
-   class PointVectorProxyContextList : public PointVectorProxyContext
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param maxIndex The maximum amount of indexable measurement data.
-       * In other words: the number of elements contained in the list structure.
-       */
-      PointVectorProxyContextList(const OGPS_ULong maxIndex);
+	/*!
+	 * Indexing of point data managed by OpenGPS::VectorBuffer.
+	 * The indexes are calculated for point measurements stored in
+	 * a simple list structure.
+	 */
+	class PointVectorProxyContextList : public PointVectorProxyContext
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param maxIndex The maximum amount of indexable measurement data.
+		 * In other words: the number of elements contained in the list structure.
+		 */
+		PointVectorProxyContextList(size_t maxIndex);
 
-      /*! Destroys this instance. */
-      virtual ~PointVectorProxyContextList();
+		/*!
+		 * Sets the current index.
+		 * @param index The new arbitrary index.
+		 * @returns Returns true on success, false otherwise.
+		 */
+		void SetIndex(size_t index);
 
-      /*!
-       * Sets the current index.
-       * @param index The new arbitrary index.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual void SetIndex(const OGPS_ULong index);
+		size_t GetIndex() const override;
+		bool CanIncrementIndex() const override;
+		bool IncrementIndex() override;
+		bool IsMatrix() const override;
 
-      virtual OGPS_ULong GetIndex() const;
-      virtual OGPS_Boolean CanIncrementIndex() const;
-      virtual OGPS_Boolean IncrementIndex();
-      virtual OGPS_Boolean IsMatrix() const;
+	private:
+		/*! The current index. */
+		size_t m_Index{};
 
-   private:
-      /*! The current index. */
-      OGPS_ULong m_Index;
-
-      /*! The maximum index possible. */
-      OGPS_ULong m_MaxIndex;
-   };
+		/*! The maximum index possible. */
+		size_t m_MaxIndex;
+	};
 }
 
-#endif /* _OPENGPS_POINT_VECTOR_PROXY_CONTEXT_LIST_HXX */
+#endif

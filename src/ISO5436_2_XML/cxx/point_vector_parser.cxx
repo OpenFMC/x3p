@@ -30,10 +30,7 @@
 
 #include "point_vector_parser.hxx"
 
-#include "int16_data_point_parser.hxx"
-#include "int32_data_point_parser.hxx"
-#include "float_data_point_parser.hxx"
-#include "double_data_point_parser.hxx"
+#include "data_point_parser_impl.hxx"
 #include "missing_data_point_parser.hxx"
 
 #include "point_vector_reader_context.hxx"
@@ -43,80 +40,65 @@
 
 #include "stdafx.hxx"
 
-PointVectorParser::PointVectorParser()
+PointVectorParser::~PointVectorParser() = default;
+
+void PointVectorParser::SetX(std::unique_ptr<DataPointParser> value)
 {
-   m_X = NULL;
-   m_Y = NULL;
-   m_Z = NULL;
+	assert(value);
+
+	m_X = std::move(value);
 }
 
-PointVectorParser::~PointVectorParser()
+void PointVectorParser::SetY(std::unique_ptr<DataPointParser> value)
 {
-   _OPENGPS_DELETE(m_X);
-   _OPENGPS_DELETE(m_Y);
-   _OPENGPS_DELETE(m_Z);
+	assert(value);
+
+	m_Y = std::move(value);
 }
 
-void PointVectorParser::SetX(DataPointParser* const value)
+void PointVectorParser::SetZ(std::unique_ptr<DataPointParser> value)
 {
-   _ASSERT(value);
+	assert(value);
 
-   _OPENGPS_DELETE(m_X);
-   m_X = value;
-}
-
-void PointVectorParser::SetY(DataPointParser* const value)
-{
-   _ASSERT(value);
-
-   _OPENGPS_DELETE(m_Y);
-   m_Y = value;
-}
-
-void PointVectorParser::SetZ(DataPointParser* const value)
-{
-   _ASSERT(value);
-
-   _OPENGPS_DELETE(m_Z);
-   m_Z = value;
+	m_Z = std::move(value);
 }
 
 void PointVectorParser::Read(PointVectorReaderContext& context, PointVectorBase& value)
 {
-   _ASSERT(m_X && m_Y && m_Z);
+	assert(m_X && m_Y && m_Z);
 
-   m_X->Read(context, *value.GetX()); // parse x component
-   m_Y->Read(context, *value.GetY()); // parse y component
-   m_Z->Read(context, *value.GetZ()); // parse z component
+	m_X->Read(context, *value.GetX());
+	m_Y->Read(context, *value.GetY());
+	m_Z->Read(context, *value.GetZ());
 }
 
 void PointVectorParser::Write(PointVectorWriterContext& context, const PointVectorBase& value)
 {
-   _ASSERT(m_X && m_Y && m_Z);
+	assert(m_X && m_Y && m_Z);
 
-   m_X->Write(context, *value.GetX()); // parse x component
-   m_Y->Write(context, *value.GetY()); // parse y component
-   m_Z->Write(context, *value.GetZ()); // parse z component
+	m_X->Write(context, *value.GetX());
+	m_Y->Write(context, *value.GetY());
+	m_Z->Write(context, *value.GetZ());
 }
 
-DataPointParser* PointVectorParser::CreateDataPointParser(const OGPS_DataPointType dataType) const
+std::unique_ptr<DataPointParser> PointVectorParser::CreateDataPointParser(OGPS_DataPointType dataType) const
 {
-   switch(dataType)
-   {
-   case OGPS_Int16PointType:
-      return new Int16DataPointParser();
-   case OGPS_Int32PointType:
-      return new Int32DataPointParser();
-   case OGPS_FloatPointType:
-      return new FloatDataPointParser();
-   case OGPS_DoublePointType:
-      return new DoubleDataPointParser();
-   case OGPS_MissingPointType:
-      return new MissingDataPointParser();
-   default:
-      _ASSERT(FALSE);
-      break;
-   }
+	switch (dataType)
+	{
+	case OGPS_Int16PointType:
+		return std::make_unique<Int16DataPointParser>();
+	case OGPS_Int32PointType:
+		return std::make_unique<Int32DataPointParser>();
+	case OGPS_FloatPointType:
+		return std::make_unique<FloatDataPointParser>();
+	case OGPS_DoublePointType:
+		return std::make_unique<DoubleDataPointParser>();
+	case OGPS_MissingPointType:
+		return std::make_unique<MissingDataPointParser>();
+	default:
+		assert(false);
+		break;
+	}
 
-   return NULL;
+	return nullptr;
 }

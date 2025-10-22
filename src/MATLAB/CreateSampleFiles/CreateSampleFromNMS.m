@@ -39,7 +39,7 @@ z = s.z/1e6;
 meta.Date = '2008-08-25T14:14:00.0+02:00';
 meta.Creator = 'Dr. Georg Wiora, NanoFocus AG';
 meta.Instrument_Manufacturer = 'NanoFocus AG';
-meta.Instrument_Model = 'µsurf explorer';
+meta.Instrument_Model = 'Âµsurf explorer';
 meta.Instrument_Serial = 'not available';
 meta.Instrument_Version = 'Software V6.7, Instrument Version D';
 meta.CalibrationDate = '2008-08-25T13:59:21.4+02:00';
@@ -85,10 +85,10 @@ meta.Comment = 'Confocal Measurement of star structure on a 1 Euro coin. Objecti
 pinfo = writeX3P('1-euro-star_offset_rot_absxy_jitter.x3p','SUR',u3dj,v3dj,z,meta,'rotation',R,'translation',[1e-6,5e-3,1e0])
 
 
-%% Add a second layer with a 100 µm offset
+%% Add a second layer with a 100 Âµm offset
 z2 = repmat(z,[1,1,2]);
 z2(:,:,2) = z2(:,:,2) + 100e-6;
-meta.Comment = 'Confocal Measurement of star structure on a 1 Euro coin. Objective 20x0.6. Second layer created by z-shift of 100µm.';
+meta.Comment = 'Confocal Measurement of star structure on a 1 Euro coin. Objective 20x0.6. Second layer created by z-shift of 100ï¿½m.';
 pinfo = writeX3P('1-e uro-star_2_layer.x3p','SUR',u,v,z2,meta)
 
 %% Create a profile
@@ -97,13 +97,13 @@ meta.Comment = 'Confocal Measurement of star structure on a 1 Euro coin. Objecti
 pinfo = writeX3P('1-euro-star_profile.x3p','PRF',u,v(500),prof,meta)
 %% Create a two layer profile
 prof2 = repmat(z(:,500),[1,1,2]);
-% Add 100 µm offset in z
+% Add 100 Âµm offset in z
 prof2(:,1,2) = prof2(:,1,2)+1e-4;
 
 meta.Comment = ['Confocal Measurement of star structure on a 1 Euro coin.',...
   'Objective 20x0.6.',...
   'Line profile extracted from original dataset at column 500.',...
-  'Second layer created by z-shift of 100µm.'];
+  'Second layer created by z-shift of 100 Âµm.'];
 pinfo = writeX3P('1-euro-star_profile_2_layer.x3p','PRF',u,v(500),prof2,meta)
 
 %% Create a profile with rotation and offset

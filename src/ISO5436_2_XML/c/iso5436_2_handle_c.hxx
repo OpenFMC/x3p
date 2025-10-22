@@ -41,9 +41,11 @@
 #ifndef _OPENGPS_C_ISO5436_2_HXX
 #define _OPENGPS_C_ISO5436_2_HXX
 
+#include <memory>
+
 namespace OpenGPS
 {
-   class ISO5436_2;
+	class ISO5436_2;
 }
 
 /*!
@@ -53,11 +55,11 @@ namespace OpenGPS
  */
 typedef struct _OGPS_ISO5436_2_HANDLE
 {
-   /*! Gets/Sets the pointer to the internal C++ object behind the scenes. */
-   OpenGPS::ISO5436_2* instance;
-} OGPS_ISO5436_2, *OGPS_ISO5436_2Handle; /*! Encapsulates the internal C++ structure
+	/*! Gets/Sets the pointer to the internal C++ object behind the scenes. */
+	std::unique_ptr<OpenGPS::ISO5436_2> instance;
+} OGPS_ISO5436_2, * OGPS_ISO5436_2Handle; /*! Encapsulates the internal C++ structure
  * of a data point handle used within the C interface. */
 
-#endif /* _OPENGPS_C_ISO5436_2_HXX */
+#endif
 
 /*! @} */

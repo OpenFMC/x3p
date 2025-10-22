@@ -36,93 +36,55 @@
 
 #include "stdafx.hxx"
 
-PointVectorProxy::PointVectorProxy(const PointVectorProxyContext* const context, VectorBuffer* const buffer)
-: PointVectorBase(), m_Context(context), m_Buffer(buffer)
+PointVectorProxy::PointVectorProxy(std::shared_ptr<PointVectorProxyContext> context, const VectorBuffer& buffer)
+	:m_X{ std::make_unique<DataPointProxy>(context, buffer.GetX()) },
+	m_Y{ std::make_unique<DataPointProxy>(context, buffer.GetY()) },
+	m_Z{ std::make_unique<DataPointProxy>(context, buffer.GetZ()) }
 {
-   _ASSERT(context && buffer);
-
-   m_X = new DataPointProxy(context, buffer->GetX());
-   m_Y = new DataPointProxy(context, buffer->GetY());
-   m_Z = new DataPointProxy(context, buffer->GetZ());
+	assert(context);
 }
 
-PointVectorProxy::~PointVectorProxy()
+PointVectorProxy::~PointVectorProxy() = default;
+
+DataPoint* PointVectorProxy::GetX() const
 {
-   _OPENGPS_DELETE(m_X);
-   _OPENGPS_DELETE(m_Y);
-   _OPENGPS_DELETE(m_Z);
+	return m_X.get();
 }
 
-const DataPoint* PointVectorProxy::GetX() const
+DataPoint* PointVectorProxy::GetY() const
 {
-   _ASSERT(m_X);
-
-   return m_X;
+	return m_Y.get();
 }
 
-const DataPoint* PointVectorProxy::GetY() const
+DataPoint* PointVectorProxy::GetZ() const
 {
-   _ASSERT(m_Y);
-
-   return m_Y;
-}
-
-const DataPoint* PointVectorProxy::GetZ() const
-{
-   _ASSERT(m_Z);
-
-   return m_Z;
-}
-
-DataPoint* PointVectorProxy::GetX()
-{
-   _ASSERT(m_X);
-
-   return m_X;
-}
-
-DataPoint* PointVectorProxy::GetY()
-{
-   _ASSERT(m_Y);
-
-   return m_Y;
-}
-
-DataPoint* PointVectorProxy::GetZ()
-{
-   _ASSERT(m_Z);
-
-   return m_Z;
+	return m_Z.get();
 }
 
 void PointVectorProxy::Set(const PointVectorBase& value)
 {
-   _ASSERT(m_X && m_Y && m_Z);
+	if (m_X->IsValid())
+	{
+		m_X->Set(*value.GetX());
+	}
 
-   if(m_X->IsValid())
-   {
-      m_X->Set(*value.GetX());
-   }
+	if (m_Y->IsValid())
+	{
+		m_Y->Set(*value.GetY());
+	}
 
-   if(m_Y->IsValid())
-   {
-      m_Y->Set(*value.GetY());
-   }
-
-   m_Z->Set(*value.GetZ());
+	m_Z->Set(*value.GetZ());
 }
 
 void PointVectorProxy::Get(PointVectorBase& value) const
 {
-   _ASSERT(m_X && m_Y && m_Z);
+	auto x = value.GetX();
+	auto y = value.GetY();
+	auto z = value.GetZ();
 
-   DataPoint *x = value.GetX();
-   DataPoint *y = value.GetY();
-   DataPoint *z = value.GetZ();
+	assert(x && y && z);
 
-   _ASSERT(x && y && z);
-
-   x->Set(*m_X);
-   y->Set(*m_Y);
-   z->Set(*m_Z);
+	x->Set(*m_X);
+	y->Set(*m_Y);
+	z->Set(*m_Z);
 }

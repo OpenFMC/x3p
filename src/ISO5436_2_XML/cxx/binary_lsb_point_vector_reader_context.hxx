@@ -35,35 +35,29 @@
 #ifndef _OPENGPS_BINARY_LSB_POINT_VECTOR_READER_CONTEXT_HXX
 #define _OPENGPS_BINARY_LSB_POINT_VECTOR_READER_CONTEXT_HXX
 
-#ifndef _OPENGPS_BINARY_POINT_VECTOR_READER_CONTEXT_HXX
-#  include "binary_point_vector_reader_context.hxx"
-#endif
+#include "binary_point_vector_reader_context.hxx"
 
 namespace OpenGPS
 {
-   class String;
+	class String;
 
-   /*!
-    * Implements OpenGPS::BinaryPointVectorReaderContext for binary files to
-    * be parsed on machines reading in least significant byte order.
-    */
-   class BinaryLSBPointVectorReaderContext : public BinaryPointVectorReaderContext
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param filePath Absolute path to the binary file streamed herein.
-       */
-      BinaryLSBPointVectorReaderContext(const OpenGPS::String& filePath);
+	/*!
+	 * Implements OpenGPS::BinaryPointVectorReaderContext for binary files to
+	 * be parsed on machines reading in least significant byte order.
+	 */
+	class BinaryLSBPointVectorReaderContext : public BinaryPointVectorReaderContext
+	{
+	public:
+		using BinaryPointVectorReaderContext::BinaryPointVectorReaderContext;
 
-      /*! Destroys this instance. */
-      virtual ~BinaryLSBPointVectorReaderContext();
+		void Read(OGPS_Int16& value) override;
+		void Read(OGPS_Int32& value) override;
+		void Read(OGPS_Float& value) override;
+		void Read(OGPS_Double& value) override;
 
-      virtual void Read(OGPS_Int16* const value);
-      virtual void Read(OGPS_Int32* const value);
-      virtual void Read(OGPS_Float* const value);
-      virtual void Read(OGPS_Double* const value);
-   };
+	private:
+		template<typename T, size_t TSize> inline void ReadT(T& value);
+	};
 }
 
-#endif /* _OPENGPS_BINARY_LSB_POINT_VECTOR_READER_CONTEXT_HXX */
+#endif

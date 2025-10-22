@@ -82,9 +82,9 @@ static and shared library usage scenarios. */
  * you must set the SHARED_OPENGPS_LIBRARY flag when compiling your source code!
  */
 #          define _OPENGPS_EXPORT
-#        endif /* SHARED_OPENGPS_LIBRARY */
-#     endif /* BUILD_ISO5436_2_XML */
-#  endif /* BUILD_ISO5436_2_XML_DLL */
+#        endif
+#     endif
+#  endif
 #else
 /*!
  * Manages export and import of symbols when used as shared library.
@@ -92,67 +92,38 @@ static and shared library usage scenarios. */
  * you must set the SHARED_OPENGPS_LIBRARY flag when compiling your source code!
  */
 #  define _OPENGPS_EXPORT
-#endif /* _WIN32 */
-
-#ifndef NULL
-/*! Initial value for pointers when they do not point to any memory location. */
-# define NULL 0
 #endif
 
-#ifndef FALSE
-# ifdef __cplusplus
-/*! The FALSE boolean value. @see OGPS_Boolean */
-#   define FALSE false
-# else
-/*! The FALSE boolean value. @see OGPS_Boolean */
-#   define FALSE 0
-# endif /* __cplusplus */
-#endif /* FALSE */
+#include <stdbool.h>
 
-#ifndef TRUE
-# ifdef __cplusplus
-/*! The TRUE boolean value. @see OGPS_Boolean */
-#   define TRUE true
-# else
-/*! The TRUE boolean value. @see OGPS_Boolean */
-#   define TRUE 1
-# endif /* __cplusplus */
-#endif /* TRUE */
-
-#ifndef OGPS_Boolean
-# ifdef __cplusplus
-/*! Holds a boolean value. @see FALSE, TRUE */
 typedef bool OGPS_Boolean;
-# else
-/*! Holds a boolean value. @see FALSE, TRUE */
-typedef int OGPS_Boolean;
-# endif /* __cplusplus */
-#endif /* OGPS_Boolean */
 
 #ifdef _UNICODE
 /*! The current type of characters. This is either unicode (wchar_t) or char. */
-#if linux | __APPLE__
+#ifndef _WIN32
     #define _T(xx) L ## xx
 #endif
 typedef wchar_t OGPS_Character;
 #else
 /*! The current type of characters. This is either unicode (wchar_t) or char. */
-#if linux | __APPLE__
+#ifndef _WIN32
     #define _T(xx) xx
 #endif
 typedef char OGPS_Character;
-#endif /* _UNICODE */
+#endif
+
+#include <stdint.h>
 
 /*! Represents measurement data of type short. */
-typedef short OGPS_Int16;
+typedef int16_t OGPS_Int16;
 /*! Represents measurement data of type int. */
-typedef int OGPS_Int32;
+typedef int32_t OGPS_Int32;
 /*! Represents measurement data of type float. */
 typedef float OGPS_Float;
 /*! Represents measurement data of type double. */
 typedef double OGPS_Double;
-/*! Represents most index ranges. */
-typedef unsigned long OGPS_ULong;
+/*! Represents most index ranges, still defined for backwards comptatibility. */
+typedef size_t OGPS_ULong;
 
 /*! Comprises text used to describe raised exceptions, that might be localized. */
 #define _EX_T(x) (x)
@@ -179,23 +150,23 @@ typedef unsigned long OGPS_ULong;
 #  define _OPENGPS_MSTR(x) L ## #x
 #else
 #  define _OPENGPS_MSTR(x) #x
-#endif /* _UNICODE */
+#endif
 
-#define _OPENGPS_VERSIONSTRING_M(ver,mver,build,rev) _OPENGPS_MSTR(ver) _T(".") _OPENGPS_MSTR(mver) _T(".") _OPENGPS_MSTR(build) _T(".") _T(rev)
+#define _OPENGPS_VERSIONSTRING_M(ver,mver,build) _OPENGPS_MSTR(ver) _T(".") _OPENGPS_MSTR(mver) _T(".") _OPENGPS_MSTR(build)
 
 /// Build a version string
-#define _OPENGPS_VERSIONSTRING _OPENGPS_VERSIONSTRING_M(_OPENGPS_VERSION, _OPENGPS_MINVERSION, _OPENGPS_BUILD, _OPENGPS_REVISION)
+#define _OPENGPS_VERSIONSTRING _OPENGPS_VERSIONSTRING_M(_OPENGPS_VERSION, _OPENGPS_MINVERSION, _OPENGPS_BUILD)
 
 /// Define ID string with programm name and Version
 #define _OPENGPS_ID _OPENGPS_NAME _T(" (V") _OPENGPS_VERSIONSTRING _T(")")
 
-#define _OPENGPS_DELETE(x) if((x) != NULL) { delete (x); (x) = NULL; }
-#define _OPENGPS_DELETE_ARRAY(x) if((x) != NULL) { delete[] (x); (x) = NULL; }
+#define _OPENGPS_DELETE(x) if((x) != nullptr) { delete (x); (x) = nullptr; }
+#define _OPENGPS_DELETE_ARRAY(x) if((x) != nullptr) { delete[] (x); (x) = nullptr; }
 #define _OPENGPS_FREE(x) if((x) != NULL) { free(x); (x) = NULL; }
 
 #define _OPENGPS_DBL_EPSILON 2.2204460492503131e-016 /* smallest such that 1.0 + _OPENGPS_DBL_EPSILON != 1.0 */
 #define _OPENGPS_DBL_EQ(a, b) (fabs((a) - (b)) < (_OPENGPS_DBL_EPSILON)) /* a equals b */
 #define _OPENGPS_DBL_EQN(a) _OPENGPS_DBL_EQ(a, 0.0) /* a equals 0.0 */
 
-#endif	/* _OPENGPS_H */
+#endif
 /*! @} */

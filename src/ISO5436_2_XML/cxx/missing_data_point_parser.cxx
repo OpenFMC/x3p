@@ -36,24 +36,16 @@
 
 #include "stdafx.hxx"
 
-MissingDataPointParser::MissingDataPointParser() : DataPointParser()
-{
-}
-
-MissingDataPointParser::~MissingDataPointParser()
-{
-}
-
 void MissingDataPointParser::Read(PointVectorReaderContext& context, DataPoint& value)
 {
-   context.Skip();
-   value.Reset();
+	context.Skip();
+	value.Reset();
 }
 
 void MissingDataPointParser::Write(PointVectorWriterContext& context, const DataPoint& value)
 {
-   if(!value.IsValid())
-   {
-      context.Skip();
-   }
+	if (!value.IsValid())
+	{
+		context.Skip();
+	}
 }

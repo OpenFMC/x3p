@@ -32,55 +32,49 @@
 #include <opengps/cxx/exceptions.hxx>
 #include "stdafx.hxx"
 
-PointVectorProxyContextList::PointVectorProxyContextList(const unsigned long maxIndex)
-: PointVectorProxyContext()
-{
-   m_MaxIndex = maxIndex;
-   m_Index = 0;
-}
-
-PointVectorProxyContextList::~PointVectorProxyContextList()
+PointVectorProxyContextList::PointVectorProxyContextList(size_t maxIndex)
+	:m_MaxIndex{ maxIndex }
 {
 }
 
-void PointVectorProxyContextList::SetIndex(const OGPS_ULong index)
+void PointVectorProxyContextList::SetIndex(size_t index)
 {
-   if(index < m_MaxIndex)
-   {
-      m_Index = index;
-   }
-   else
-   {
-      throw OpenGPS::Exception(
-         OGPS_ExInvalidOperation,
-         _EX_T("Index out of range."),
-         _EX_T("The data point addessed lies outside the point list."),
-         _EX_T("OpenGPS::PointVectorProxyContextList::SetIndex"));
-   }
+	if (index < m_MaxIndex)
+	{
+		m_Index = index;
+	}
+	else
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("Index out of range."),
+			_EX_T("The data point addessed lies outside the point list."),
+			_EX_T("OpenGPS::PointVectorProxyContextList::SetIndex"));
+	}
 }
 
-OGPS_ULong PointVectorProxyContextList::GetIndex() const
+size_t PointVectorProxyContextList::GetIndex() const
 {
-   return m_Index;
+	return m_Index;
 }
 
-OGPS_Boolean PointVectorProxyContextList::CanIncrementIndex() const
+bool PointVectorProxyContextList::CanIncrementIndex() const
 {
-   return (m_Index + 1 < m_MaxIndex);
+	return (m_Index + 1 < m_MaxIndex);
 }
 
-OGPS_Boolean PointVectorProxyContextList::IncrementIndex()
+bool PointVectorProxyContextList::IncrementIndex()
 {
-   if(CanIncrementIndex())
-   {
-      ++m_Index;
-      return TRUE;
-   }
+	if (CanIncrementIndex())
+	{
+		++m_Index;
+		return true;
+	}
 
-   return FALSE;
+	return false;
 }
 
-OGPS_Boolean PointVectorProxyContextList::IsMatrix() const
+bool PointVectorProxyContextList::IsMatrix() const
 {
-   return FALSE;
+	return false;
 }

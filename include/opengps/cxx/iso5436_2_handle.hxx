@@ -48,28 +48,23 @@
  *
  */
 
-
-
-
 #ifndef _OPENGPS_CXX_ISO5436_2_HANDLE_HXX
 #define _OPENGPS_CXX_ISO5436_2_HANDLE_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
 
 namespace OpenGPS
 {
-   namespace Schemas
-   {
-      namespace ISO5436_2
-      {
-         class ISO5436_2Type;
-         class Record1Type;
-         class Record2Type;
-         class MatrixDimensionType;
-      }
-   }
+	namespace Schemas
+	{
+		namespace ISO5436_2
+		{
+			class ISO5436_2Type;
+			class Record1Type;
+			class Record2Type;
+			class MatrixDimensionType;
+		}
+	}
 }
 
 /*!
@@ -80,21 +75,21 @@ namespace OpenGPS
  * @remarks You must release the returned handle object with ::gps_CloseISO5436_2 when done with it.
  *
  * @param file Full path to the ISO5436-2 XML X3P to be created.
- * @param temp Specifies the new absolute path to the directory where unpacked X3P data gets stored temporarily. If set to NULL the default directory for  temporary files specified by your system is used.
+ * @param temp Specifies the new absolute path to the directory where unpacked X3P data gets stored temporarily. If set to nullptr the default directory for  temporary files specified by your system is used.
  * @param record1 The Record1 object defined in the ISO5436_2 XML specification. The given object instance must be valid.
- * @param record2 The Record2 object defined in the ISO5436_2 XML specification. This is optional, so the parameter can be NULL. But if set, it must point to a valid instance.
+ * @param record2 The Record2 object defined in the ISO5436_2 XML specification. This is optional, so the parameter can be nullptr. But if set, it must point to a valid instance.
  * @param matrixDimension Specifies the topology for which point measurement data will be processed.
  * @param useBinaryData Defines whether point measurement data will be directly stored into the xml document as tag elements or if it is separately stored in a binary file within the X3P container.
- * @returns Returns the file handle or NULL on failure.
+ * @returns Returns the file handle or nullptr on failure.
  *
  */
 _OPENGPS_EXPORT OGPS_ISO5436_2Handle ogps_CreateMatrixISO5436_2(
-   const OGPS_Character* const file,
-   const OGPS_Character* const temp,
-   const OpenGPS::Schemas::ISO5436_2::Record1Type& record1,
-   const OpenGPS::Schemas::ISO5436_2::Record2Type* record2,
-   const OpenGPS::Schemas::ISO5436_2::MatrixDimensionType& matrixDimension,
-   const OGPS_Boolean useBinaryData = TRUE);
+	const OGPS_Character* file,
+	const OGPS_Character* temp,
+	const OpenGPS::Schemas::ISO5436_2::Record1Type& record1,
+	const OpenGPS::Schemas::ISO5436_2::Record2Type* record2,
+	const OpenGPS::Schemas::ISO5436_2::MatrixDimensionType& matrixDimension,
+	bool useBinaryData = true);
 
 /*!
  * Creates a new ISO5436-2 XML X3P file.
@@ -104,28 +99,28 @@ _OPENGPS_EXPORT OGPS_ISO5436_2Handle ogps_CreateMatrixISO5436_2(
  * @remarks You must release the returned handle object with ::gps_CloseISO5436_2 when done with it.
  *
  * @param file Full path to the ISO5436-2 XML X3P to be created.
- * @param temp Specifies the new absolute path to the directory where unpacked X3P data gets stored temporarily. If set to NULL the default directory for  temporary files specified by your system is used.
+ * @param temp Specifies the new absolute path to the directory where unpacked X3P data gets stored temporarily. If set to nullptr the default directory for  temporary files specified by your system is used.
  * @param record1 The Record1 object defined in the ISO5436_2 XML specification. The given object instance must be valid.
- * @param record2 The Record2 object defined in the ISO5436_2 XML specification. This is optional, so the parameter can be NULL. But if set, it must point to a valid instance.
+ * @param record2 The Record2 object defined in the ISO5436_2 XML specification. This is optional, so the parameter can be nullptr. But if set, it must point to a valid instance.
  * @param listDimension Specifies the size of point measurement data that will be processed.
  * @param useBinaryData Defines whether point measurement data will be directly stored into the xml document as tag elements or if it is separately stored in a binary file within the X3P container.
- * @returns Returns the file handle or NULL on failure.
+ * @returns Returns the file handle or nullptr on failure.
  */
 _OPENGPS_EXPORT OGPS_ISO5436_2Handle ogps_CreateListISO5436_2(
-   const OGPS_Character* const file,
-   const OGPS_Character* const temp,
-   const OpenGPS::Schemas::ISO5436_2::Record1Type& record1,
-   const OpenGPS::Schemas::ISO5436_2::Record2Type* record2,
-   const OGPS_ULong listDimension,
-   const OGPS_Boolean useBinaryData = TRUE);
+	const OGPS_Character* file,
+	const OGPS_Character* temp,
+	const OpenGPS::Schemas::ISO5436_2::Record1Type& record1,
+	const OpenGPS::Schemas::ISO5436_2::Record2Type* record2,
+	size_t listDimension,
+	bool useBinaryData = true);
 
 /*!
  * Provides access to the ISO5436_2 XML document.
  *
  * @param handle Handle object to operate on.
- * @returns Returns ISO5436_2 XML document handle or NULL on failure.
+ * @returns Returns ISO5436_2 XML document handle or nullptr on failure.
   */
-_OPENGPS_EXPORT OpenGPS::Schemas::ISO5436_2::ISO5436_2Type* const ogps_GetDocument(const OGPS_ISO5436_2Handle handle);
+_OPENGPS_EXPORT OpenGPS::Schemas::ISO5436_2::ISO5436_2Type* ogps_GetDocument(const OGPS_ISO5436_2Handle handle);
 
-#endif /* _OPENGPS_CXX_ISO5436_2_HANDLE_HXX */
+#endif
 /*! @} */

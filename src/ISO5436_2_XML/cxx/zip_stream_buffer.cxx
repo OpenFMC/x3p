@@ -34,71 +34,56 @@
 
 #include <opengps/cxx/string.hxx>
 
-ZipStreamBuffer::ZipStreamBuffer(zipFile handle, const OGPS_Boolean enable_md5)
-: BaseType()
+ZipStreamBuffer::ZipStreamBuffer(zipFile handle, bool enable_md5)
+	:m_Handle{ handle }
 {
-   m_Handle = handle;
-
-   if(enable_md5)
-   {
-      m_Md5Context = new md5_context;
-      md5_starts(m_Md5Context);
-   }
-   else
-   {
-      m_Md5Context = NULL;
-   }
+	if (enable_md5)
+	{
+		m_Md5Context = std::make_unique<md5_context>();
+		md5_starts(m_Md5Context.get());
+	}
 }
 
-ZipStreamBuffer::~ZipStreamBuffer()
+std::streamsize ZipStreamBuffer::xsputn(const char_type* s, std::streamsize count)
 {
-   _OPENGPS_DELETE(m_Md5Context);
+	if (m_Md5Context)
+	{
+		md5_update(m_Md5Context.get(), reinterpret_cast<const unsigned char*>(s), static_cast<int>(count));
+	}
+
+	if (zipWriteInFileInZip(m_Handle, s, static_cast<unsigned int>(count)) == ZIP_OK)
+	{
+		return count;
+	}
+
+	return 0;
 }
 
-std::streamsize ZipStreamBuffer::xsputn(const char * const s, std::streamsize n )
+bool ZipStreamBuffer::GetMd5(std::array<unsigned char, 16>& md5)
 {
-   if(m_Md5Context)
-   {
-      md5_update(m_Md5Context, (const unsigned char*)s, n);
-   }
+	if (m_Md5Context)
+	{
+		md5_finish(m_Md5Context.get(), md5.data());
+		md5_starts(m_Md5Context.get());
 
-   if(zipWriteInFileInZip(m_Handle, s, n) == ZIP_OK)
-   {
-      return n;
-   }
+		return true;
+	}
 
-   return 0;
-}
-
-OGPS_Boolean ZipStreamBuffer::GetMd5(OpenGPS::UnsignedByte md5[16])
-{
-   if(m_Md5Context)
-   {
-      md5_finish(m_Md5Context, md5);
-      md5_starts(m_Md5Context);
-
-      return TRUE;
-   }
-
-   return FALSE;
+	return false;
 }
 
 ZipOutputStream::ZipOutputStream(ZipStreamBuffer& buffer)
-: BaseType(&buffer)
+	:std::ostream(&buffer)
 {
 }
 
-ZipOutputStream::~ZipOutputStream()
+std::ostream& ZipOutputStream::write(const char* s)
 {
-}
+	if (s)
+	{
+		const auto size{ strlen(s) };
+		return std::ostream::write(s, size);
+	}
 
-ZipOutputStream::BaseType& ZipOutputStream::write(const char *s)
-{
-   if(s)
-   {
-      const size_t size = strlen(s);
-      return BaseType::write(s, size);
-   }
-
-   return *this;
+	return *this;
 }

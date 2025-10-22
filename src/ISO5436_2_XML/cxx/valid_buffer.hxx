@@ -35,124 +35,106 @@
 #ifndef _OPENGPS_VALID_BUFFER_HXX
 #define _OPENGPS_VALID_BUFFER_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
-
-#ifndef _OPENGPS_POINT_VALIDITY_PROVIDER_HXX
-#  include "point_validity_provider.hxx"
-#endif
-
+#include <opengps/cxx/opengps.hxx>
+#include "point_validity_provider.hxx"
 #include <iostream>
 
 namespace OpenGPS
 {
-   /*!
-    * Implements the OpenGPS::PointValidityProvider as an external binary file.
-    *
-    * All bit values of the binary file correspond to the location of the point
-    * vector of the same index. If the file bit is on (set to one) the point
-    * vector is valid, if the bit at the given index is off, then the point
-    * vector at the corresponding location has invalid data.
-    */
-   class ValidBuffer : public PointValidityProvider
-   {
-   public:
-      /*! Destroys this instance. */
-      virtual ~ValidBuffer();
+	/*!
+	 * Implements the OpenGPS::PointValidityProvider as an external binary file.
+	 *
+	 * All bit values of the binary file correspond to the location of the point
+	 * vector of the same index. If the file bit is on (set to one) the point
+	 * vector is valid, if the bit at the given index is off, then the point
+	 * vector at the corresponding location has invalid data.
+	 */
+	class ValidBuffer : public PointValidityProvider
+	{
+	public:
+		/*! Destroys this instance. */
+		~ValidBuffer() override;
 
+		/*! Returns wheter the bit buffer has already been allocated. */
+		bool IsAllocated() const;
 
-      /*! Returns wheter the bit buffer has already been allocated. */
-      virtual OGPS_Boolean IsAllocated() const;
+		/*!
+		 * Maps the bit buffer from a binary stream.
+		 * @param stream The bit array gets copied from here.
+		 */
+		void Read(std::basic_istream<char>& stream);
 
-      /*!
-       * Maps the bit buffer from a binary stream.
-       * @param stream The bit array gets copied from here.
-       */
-      virtual void Read(std::basic_istream<OpenGPS::Byte>& stream);
+		/*!
+		 * Maps the bit buffer to a binary stream.
+		 * @param stream The internal bit array gets written to the given stream.
+		 */
+		void Write(std::ostream& stream);
 
-      /*!
-       * Maps the bit buffer to a binary stream.
-       * @param stream The internal bit array gets written to the given stream.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual void Write(std::ostream& stream);
+		/*!
+		 * Checks whether the current instance serves any point data that is marked as invalid.
+		 * @returns false if none of the referenced point data is marked as invalid here, otherwise true.
+		 */
+		bool HasInvalidMarks() const;
 
-      /*!
-       * Checks whether the current instance serves any point data that is marked as invalid.
-       * @returns FALSE if none of the referenced point data is marked as invalid here, otherwise TRUE.
-       */
-      virtual OGPS_Boolean HasInvalidMarks() const;
+		void SetValid(size_t index, bool value) override;
+		bool IsValid(size_t index) const override;
 
-      virtual void SetValid(const unsigned int index, const OGPS_Boolean value);
-      virtual OGPS_Boolean IsValid(const unsigned int index) const;
+	protected:
+		/*!
+		 * Creates a new instance.
+		 * @param value The point buffer of the Z axis.
+		 */
+		ValidBuffer(std::shared_ptr<PointBuffer> value);
 
-   protected:
-      /*!
-       * Creates a new instance.
-       * @param value The point buffer of the Z axis.
-       */
-      ValidBuffer(PointBuffer* const value);
+		/*! Allocates the internal bit array. Initially all point vectors are assumed to be valid. */
+		void Allocate();
 
-      /*! Allocates the internal bit array. Initially all point vectors are assumed to be valid. */
-      virtual void Allocate();
+		/*! Frees allocated resources. */
+		void Reset();
 
-      /*! Frees allocated resources. */
-      virtual void Reset();
+	private:
+		/*!
+		 * Allocates the internal bit array. Initially all point vectors are assumed to be valid.
+		 * @param rawSize Amount of memory to be allocated in bytes.
+		 */
+		void AllocateRaw(size_t rawSize);
 
-   private:
-      /*! Not to be publicly used ctor. */
-      ValidBuffer();
+		/*! Pointer to the internal bit array. */
+		std::unique_ptr<unsigned char[]> m_ValidityBuffer;
 
-      /*!
-       * Allocates the internal bit array. Initially all point vectors are assumed to be valid.
-       * @param rawSize Amount of memory to be allocated in bytes.
-       * @returns Returns TRUE on success, FALSE otherwise.
-       */
-      virtual void AllocateRaw(const unsigned int rawSize);
+		/*! Size of the bit array in bytes. */
+		size_t m_RawSize{};
+	};
 
-      /*! Pointer to the internal bit array. */
-      OpenGPS::UnsignedBytePtr m_ValidityBuffer;
+	/*!
+	 * Implementation of OpenGPS::ValidBuffer for Z axis of ::OGPS_Int16 data type.
+	 */
+	class Int16ValidBuffer : public ValidBuffer
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param value The point buffer of the Z axis.
+		 */
+		Int16ValidBuffer(std::shared_ptr<PointBuffer> value);
 
-      /*! Size of the bit array in bytes. */
-      OGPS_ULong m_RawSize;
-   };
+		void SetValid(size_t index, bool value) override;
+	};
 
-   /*!
-    * Implementation of OpenGPS::ValidBuffer for Z axis of ::OGPS_Int16 data type.
-    */
-   class Int16ValidBuffer : public ValidBuffer
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param value The point buffer of the Z axis.
-       */
-      Int16ValidBuffer(PointBuffer* const value);
+	/*!
+	 * Implementation of OpenGPS::ValidBuffer for Z axis of ::OGPS_Int32 data type.
+	 */
+	class Int32ValidBuffer : public ValidBuffer
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param value The point buffer of the Z axis.
+		 */
+		Int32ValidBuffer(std::shared_ptr<PointBuffer> value);
 
-      /*! Destroys this instance. */
-      ~Int16ValidBuffer();
-
-      virtual void SetValid(const unsigned int index, const OGPS_Boolean value);
-   };
-
-   /*!
-    * Implementation of OpenGPS::ValidBuffer for Z axis of ::OGPS_Int32 data type.
-    */
-   class Int32ValidBuffer : public ValidBuffer
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param value The point buffer of the Z axis.
-       */
-      Int32ValidBuffer(PointBuffer* const value);
-
-      /*! Destroys this instance. */
-      ~Int32ValidBuffer();
-
-      virtual void SetValid(const unsigned int index, const OGPS_Boolean value);
-   };
+		void SetValid(size_t index, bool value) override;
+	};
 }
 
-#endif /* _OPENGPS_VALID_BUFFER_HXX */
+#endif

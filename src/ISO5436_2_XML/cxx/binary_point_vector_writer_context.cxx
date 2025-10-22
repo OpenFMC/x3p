@@ -32,83 +32,84 @@
 #include <opengps/cxx/exceptions.hxx>
 #include "stdafx.hxx"
 
-/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
-#define _CHECK_STREAM_AND_THROW_EXCEPTION \
-   if(!HasStream()) \
-   { \
-   throw OpenGPS::Exception( \
-      OGPS_ExInvalidOperation, \
-      _EX_T("No binary file stream available."), \
-      _EX_T("The operation on the binary file stream failed, because the stream has been closed already."), \
-      _EX_T("OpenGPS::BinaryPointVectorWriterContext")); \
-   }
-
-/*! Checks whether the underlying stream is valid. Throws an exception if this is not the case. */
-#define _CHECK_ISGOOD_AND_THROW_EXCEPTION \
-   if(!IsGood()) \
-   { \
-   throw OpenGPS::Exception( \
-      OGPS_ExInvalidOperation, \
-      _EX_T("The underlying binary stream object became invalid."), \
-      _EX_T("A read/write error occured."), \
-      _EX_T("OpenGPS::BinaryPointVectorWriterContext")); \
-   }
-
 BinaryPointVectorWriterContext::BinaryPointVectorWriterContext(zipFile handle)
-: PointVectorWriterContext()
+	:m_Buffer{ std::make_unique<ZipStreamBuffer>(handle, true) },
+	m_Stream{ std::make_unique<ZipOutputStream>(*m_Buffer) }
 {
-   m_Buffer = new ZipStreamBuffer(handle, TRUE);
-   m_Stream = new ZipOutputStream(*m_Buffer);
 }
 
 BinaryPointVectorWriterContext::~BinaryPointVectorWriterContext()
 {
-   Close();
+	Close();
 }
 
 std::ostream* BinaryPointVectorWriterContext::GetStream()
 {
-   _ASSERT(m_Stream && m_Buffer);
-   return m_Stream;
+	assert(m_Stream && m_Buffer);
+	return m_Stream.get();
 }
 
 void BinaryPointVectorWriterContext::Close()
 {
-   _OPENGPS_DELETE(m_Stream);
-   _OPENGPS_DELETE(m_Buffer);
+	m_Stream.reset();
+	m_Buffer.reset();
 }
 
-OGPS_Boolean BinaryPointVectorWriterContext::HasStream() const
+bool BinaryPointVectorWriterContext::HasStream() const
 {
-   if(m_Stream)
-   {
-      _ASSERT(m_Buffer);
-      return TRUE;
-   }
+	if (m_Stream)
+	{
+		assert(m_Buffer);
+		return true;
+	}
 
-   return FALSE;
+	return false;
 }
 
-OGPS_Boolean BinaryPointVectorWriterContext::IsGood() const
+bool BinaryPointVectorWriterContext::IsGood() const
 {
-   _ASSERT(m_Stream && m_Buffer);
+	assert(m_Stream && m_Buffer);
 
-   const std::ios_base::io_state state = m_Stream->rdstate();
-   return (state == std::ios_base::goodbit || state == std::ios_base::eofbit);
+	const auto state{ m_Stream->rdstate() };
+	return (state == std::ios_base::goodbit || state == std::ios_base::eofbit);
+}
+
+void BinaryPointVectorWriterContext::CheckStreamAndThrowException()
+{
+	if (!HasStream())
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("No binary file stream available."),
+			_EX_T("The operation on the binary file stream failed, because the stream has been closed already."),
+			_EX_T("OpenGPS::BinaryPointVectorWriterContext"));
+	}
+}
+
+void BinaryPointVectorWriterContext::CheckIsGoodAndThrowException()
+{
+	if (!IsGood())
+	{
+		throw Exception(
+			OGPS_ExInvalidOperation,
+			_EX_T("The underlying binary stream object became invalid."),
+			_EX_T("A read/write error occured."), \
+			_EX_T("OpenGPS::BinaryPointVectorWriterContext"));
+	}
 }
 
 void BinaryPointVectorWriterContext::Skip()
 {
-   _CHECK_STREAM_AND_THROW_EXCEPTION;
-   _CHECK_ISGOOD_AND_THROW_EXCEPTION;
+	CheckStreamAndThrowException();
+	CheckIsGoodAndThrowException();
 }
 
 void BinaryPointVectorWriterContext::MoveNext()
 {
 }
 
-void BinaryPointVectorWriterContext::GetMd5(OpenGPS::UnsignedByte md5[16])
+void BinaryPointVectorWriterContext::GetMd5(std::array<unsigned char, 16>& md5)
 {
-   _ASSERT(HasStream());
-   m_Buffer->GetMd5(md5);
+	assert(HasStream());
+	m_Buffer->GetMd5(md5);
 }

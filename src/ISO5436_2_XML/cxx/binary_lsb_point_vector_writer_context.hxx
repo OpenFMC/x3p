@@ -35,37 +35,31 @@
 #ifndef _OPENGPS_BINARY_LSB_POINT_VECTOR_WRITER_CONTEXT_HXX
 #define _OPENGPS_BINARY_LSB_POINT_VECTOR_WRITER_CONTEXT_HXX
 
-#ifndef _OPENGPS_BINARY_POINT_VECTOR_WRITER_CONTEXT_HXX
-#  include "binary_point_vector_writer_context.hxx"
-#endif
+#include "binary_point_vector_writer_context.hxx"
 
 namespace OpenGPS
 {
-   class OutputBinaryFileStream;
+	class OutputBinaryFileStream;
 
-   /*!
-    * Implements OpenGPS::BinaryPointVectorWriterContext for binary files to
-    * be written on machines operating in least significant byte order. Writes
-    * binary data to a compressed stream. Normally this stream points to a
-    * file descriptor within a zip archive.
-    */
-   class BinaryLSBPointVectorWriterContext : public BinaryPointVectorWriterContext
-   {
-   public:
-      /*!
-       * Creates a new instance.
-       * @param handle The zip-stream where binary data is written to.
-       */
-      BinaryLSBPointVectorWriterContext(zipFile handle);
+	/*!
+	 * Implements OpenGPS::BinaryPointVectorWriterContext for binary files to
+	 * be written on machines operating in least significant byte order. Writes
+	 * binary data to a compressed stream. Normally this stream points to a
+	 * file descriptor within a zip archive.
+	 */
+	class BinaryLSBPointVectorWriterContext : public BinaryPointVectorWriterContext
+	{
+	public:
+		using BinaryPointVectorWriterContext::BinaryPointVectorWriterContext;
 
-      /*! Destroys this instance. */
-      virtual ~BinaryLSBPointVectorWriterContext();
+		void Write(OGPS_Int16 value) override;
+		void Write(OGPS_Int32 value) override;
+		void Write(OGPS_Float value) override;
+		void Write(OGPS_Double value) override;
 
-      virtual void Write(const OGPS_Int16* const value);
-      virtual void Write(const OGPS_Int32* const value);
-      virtual void Write(const OGPS_Float* const value);
-      virtual void Write(const OGPS_Double* const value);
-   };
+	private:
+		template<typename T, size_t TSize> inline void WriteT(T value);
+	};
 }
 
-#endif /* _OPENGPS_BINARY_LSB_POINT_VECTOR_WRITER_CONTEXT_HXX */
+#endif

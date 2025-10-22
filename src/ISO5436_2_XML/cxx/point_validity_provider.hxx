@@ -28,76 +28,69 @@
  *   http://www.opengps.eu/                                                *
  ***************************************************************************/
 
-/*! @file
- * Interface to communicate whether the point vector at a given location
- * contains valid data.
- */
+ /*! @file
+  * Interface to communicate whether the point vector at a given location
+  * contains valid data.
+  */
 
 #ifndef _OPENGPS_POINT_VALIDITY_PROVIDER_HXX
 #define _OPENGPS_POINT_VALIDITY_PROVIDER_HXX
 
-#ifndef _OPENGPS_CXX_OPENGPS_HXX
-#  include <opengps/cxx/opengps.hxx>
-#endif
+#include <opengps/cxx/opengps.hxx>
+#include <memory>
 
 namespace OpenGPS
 {
-   class PointBuffer;
+	class PointBuffer;
 
-   /*!
-    * Interface to communicate the validity of a point vector at a given location.
-    */
-   class PointValidityProvider
-   {
-   public:
-      /*! Destroys this instance. */
-      virtual ~PointValidityProvider();
+	/*!
+	 * Interface to communicate the validity of a point vector at a given location.
+	 */
+	class PointValidityProvider
+	{
+	public:
+		/*!
+		 * Creates a new instance.
+		 * @param value The point buffer of the Z axis.
+		 * The Z axis is used to communicate validity because the Z
+		 * axis is the only axis which cannot have values implicitly and
+		 * therefore must always provide a valid measurement.
+		 */
+		PointValidityProvider(std::shared_ptr<PointBuffer> value);
 
-      /*!
-       * Sets the validity of a point vector at a given location.
-       *
-       * A specific implementation may throw an OpenGPS::Exception if this operation
-       * is not permitted due to the current state of the object instance.
-       *
-       * @param index The location of the point data the validity is updated.
-       * @param value The value of the current validity of the point vector at the given position.
-       */
-      virtual void SetValid(const unsigned int index, const OGPS_Boolean value) = 0;
+		/*! Destroys this instance. */
+		virtual ~PointValidityProvider();
 
-      /*!
-       * Gets the validity of a point vector at a given location.
-       *
-       * A specific implementation may throw an OpenGPS::Exception if this operation
-       * is not permitted due to the current state of the object instance.
-       *
-       * @param index The location of the point data the validity is checked.
-       * @returns Returns TRUE if valid, FALSE otherwise.
-       */
-      virtual OGPS_Boolean IsValid(const unsigned int index) const = 0;
+		/*!
+		 * Sets the validity of a point vector at a given location.
+		 *
+		 * A specific implementation may throw an OpenGPS::Exception if this operation
+		 * is not permitted due to the current state of the object instance.
+		 *
+		 * @param index The location of the point data the validity is updated.
+		 * @param value The value of the current validity of the point vector at the given position.
+		 */
+		virtual void SetValid(size_t index, bool value) = 0;
 
-   protected:
-      /*!
-       * Creates a new instance.
-       * @param value The point buffer of the Z axis.
-       * The Z axis is used to communicate validity because the Z
-       * axis is the only axis which cannot have values implicitly and
-       * therefore must always provide a valid measurement.
-       */
-      PointValidityProvider(PointBuffer* const value);
+		/*!
+		 * Gets the validity of a point vector at a given location.
+		 *
+		 * A specific implementation may throw an OpenGPS::Exception if this operation
+		 * is not permitted due to the current state of the object instance.
+		 *
+		 * @param index The location of the point data the validity is checked.
+		 * @returns Returns true if valid, false otherwise.
+		 */
+		virtual bool IsValid(size_t index) const = 0;
 
-      /*! Returns the point buffer of the Z axis. */
-      const PointBuffer* GetPointBuffer() const;
+	protected:
+		/*! Returns the point buffer of the Z axis. */
+		PointBuffer* GetPointBuffer() const;
 
-      /*! Returns the point buffer of the Z axis. */
-      PointBuffer* GetPointBuffer();
-
-   private:
-      /*! Not to be publicly used ctor. */
-      PointValidityProvider();
-
-      /*! Point buffer of the Z axis. */
-      PointBuffer* m_PointBuffer;
-   };
+	private:
+		/*! Point buffer of the Z axis. */
+		std::shared_ptr<PointBuffer> m_PointBuffer;
+	};
 }
 
-#endif /* _OPENGPS_POINT_VALIDITY_PROVIDER_HXX */
+#endif
